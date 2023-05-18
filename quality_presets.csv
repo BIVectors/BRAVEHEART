@@ -1,0 +1,13 @@
+qt,200,700,,Min/max range of QT interval,,,,Blank cells are ignored (eg if maximum is left blank it only will check if less than minimum)
+tpqt,0.5,,,Min/max range of T peak/QT ratio (nominal is min only),,,,
+t_mag,0.05,,,Min/max range for T wave magnitude (nominal is min only),,,,
+hr,30,150,,Min/max range for HR,,,,
+num_beats,4,,,# of beats left after PVC and outlier beats are removed,,,,
+pct_beats_removed,,60,,% of total number of beats removed to trigger,,,,
+corr,0.8,,,Min/max range for average normalized cross correlation (nomimal min only),,,,
+baseline,,0.1,,Min/max range for baseline at the end of the T wave (nominal max only),,,,
+missing_lead,,,,Missing lead - leave this one blank,,,,
+hf_noise,10,,,SNR for HF noise cutoff,,,,
+prob,0.8,,,Logistic regression probability (range 0-1),,,,
+lf_noise,,0.02,,mV for cutoff in variance in LF noise,,,,
+qrs,60,200,,Min/max range of QRS duration,,,,

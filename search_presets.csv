@@ -1,0 +1,5 @@
+name,pkthresh,maxBPM,QRwidth,RSwidth,STstart,STend
+Standard,95,150,100,100,100,45
+PVCs,85,200,150,150,150,35
+BBB/Paced,95,150,150,150,150,45
+Bigeminy,85,170,150,150,150,70

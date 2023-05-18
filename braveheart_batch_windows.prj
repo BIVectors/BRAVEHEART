@@ -1,0 +1,221 @@
+<deployment-project plugin="plugin.ezdeploy" plugin-version="1.0">
+  <configuration build-checksum="2481394482" file="C:\Users\jwaks\Documents\GitHub\BRAVEHEART_DEV\braveheart_batch_windows.prj" location="C:\Users\jwaks\Documents\GitHub\BRAVEHEART_DEV" name="braveheart_batch_windows" preferred-package-location="C:\Users\Jon Waks\Documents\GitHub\BRAVEHEART_DEV\braveheart_batch_windows\for_redistribution" preferred-package-type="package.type.exe" target="target.ezdeploy.standalone" target-name="Application Compiler">
+    <param.appname>braveheart_batch</param.appname>
+    <param.icon>${PROJECT_ROOT}\braveheart_batch_windows_resources\icon.ico</param.icon>
+    <param.icons>
+      <file>${PROJECT_ROOT}\braveheart_batch_windows_resources\icon_48.png</file>
+      <file>${PROJECT_ROOT}\braveheart_batch_windows_resources\icon_32.png</file>
+      <file>${PROJECT_ROOT}\braveheart_batch_windows_resources\icon_24.png</file>
+      <file>${PROJECT_ROOT}\braveheart_batch_windows_resources\icon_16.png</file>
+    </param.icons>
+    <param.version>1.0.0</param.version>
+    <param.authnamewatermark>Hans F. Stabenau and Jonathan W. Waks</param.authnamewatermark>
+    <param.email>braveheart.ecg@gmail.com</param.email>
+    <param.company />
+    <param.summary />
+    <param.description>BRAVHEART ECG/VCG Analysis Software -- Command Line Version
+Version 1.0.0</param.description>
+    <param.screenshot>${PROJECT_ROOT}\braveheart_splash.png</param.screenshot>
+    <param.guid />
+    <param.installpath.string>\braveheart_batch\</param.installpath.string>
+    <param.installpath.combo>option.installpath.programfiles</param.installpath.combo>
+    <param.logo />
+    <param.install.notes />
+    <param.target.install.notes />
+    <param.intermediate>${PROJECT_ROOT}\braveheart_batch_windows\for_testing</param.intermediate>
+    <param.files.only>${PROJECT_ROOT}\braveheart_batch_windows\for_redistribution_files_only</param.files.only>
+    <param.output>${PROJECT_ROOT}\braveheart_batch_windows\for_redistribution</param.output>
+    <param.logdir>${PROJECT_ROOT}\braveheart_batch_windows</param.logdir>
+    <param.enable.clean.build>false</param.enable.clean.build>
+    <param.user.defined.mcr.options />
+    <param.target.type>subtarget.standalone</param.target.type>
+    <param.support.packages />
+    <param.web.mcr>true</param.web.mcr>
+    <param.package.mcr>false</param.package.mcr>
+    <param.no.mcr>false</param.no.mcr>
+    <param.web.mcr.name>braveheart_batch_installer</param.web.mcr.name>
+    <param.package.mcr.name>MyAppInstaller_mcr</param.package.mcr.name>
+    <param.no.mcr.name>MyAppInstaller_app</param.no.mcr.name>
+    <param.windows.command.prompt>true</param.windows.command.prompt>
+    <param.create.log>false</param.create.log>
+    <param.log.file />
+    <param.native.matlab>false</param.native.matlab>
+    <param.checkbox>false</param.checkbox>
+    <param.example />
+    <param.help.text>Syntax 
+	 braveheart_batch -? 
+	 braveheart_batch varargin 
+ Input Arguments 
+	 -?  print help on how to use the application 
+	 varargin  input arguments 
+ Description 
+ 	 BRAVHEART ECG/VCG Analysis Software -- Command Line Version
+Version 1.0.0</param.help.text>
+    <unset>
+      <param.company />
+      <param.summary />
+      <param.guid />
+      <param.installpath.string />
+      <param.installpath.combo />
+      <param.logo />
+      <param.install.notes />
+      <param.target.install.notes />
+      <param.intermediate />
+      <param.files.only />
+      <param.output />
+      <param.logdir />
+      <param.enable.clean.build />
+      <param.user.defined.mcr.options />
+      <param.target.type />
+      <param.support.packages />
+      <param.web.mcr />
+      <param.package.mcr />
+      <param.no.mcr />
+      <param.package.mcr.name />
+      <param.no.mcr.name />
+      <param.windows.command.prompt />
+      <param.create.log />
+      <param.log.file />
+      <param.native.matlab />
+      <param.checkbox />
+      <param.example />
+    </unset>
+    <fileset.main>
+      <file>${PROJECT_ROOT}\braveheart_batch.m</file>
+    </fileset.main>
+    <fileset.resources>
+      <file>${PROJECT_ROOT}\braveheart_equations.pdf</file>
+      <file>${PROJECT_ROOT}\braveheart_firstpass.pdf</file>
+      <file>${PROJECT_ROOT}\braveheart_variables.pdf</file>
+      <file>${PROJECT_ROOT}\test_braveheart.m</file>
+    </fileset.resources>
+    <fileset.package>
+      <file>${PROJECT_ROOT}\Annoparams.csv</file>
+      <file>${PROJECT_ROOT}\batch_settings.csv</file>
+      <file>${PROJECT_ROOT}\braveheart_userguide.pdf</file>
+      <file>${PROJECT_ROOT}\ecg_formats.csv</file>
+      <file>${PROJECT_ROOT}\Example ECGs</file>
+      <file>${PROJECT_ROOT}\quality_presets.csv</file>
+      <file>${PROJECT_ROOT}\search_presets.csv</file>
+      <file>${PROJECT_ROOT}\transform_mats.csv</file>
+    </fileset.package>
+    <fileset.depfun>
+      <file>${PROJECT_ROOT}\annoMF.m</file>
+      <file>${PROJECT_ROOT}\Annoparams.m</file>
+      <file>${PROJECT_ROOT}\AnnoResult.m</file>
+      <file>${PROJECT_ROOT}\autoMFannotate.m</file>
+      <file>${PROJECT_ROOT}\baseline_shift_hfs.m</file>
+      <file>${PROJECT_ROOT}\baseline_voltage.m</file>
+      <file>${PROJECT_ROOT}\batch_calc.m</file>
+      <file>${PROJECT_ROOT}\Beat_Stats.m</file>
+      <file>${PROJECT_ROOT}\Beats.m</file>
+      <file>${PROJECT_ROOT}\center_of_mass.m</file>
+      <file>${PROJECT_ROOT}\com_or_rpeak.m</file>
+      <file>${PROJECT_ROOT}\curve_length.m</file>
+      <file>${PROJECT_ROOT}\deriv2nd5.m</file>
+      <file>${PROJECT_ROOT}\deriv5.m</file>
+      <file>${PROJECT_ROOT}\dihedral.m</file>
+      <file>${PROJECT_ROOT}\dowermatrix.m</file>
+      <file>${PROJECT_ROOT}\ECG12.m</file>
+      <file>${PROJECT_ROOT}\ecg_source_string.m</file>
+      <file>${PROJECT_ROOT}\ecgfilter.m</file>
+      <file>${PROJECT_ROOT}\ecgtransform.m</file>
+      <file>${PROJECT_ROOT}\energyoff.m</file>
+      <file>${PROJECT_ROOT}\extract_points.m</file>
+      <file>${PROJECT_ROOT}\find_outliers.m</file>
+      <file>${PROJECT_ROOT}\findpeaksecg.m</file>
+      <file>${PROJECT_ROOT}\findT.m</file>
+      <file>${PROJECT_ROOT}\findTGauss.m</file>
+      <file>${PROJECT_ROOT}\GEH_calculations.m</file>
+      <file>${PROJECT_ROOT}\get_source_ext.m</file>
+      <file>${PROJECT_ROOT}\getcurrentdir.m</file>
+      <file>${PROJECT_ROOT}\korsmatrix.m</file>
+      <file>${PROJECT_ROOT}\Lead_Morphology.m</file>
+      <file>${PROJECT_ROOT}\load_dicom.m</file>
+      <file>${PROJECT_ROOT}\load_ecg.m</file>
+      <file>${PROJECT_ROOT}\load_generic_csv.m</file>
+      <file>${PROJECT_ROOT}\load_hl7xml.m</file>
+      <file>${PROJECT_ROOT}\load_ISHNE.m</file>
+      <file>${PROJECT_ROOT}\load_mrq.m</file>
+      <file>${PROJECT_ROOT}\load_musexml.m</file>
+      <file>${PROJECT_ROOT}\load_philipsxml.m</file>
+      <file>${PROJECT_ROOT}\load_unformatted.m</file>
+      <file>${PROJECT_ROOT}\lzw2norm.m</file>
+      <file>${PROJECT_ROOT}\max_vector.m</file>
+      <file>${PROJECT_ROOT}\mean_abs_dev.m</file>
+      <file>${PROJECT_ROOT}\mean_vector.m</file>
+      <file>${PROJECT_ROOT}\median_abs_dev.m</file>
+      <file>${PROJECT_ROOT}\median_fit.m</file>
+      <file>${PROJECT_ROOT}\MedianAnnoNet.mat</file>
+      <file>${PROJECT_ROOT}\medianbeat.m</file>
+      <file>${PROJECT_ROOT}\medianloc.m</file>
+      <file>${PROJECT_ROOT}\middlethird.m</file>
+      <file>${PROJECT_ROOT}\minQRSTwindow.m</file>
+      <file>${PROJECT_ROOT}\mirror.m</file>
+      <file>${PROJECT_ROOT}\missing_leads.m</file>
+      <file>${PROJECT_ROOT}\mod_z_score.m</file>
+      <file>${PROJECT_ROOT}\module_output.m</file>
+      <file>${PROJECT_ROOT}\nnet_median_annotate.m</file>
+      <file>${PROJECT_ROOT}\noise_test.m</file>
+      <file>${PROJECT_ROOT}\norm_corr.m</file>
+      <file>${PROJECT_ROOT}\pacer_spike_removal.m</file>
+      <file>${PROJECT_ROOT}\plane_svd.m</file>
+      <file>${PROJECT_ROOT}\pvc_stats.m</file>
+      <file>${PROJECT_ROOT}\qrs_width_est.m</file>
+      <file>${PROJECT_ROOT}\Quality.m</file>
+      <file>${PROJECT_ROOT}\read_batch_settings.m</file>
+      <file>${PROJECT_ROOT}\read_format_csv.m</file>
+      <file>${PROJECT_ROOT}\rs_values.m</file>
+      <file>${PROJECT_ROOT}\saiqrst.m</file>
+      <file>${PROJECT_ROOT}\save_struct_parfor.m</file>
+      <file>${PROJECT_ROOT}\shift_xyz.m</file>
+      <file>${PROJECT_ROOT}\svd_8lead.m</file>
+      <file>${PROJECT_ROOT}\tcrt.m</file>
+      <file>${PROJECT_ROOT}\tcrt_width_est.m</file>
+      <file>${PROJECT_ROOT}\tpeak_loc.m</file>
+      <file>${PROJECT_ROOT}\twave_values.m</file>
+      <file>${PROJECT_ROOT}\VCG.m</file>
+      <file>${PROJECT_ROOT}\VCG_Calc.m</file>
+      <file>${PROJECT_ROOT}\VCG_Morphology.m</file>
+      <file>${PROJECT_ROOT}\vector.m</file>
+      <file>${PROJECT_ROOT}\wander_remove.m</file>
+      <file>${PROJECT_ROOT}\waveEnd.m</file>
+      <file>${PROJECT_ROOT}\waveEnd2.m</file>
+      <file>${PROJECT_ROOT}\waveEndPk.m</file>
+      <file>${PROJECT_ROOT}\waveStart2.m</file>
+      <file>${PROJECT_ROOT}\waveStartPk.m</file>
+    </fileset.depfun>
+    <build-deliverables>
+      <file location="${PROJECT_ROOT}\braveheart_batch_windows\for_testing" name="readme.txt" optional="true">C:\Users\jwaks\Documents\GitHub\BRAVEHEART_DEV\braveheart_batch_windows\for_testing\readme.txt</file>
+      <file location="${PROJECT_ROOT}\braveheart_batch_windows\for_testing" name="braveheart_batch.exe" optional="false">C:\Users\jwaks\Documents\GitHub\BRAVEHEART_DEV\braveheart_batch_windows\for_testing\braveheart_batch.exe</file>
+      <file location="${PROJECT_ROOT}\braveheart_batch_windows\for_testing" name="splash.png" optional="false">C:\Users\jwaks\Documents\GitHub\BRAVEHEART_DEV\braveheart_batch_windows\for_testing\splash.png</file>
+    </build-deliverables>
+    <workflow />
+    <matlab>
+      <root>C:\Program Files\MATLAB\R2022a</root>
+      <toolboxes>
+        <toolbox name="neuralnetwork" />
+      </toolboxes>
+      <toolbox>
+        <neuralnetwork>
+          <enabled>true</enabled>
+        </neuralnetwork>
+      </toolbox>
+    </matlab>
+    <platform>
+      <unix>false</unix>
+      <mac>false</mac>
+      <windows>true</windows>
+      <win2k>false</win2k>
+      <winxp>false</winxp>
+      <vista>false</vista>
+      <linux>false</linux>
+      <solaris>false</solaris>
+      <osver>10.0</osver>
+      <os32>false</os32>
+      <os64>true</os64>
+      <arch>win64</arch>
+      <matlab>true</matlab>
+    </platform>
+  </configuration>
+</deployment-project>

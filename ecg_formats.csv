@@ -1,0 +1,10 @@
+MUSE .xml,muse_xml,.xml,500
+BIDMC .txt,bidmc_format,.txt,500
+Prucka .txt,prucka_format,.txt,997
+Philips .xml,philips_xml,.xml,500
+ISHNE .ecg,ISHNE,.ecg,1000
+GE .mrq,mrq_ascii,.mrq,500
+DICOM .dcm,DICOM,.dcm,500
+HL7 .xml,hl7_xml,.xml,500
+Unformatted .txt,unformatted,.txt,500
+Generic .csv,generic_csv,.csv,500
