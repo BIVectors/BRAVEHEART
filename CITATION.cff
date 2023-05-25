@@ -20,10 +20,26 @@ authors:
     orcid: 'https://orcid.org/0000-0001-5560-5638'
 identifiers:
   - type: doi
-    value: 10.5281/zendo.7950584
-    description: BRAVEHEART v1.0.0
+    value: 10.1101/2023.05.17.23290060
+    description: Preprint on medRxiv
 repository-code: 'https://github.com/BIVectors/BRAVEHEART'
 license: GPL-3.0
-commit: 4f3dd0d
 version: 1.0.0
-date-released: '2023-05-19'
+date-released: '2023-05-24'
+
+preferred-citation:
+  type: article
+  authors:
+  - given-names: Hans Fredrich
+    family-names: Stabenau
+    affiliation: Beth Israel Deaconess Medical Center
+    orcid: 'https://orcid.org/0000-0001-6315-7601'
+  - given-names: Jonathan W.
+    family-names: Waks
+    affiliation: Beth Israel Deaconess Medical Center
+    orcid: 'https://orcid.org/0000-0001-5560-5638'
+  doi: "10.1101/2023.05.17.23290060"
+  journal: "medRxiv"
+  title: "BRAVEHEART: Open-source software for automated electrocardiographic and vectorcardiographic analysis"
+  month: 5
+  year: 2023

@@ -1,6 +1,7 @@
 # BRAVEHEART: Open-Source Software for Automated Electrocardiographic and Vectorcardiographic Analysis  
-[![badge](https://badgen.net/badge/MATLAB/R2022a/?color=green)](https://www.mathworks.com/products/matlab.html)  [![badge](https://img.shields.io/github/v/release/BIVectors/BRAVEHEART?label=Latest%20Release)](https://github.com/BIVectors/BRAVEHEART/releases)  [![badge](https://badgen.net/badge/icon/Windows%20.exe?icon=windows&label)](https://github.com/BIVectors/BRAVEHEART/releases) [![badge](https://badgen.net/badge/icon/Mac%20.app?icon=apple&label)](https://github.com/BIVectors/BRAVEHEART/releases) ![badge](https://badgen.net/badge/License/GPL-3.0/?color=red) 
-![badge](https://github.com/BIVectors/BRAVEHEART/actions/workflows/testing.yml/badge.svg)
+[![badge](https://badgen.net/badge/MATLAB/R2022a/?color=green)](https://www.mathworks.com/products/matlab.html) ![badge](https://badgen.net/badge/License/GPL-3.0/?color=red) 
+![badge](https://github.com/BIVectors/BRAVEHEART/actions/workflows/testing.yml/badge.svg)  
+ [![badge](https://img.shields.io/github/v/release/BIVectors/BRAVEHEART?label=Latest%20Release)](https://github.com/BIVectors/BRAVEHEART/releases) ![badge](https://img.shields.io/github/repo-size/BIVectors/BRAVEHEART?label=Repo%20Size) ![badge](https://img.shields.io/github/directory-file-count/BIVectors/BRAVEHEART?label=File%20Count) ![badge](https://img.shields.io/github/languages/code-size/BIVectors/BRAVEHEART?label=Code%20Size)  [![badge](https://badgen.net/badge/icon/Windows%20.exe?icon=windows&label)](https://github.com/BIVectors/BRAVEHEART/releases) [![badge](https://badgen.net/badge/icon/Mac%20.app?icon=apple&label)](https://github.com/BIVectors/BRAVEHEART/releases)
 
 **Hans Fredrich Stabenau, MD, PhD & Jonathan W. Waks, MD  
 Harvard-Thorndike Electrophysiology Institute, Department of Cardiovascular Medicine,  
@@ -29,13 +30,13 @@ All rights reserved.
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.  This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.  You should have received a copy of the GNU General Public License along with this program. If not, see https://www.gnu.org/licenses/ or the [LICENSE](https://github.com/BIVectors/BRAVEHEART/blob/main/LICENSE) file included in this repository.
 
 ## Installation & User Guide/Software Methods
-![badge](https://img.shields.io/github/repo-size/BIVectors/BRAVEHEART?label=Repo%20Size) ![badge](https://img.shields.io/github/directory-file-count/BIVectors/BRAVEHEART?label=File%20Count) ![badge](https://img.shields.io/github/languages/code-size/BIVectors/BRAVEHEART?label=Code%20Size) ![badge](https://img.shields.io/tokei/lines/github/BIVectors/BRAVEHEART?color=138dca&label=Total%20Lines)  
 A detailed user guide that covers installation and use of the software, including a quick start guide and examples of ECG/VCG processing, is available in the file [braveheart_userguide.pdf](https://github.com/BIVectors/BRAVEHEART/blob/main/braveheart_userguide.pdf).  
 
-A pre-print of a manuscript despribing the software methods in detail is available in the file [braveheart_methods.pdf](https://github.com/BIVectors/BRAVEHEART/blob/main/braveheart_methods.pdf).  This manuscript will be available shortly as a [pre-print on medRxiv.org](https://www.medrxiv.org/).
+A pre-print of a manuscript describing the software methods in detail is available in the file [braveheart_methods.pdf](https://github.com/BIVectors/BRAVEHEART/blob/main/braveheart_methods.pdf) and as a [preprint on medRxiv.org](https://doi.org/10.1101/2023.05.17.23290060).
 
 ## How to Cite Use of BRAVEHEART
-Please include the link to this GitHub repository and cite our [preprint on medRxiv.org](https://www.medrxiv.org/).
+[![badge](https://badgen.net/badge/medRxiv/2023.05.17.23290060/0E4C92)](https://doi.org/10.1101/2023.05.17.23290060)  
+Please include the link to this GitHub repository and cite our [preprint on medRxiv.org](https://doi.org/10.1101/2023.05.17.23290060).  The upper right section of this repository has a [citation file](https://github.com/BIVectors/BRAVEHEART/blob/main/CITATION.cff) that will provide the appropriate references.
 
 ## Publications
 The software has been used for ECG/VCG analysis in the following publications:  
