@@ -120,6 +120,9 @@ classdef ECG12
                         [obj.I, obj.II, obj.III, obj.avR, obj.avF, obj.avL, ...
                             obj.V1, obj.V2, obj.V3, obj.V4, obj.V5, obj.V6] = load_generic_csv(filename, unitspermv);
 
+                   case 'cardiosoft_xml'
+						[obj.hz, obj.I, obj.II, obj.III, obj.avR, obj.avF, obj.avL, ...
+                            obj.V1, obj.V2, obj.V3, obj.V4, obj.V5, obj.V6] = load_cardiosoftxml(filename);
 					
                     otherwise
                         error('unknown format %s', format);
@@ -154,6 +157,13 @@ classdef ECG12
             
             % maxRR_hr is needed for auto HPF level calculation
             % highpass_lvl_min is level chosen by auto (if used)
+
+            % Check that aps.wavelet_level_highpass is not > max level = floor(log2(num_samples))
+            if aps.wavelet_level_highpass > floor(log2(length(obj.I))) 
+                error('Error! Max level of wavelet decomposition for a signal of length %i is %i - you chose %i.', ...
+                    length(obj.I), floor(log2(length(obj.I))), aps.wavelet_level_highpass);
+            end
+
             [obj.I, obj.II, obj.III, obj.avR, obj.avF, obj.avL, obj.V1, obj.V2, obj.V3, obj.V4, obj.V5, obj.V6, highpass_lvl_min] = ...
                 ecgfilter(obj.I, obj.II, obj.III, obj.avR, obj.avF, obj.avL, obj.V1, obj.V2, obj.V3, obj.V4, obj.V5, obj.V6, ...
                 obj.hz, maxRR_hr, ...

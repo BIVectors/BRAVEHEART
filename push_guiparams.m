@@ -79,30 +79,66 @@ function push_guiparams(aps, hObject, eventdata, handles)
     
 % Wavelet name Lowpass
     switch aps.wavelet_name_lowpass
-        case 'Sym4'
+        case 'sym4'
             set(handles.wavelet_type,'Value', 1);
-        case 'Sym5'
+        case 'sym5'
             set(handles.wavelet_type,'Value', 2);
-        case 'Sym6'
+        case 'sym6'
             set(handles.wavelet_type,'Value', 3);
-        case 'db4'
+        case 'sym7'
             set(handles.wavelet_type,'Value', 4);
-        case 'db8'
+        case 'sym8'
             set(handles.wavelet_type,'Value', 5);
+        case 'sym9'
+            set(handles.wavelet_type,'Value', 6);
+        case 'sym10'
+            set(handles.wavelet_type,'Value', 7);
+        case 'db4'
+            set(handles.wavelet_type,'Value', 8);
+        case 'db5'
+            set(handles.wavelet_type,'Value', 9);
+        case 'db6'
+            set(handles.wavelet_type,'Value', 10);
+        case 'db7'
+            set(handles.wavelet_type,'Value', 11);
+        case 'db8'
+            set(handles.wavelet_type,'Value', 12);
+        case 'db9'
+            set(handles.wavelet_type,'Value', 13);
+        case 'db10'
+            set(handles.wavelet_type,'Value', 14);
     end
     
 % Wavelet name Highpass
         switch aps.wavelet_name_highpass
-        case 'Sym4'
+        case 'sym4'
             set(handles.wavelet_type_lf,'Value', 1);
-        case 'Sym5'
+        case 'sym5'
             set(handles.wavelet_type_lf,'Value', 2);
-        case 'Sym6'
+        case 'sym6'
             set(handles.wavelet_type_lf,'Value', 3);
-        case 'db4'
+        case 'sym7'
             set(handles.wavelet_type_lf,'Value', 4);
-        case 'db8'
+        case 'sym8'
             set(handles.wavelet_type_lf,'Value', 5);
+        case 'sym9'
+            set(handles.wavelet_type_lf,'Value', 6);
+        case 'sym10'
+            set(handles.wavelet_type_lf,'Value', 7);
+        case 'db4'
+            set(handles.wavelet_type_lf,'Value', 8);
+        case 'db5'
+            set(handles.wavelet_type_lf,'Value', 9);
+        case 'db6'
+            set(handles.wavelet_type_lf,'Value', 10);
+        case 'db7'
+            set(handles.wavelet_type_lf,'Value', 11);
+        case 'db8'
+            set(handles.wavelet_type_lf,'Value', 12);
+        case 'db9'
+            set(handles.wavelet_type_lf,'Value', 13);
+        case 'db10'
+            set(handles.wavelet_type_lf,'Value', 14);
     end
      
 % Baseline correction flag

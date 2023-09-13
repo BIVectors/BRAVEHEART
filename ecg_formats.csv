@@ -8,3 +8,4 @@ DICOM .dcm,DICOM,.dcm,500
 HL7 .xml,hl7_xml,.xml,500
 Unformatted .txt,unformatted,.txt,500
 Generic .csv,generic_csv,.csv,500
+Cardiosoft .xml,cardiosoft_xml,.xml,500

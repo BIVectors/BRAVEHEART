@@ -33,16 +33,19 @@ classdef Annoparams
 	properties
 		
 		% For ease of transfering parameters, use 0 and 1 instead of False and True
+
+        % See BRAVEHEART user guide (available on GitHub) for details about
+        % each of the parameters below
 		
 		% Load in ECG/peak detection
 		maxBPM = 150;                    % Sets window for detecting R peaks
 		pkthresh = 95;                   % Percentile of ECG signal above which a peak can be found
 		lowpass = 1;                     % Low pass wavelet filter on/off
 		highpass = 1;                    % High pass wavelet filter on/off
-		wavelet_level_lowpass = 2;       % Lvl 2 at 500 Hz and Lvl 3 at 997 Hz is 62.5 Hz low-pass filter
-		wavelet_level_highpass = 10;     % Lvl 10 is 0.24 Hz at 500 Hz
-		wavelet_name_lowpass = 'Sym4';   % Low-pass wavelet (Sym4, Sym5, Sym6, db4, db8)
-		wavelet_name_highpass = 'db4';   % High-pass wavelet (Sym4, Sym5, Sym6, db4, db8)
+		wavelet_level_lowpass = 1;       % LPF freq is > samp freq/2^(wavelet_level_lowpass + 1)
+		wavelet_level_highpass = 10;     % HPF freq is < samp freq/2^(wavelet_level_highpass + 1)
+		wavelet_name_lowpass = 'sym4';   % Low-pass wavelet (sym4, sym5, sym6, db4, db8, db10, etc)
+		wavelet_name_highpass = 'db4';   % High-pass wavelet (sym4, sym5, sym6, db4, db8, db10, etc)
 		baseline_correct_flag = 1;       % Corrects baseline offset
 		
 		% Transformation matrix

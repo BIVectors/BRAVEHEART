@@ -398,7 +398,7 @@ uiwait(msgbox(...
 {'\fontsize{14}\it\bf \color[rgb]{0.09,0.078,0.377}';...
 'BRAVE\color[rgb]{0.89,0.016,0.016}H\fontsize{11}EART';...
 '\fontsize{8}\rm\color{black}(Beth Israel Analysis of Vectors of the Heart)';...
-'Version 1.0.0' ; 
+'Version 1.0.1' ; 
 ' ' ;...
 'Copyright 2016-2023  Hans F. Stabeneau and Jonathan W. Waks' ;...
 ' ' ;...
@@ -2440,6 +2440,13 @@ filename = strcat(csvpathname, csvfilename_short);
 
 % Load Annoparams +/- fiducial points from .csv file
 [aps, beats] = Annoparams(filename);
+
+% If aps.wavelet_level_highpass is > max level, will throw an error
+% This code will add explanation to GUI given error handeling is within
+% ECG12.m independent of GUI
+if aps.wavelet_level_highpass > floor(log2(length(handles.ecg_raw.I)))
+     set(handles.lf_fmin_txt,'String','Error - wavelet level > max');
+end
     
 % Since beats are already manually set, don't need PVC/outlier removal    
 aps.outlier_removal = 0;
@@ -3211,6 +3218,14 @@ maxRR_hr = 60000/maxRR;
 handles.maxRR_hr = maxRR_hr;
     
 % Filter ECG based on flags as checked above
+% If aps.wavelet_level_highpass is > max level, will throw an error
+% This code will add explanation to GUI given error handeling is within
+% ECG12.m independent of GUI
+if aps.wavelet_level_highpass > floor(log2(length(ecg_raw.I)))
+     set(handles.lf_fmin_txt,'String','Error - wavelet level > max');
+end
+
+% Actual filtering
 [ecg, highpass_lvl_min] = ecg_raw.filter(maxRR_hr, aps);
 handles.ecg = ecg;
     

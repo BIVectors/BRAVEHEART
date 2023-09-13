@@ -25,16 +25,7 @@ function [age, gender] = xml_demographics(filename, ecg_string)
 
   
  switch ecg_string  
-    case 'bidmc_format'
-        % Format does not contain data on age/gender
-        age = 50;
-        gender = 'MALE';
 
-    case 'prucka_format'
-        % Format does not contain data on age/gender
-        age = 50;
-        gender = 'MALE';
-    
     case 'muse_xml'
         % Deal with parsing issues with xmlread
         % Create Document Builder
@@ -92,25 +83,32 @@ function [age, gender] = xml_demographics(filename, ecg_string)
         catch ME
             gender = 'MALE';
         end
-         
 
-    case 'ISHNE'
-        % Format does not contain data on age/gender
-        age = 50;
-        gender = 'MALE';
-    
-    case 'mrq_ascii'
-        % Format does not contain data on age/gender
-        age = 50;
-        gender = 'MALE';
+     case 'cardiosoft_xml'
+        % Deal with parsing issues with xmlread
+        % Create Document Builder
+        builder = javax.xml.parsers.DocumentBuilderFactory.newInstance;
+
+        % Disable dtd validation
+        builder.setFeature('http://apache.org/xml/features/nonvalidating/load-external-dtd', false);
+
+        % Read the xml file
+        tree = xmlread(filename, builder);
         
-%     case 'DICOM'
-%         freq = 500;
-%         unitspermv = 200;   
-%         
-%     case 'hl7_xml'
-%         freq = 500;
-%         unitspermv = 200; 
+        try
+            patient_demographics = tree.getElementsByTagName('Age');
+            age =  str2num(patient_demographics.item(0).getFirstChild.getNodeValue);
+        catch ME
+            age = 50;
+        end
+         
+        try 
+            patient_demographics = tree.getElementsByTagName('Gender');
+            gender = char(patient_demographics.item(0).getFirstChild.getNodeValue);
+        catch ME
+            gender = 'MALE';
+        end
+         
 
      otherwise
         age = 50;

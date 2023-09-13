@@ -22,19 +22,30 @@
 
 function [freq, wavelet_level_selection, wavelet_level_selection_lf] = ecg_source_gui(freq)
 
+% wavelet_level_selection_lf is really the value here + 5; eg 5 -> lvl 10, 6 -> lvl 11
+% Now sets the HPF denoising to highest level that is < 0.25 Hz
+
+% To get wavelet_level_selection_lf from findHighpassLvl(cut,fs) function
+% take output and substract 5
+
  switch freq
      case 500
-         wavelet_level_selection = 2;
-         wavelet_level_selection_lf = 5;
+         wavelet_level_selection = 1;
+         % wavelet_level_selection_lf = 5;
+         wavelet_level_selection_lf = findHighpassLvl(0.25,freq) - 5;
+         
      case 997
-         wavelet_level_selection = 3;
-         wavelet_level_selection_lf = 6;
-     case 1000
-         wavelet_level_selection = 3;
-         wavelet_level_selection_lf = 6;
-     otherwise
          wavelet_level_selection = 2;
-         wavelet_level_selection_lf = 5;
+         % wavelet_level_selection_lf = 6;
+         wavelet_level_selection_lf = findHighpassLvl(0.25,freq) - 5;
+     case 1000
+         wavelet_level_selection = 2;
+         % wavelet_level_selection_lf = 6;
+         wavelet_level_selection_lf = findHighpassLvl(0.25,freq) - 5;
+     otherwise
+         wavelet_level_selection = 1;
+         % wavelet_level_selection_lf = 5;
+         wavelet_level_selection_lf = findHighpassLvl(0.25,freq) - 5;
  end
  
 end

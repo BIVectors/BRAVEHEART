@@ -2,7 +2,7 @@ maxBPM,150
 pkthresh,95
 lowpass,1
 highpass,1
-wavelet_level_lowpass,2
+wavelet_level_lowpass,1
 wavelet_level_highpass,10
 wavelet_name_lowpass,Sym4
 wavelet_name_highpass,db4
@@ -31,8 +31,8 @@ median_reanno_method,NNet
 outlier_removal,1
 modz_cutoff,4
 pvc_removal,1
-pvcthresh,0.9500
-rmse_pvcthresh,0.1000
+pvcthresh,0.95
+rmse_pvcthresh,0.1
 keep_pvc,0
 blanking_samples,0
 debug,0

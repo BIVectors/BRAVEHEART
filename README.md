@@ -32,11 +32,12 @@ This program is free software: you can redistribute it and/or modify it under th
 ## Installation & User Guide/Software Methods
 A detailed user guide that covers installation and use of the software, including a quick start guide and examples of ECG/VCG processing, is available in the file [braveheart_userguide.pdf](https://github.com/BIVectors/BRAVEHEART/blob/main/braveheart_userguide.pdf).  
 
-A pre-print of a manuscript describing the software methods in detail is available in the file [braveheart_methods.pdf](https://github.com/BIVectors/BRAVEHEART/blob/main/braveheart_methods.pdf) and as a [preprint on medRxiv.org](https://doi.org/10.1101/2023.05.17.23290060).
+A manuscript describing the software methods in detail is available in the file [braveheart_methods.pdf](https://github.com/BIVectors/BRAVEHEART/blob/main/braveheart_methods.pdf) and as a [manuscript in Computer Methods and Programs in Biomedicine](https://doi.org/10.1016/j.cmpb.2023.107798). 
 
 ## How to Cite Use of BRAVEHEART
-[![badge](https://badgen.net/badge/medRxiv/2023.05.17.23290060/0E4C92)](https://doi.org/10.1101/2023.05.17.23290060)  
-Please include the link to this GitHub repository and cite our [preprint on medRxiv.org](https://doi.org/10.1101/2023.05.17.23290060).  The upper right section of this repository has a [citation file](https://github.com/BIVectors/BRAVEHEART/blob/main/CITATION.cff) that will provide the appropriate references.
+Please include the link to this GitHub repository and cite our [manuscript in Computer Methods and Programs in Biomedicine](https://doi.org/10.1016/j.cmpb.2023.107798).  The upper right section of this repository has a [citation file](https://github.com/BIVectors/BRAVEHEART/blob/main/CITATION.cff) that will provide the appropriate references:  
+
+[Hans F. Stabenau and Jonathan W. Waks. BRAVEHEART: Open-source software for automated electrocardiographic and vectorcardiographic analysis. _Computer Methods and Programs in Biomedicine_. 2023, In Press. DOI: https://doi.org/10.1016/j.cmpb.2023.107798](https://doi.org/10.1016/j.cmpb.2023.107798)  
 
 ## Publications
 The software has been used for ECG/VCG analysis in the following publications:  
@@ -49,6 +50,8 @@ The software has been used for ECG/VCG analysis in the following publications:
 4. [H. F. Stabenau, M. Marcus, J. D. Matos, I. McCormick, D. Litmanovich, W. J. Manning, B. J. Carroll, and J. W. Waks. The spatial ventricular gradient is associated with adverse outcomes in acute pulmonary embolism. Ann Noninvasive Electrocardiol, 2023, Jan 24;e13041.](https://onlinelibrary.wiley.com/doi/10.1111/anec.13041)
 
 5. [A. N. Rosas Diaz, H. F. Stabenau, G. P. Hurtado, S. Warack, J. W. Waks, and A. Asnani. The spatial ventricular gradient is an independent predictor of anthracycline-associated cardiotoxicity. JACC: Advances, 2(2):100269, 2023.](https://www.jacc.org/doi/10.1016/j.jacadv.2023.100269)
+
+6. [H. F. Stabenau, A. Sau, D. B. Kramer, N. S. Peters, F. S. Ng, and J. W. Waks. Limits of the Spatial Ventricular Gradient and QRST Angles in Patients with Normal Electrocardiograms and No Known Cardiovascular Disease Stratified by Age, Sex, and Race. J Cardiovasc Electrophysiol, 2023, In Press.](https://doi.org/10.1111/jce.16062)
 
 If you have used BRAVEHEART for your research project we would be happy to include a reference to your manuscript!
 

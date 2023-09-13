@@ -24,10 +24,10 @@
 function [signal_nowander, approx_signal, lvl] = wander_remove(freq, hr, signal, wavelet_name_lf, wavelet_level_lf)
 
 % set level to 0 if doing automatic level detection based on HR frequency
+% (feature to be added in future)
 
-num_samples = length(signal);
-max_lvl = ceil(log2(num_samples));  % max level of wavelet decomposition based on signal length
-
+num_samples = length(signal)/3;      % This signal is actually the mirrored signal
+max_lvl = floor(log2(num_samples));  % max level of wavelet decomposition based on signal length
 
 %1D wavelet decomposition using specified wavelet and max_lvl levels   
     [A,D]=wavedec(signal,max_lvl,wavelet_name_lf); 
