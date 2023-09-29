@@ -134,18 +134,6 @@ else
     return;
 end
 
-% To deal with progress bar issues with parallel computing will set the
-% parallel computing flag 'parallel_proc' = 0 if the user does not have the
-% parallel computing toolbox.  This isn't technically necessary for calculations 
-% due to the fact that parfor will run as a regular for loop if the toolbox is 
-% not installed, but disabling the flag makes dealing with the progress bars
-% sigificantly easier as its require calling commands that do not exist
-% without the toolbox.  This really is the only way to allow both parallel
-% and serial waitbars to work
-
-if isempty( ver('parallel'))
-    parallel_proc = 0;
-end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %                  EDIT BELOW HERE AT YOUR OWN RISK!!!                    %
@@ -163,6 +151,19 @@ if isdeployed && ~exist('disable_read','var')  % This only is true if running fr
     [format, output_ext, output_note, parallel_proc, progressbar, ...
         save_figures, save_data, save_annotations, ...
         vcg_calc_flag, lead_morph_flag, vcg_morph_flag] = read_batch_settings(fullfile(getcurrentdir(),'batch_settings.csv'));
+end
+
+% To deal with progress bar issues with parallel computing will set the
+% parallel computing flag 'parallel_proc' = 0 if the user does not have the
+% parallel computing toolbox.  This isn't technically necessary for calculations 
+% due to the fact that parfor will run as a regular for loop if the toolbox is 
+% not installed, but disabling the flag makes dealing with the progress bars
+% sigificantly easier as its require calling commands that do not exist
+% without the toolbox.  This really is the only way to allow both parallel
+% and serial waitbars to work
+
+if isempty( ver('parallel')) || isdeployed      % Disable bug with parallel if deployed - on list to fix!
+    parallel_proc = 0;
 end
 
 tic     % Start timer
