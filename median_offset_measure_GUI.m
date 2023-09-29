@@ -52,7 +52,12 @@ plot(ecg_noshift.(shift_prop{i}),'k');
 hold on
 plot(ecg.(shift_prop{i}),'r');
 line([0 length(ecg_noshift.(shift_prop{i}))],[0 0],'Color','b');
-ylim( [ min( [min(ecg_noshift.(shift_prop{i})) min(ecg.(shift_prop{i}))]) max( [max(ecg_noshift.(shift_prop{i})) max(ecg.(shift_prop{i}))])]);
+    % Prevent figure not genearating if a lead is missing due to ylim error
+    if min( [min(ecg_noshift.(shift_prop{i})) min(ecg.(shift_prop{i}))]) ~= max( [max(ecg_noshift.(shift_prop{i})) max(ecg.(shift_prop{i}))])
+        ylim( [ min( [min(ecg_noshift.(shift_prop{i})) min(ecg.(shift_prop{i}))]) max( [max(ecg_noshift.(shift_prop{i})) max(ecg.(shift_prop{i}))])]);
+    else
+        ylim( [ min( [min(ecg_noshift.(shift_prop{i})) min(ecg.(shift_prop{i}))])-0.01 max( [max(ecg_noshift.(shift_prop{i})) max(ecg.(shift_prop{i}))])+0.01 ]);
+    end
 ylabel(label(i))
 hold off
 

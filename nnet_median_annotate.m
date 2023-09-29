@@ -79,15 +79,24 @@ S_down = S;
 T_down = T;
 Tend_down = Tend;
 
+% Need to assign points differently if the 500 Hz median beat was due to
+% downsampling or upsampling, because if UPsampled to get to 500 Hz median
+% and an interpolated point is chosen as a fiducial point, this point does
+% not directly map onto the orignal signal.  If the sampling frequency of
+% the original signal is > 500 Hz and the signal was DOWNsampled to create
+% a 500 Hz median beat to pass into the NN, then the point chosen on the
+% median should exist on the original signal (with slight exception for
+% sampling frequencies that are not multiples of 500 Hz like 997 Hz, but in
+% these cases the error should be small since you actually downsampled the
+% original signal to get the median).  This issue was fixed in v1.0.2
+
 if freq ~= 500
-	
-	c = freq/500;
-	
-	Q = round(c*Q)-1;
-	S = round(c*S)-1;
-	T = round(c*T)-1;
-	Tend = round(c*Tend)-1;
-	
+
+	Q = resamp_loc(500, freq, Q);
+	S = resamp_loc(500, freq, S);
+	T = resamp_loc(500, freq, T);
+	Tend = resamp_loc(500, freq, Tend);
+
 end
 
 
@@ -112,7 +121,7 @@ if freq ~= 500
 	
 	figure('name','Median Reannotation Fiducial Point Debug','numbertitle','off')
 	subplot(1,2,1)
-	title('Downsampled Signal - 500 Hz')
+	title('Resampled Signal - 500 Hz')
 	yyaxis left
 	
 	ylabel('VM Signal (mV)')

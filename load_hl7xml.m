@@ -83,6 +83,9 @@ for i = 2:max_component
 lead_name = D.component.series.component.sequenceSet.component(i).sequence.code.codeAttribute;
 signal = D.component.series.component.sequenceSet.component(i).sequence.value.digits;
 
+% Remove end of line characters that can be an issue on some systems
+signal = regexprep(signal, '\r\n|\n|\r', '');
+
 switch lead_name    
     case "MDC_ECG_LEAD_I"
         I = str2num(signal).*scale;

@@ -58,32 +58,33 @@ for k=0:wlist.getLength-1
     W = string((wlist.item(k).getFirstChild.getNodeValue));
     W = regexprep(W, '\t', '');
     label = char(wlist.item(k).getAttributes.item(0));
+    D = sscanf(W, '%g,', [1, inf]) * gain / unit_div;
 
-	switch label
-		case 'lead="I"'
-			I = sscanf(W, '%g,', [1, inf]) * gain / unit_div;
-		case 'lead="II"'
-			II = sscanf(W, '%g,', [1, inf]) * gain / unit_div;
-		case 'lead="III"'
-			III = sscanf(W, '%g,', [1, inf]) * gain / unit_div;
-        case 'lead="aVR"'
-			avR = sscanf(W, '%g,', [1, inf]) * gain / unit_div;
-        case 'lead="aVL"'
-			avL = sscanf(W, '%g,', [1, inf]) * gain / unit_div;
-        case 'lead="aVF"'
-			avF = sscanf(W, '%g,', [1, inf]) * gain / unit_div;
-		case 'lead="V1"'
-			V1 = sscanf(W, '%g,', [1, inf]) * gain / unit_div;
-		case 'lead="V2"'
-			V2 = sscanf(W, '%g,', [1, inf]) * gain / unit_div;
-		case 'lead="V3"'
-			V3 = sscanf(W, '%g,', [1, inf]) * gain / unit_div;
-		case 'lead="V4"'
-			V4 = sscanf(W, '%g,', [1, inf]) * gain / unit_div;
-		case 'lead="V5"'
-			V5 = sscanf(W, '%g,', [1, inf]) * gain / unit_div;
-		case 'lead="V6"'
-			V6 = sscanf(W, '%g,', [1, inf]) * gain / unit_div;
+	switch lower(label)     % User lowercase because some different versions use different capital letters
+		case 'lead="i"'
+			I = D;
+		case 'lead="ii"'
+			II = D;
+		case 'lead="iii"'
+			III = D;
+        case 'lead="avr"'
+			avR = D;
+        case 'lead="avl"'
+			avL = D;
+        case 'lead="avf"'
+			avF = D;
+		case 'lead="v1"'
+			V1 = D;
+		case 'lead="v2"'
+			V2 = D;
+		case 'lead="v3"'
+			V3 = D;
+		case 'lead="v4"'
+			V4 = D;
+		case 'lead="v5"'
+			V5 = D;
+		case 'lead="v6"'
+			V6 = D;
     end
 
 end         % End for loop

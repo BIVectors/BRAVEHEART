@@ -84,7 +84,7 @@ else
     end
     
     % peak finding on absolute value of signal
-    [~,locs] = findpeaks(abs(signal(win_st:win_end)),'MinPeakDistance',40,'MinPeakProminence',0.01);
+    [~,locs] = findpeaks(abs(signal(win_st:win_end)),'MinPeakDistance',blank,'MinPeakProminence',0.01);
     locs = locs + win_st -1; 
     
     [~, twave_pos_index] = max(signal(win_st:win_end));  % reads in t wave from QRS end to T end - finds max postive value

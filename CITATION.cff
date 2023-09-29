@@ -26,7 +26,7 @@ identifiers:
       Programs in Biomedicine
 repository-code: 'https://github.com/BIVectors/BRAVEHEART'
 license: GPL-3.0
-version: 1.0.1
+version: 1.0.2
 date-released: '2023-09-12'
 preferred-citation:
   type: article

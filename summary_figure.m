@@ -50,7 +50,7 @@ summaryecg_fig = figure('name',filename,'numbertitle','off');
     
     line([0 length(median_vcg.X')],[-0.05 -0.05], 'Color','black','LineStyle',':');
     
-    text_string = sprintf('X / Y / Z Cross Correlation = %0.3f / %0.3f / %0.3f \nQRS = %i ms \nQT = %i ms', correlation_test.X,  correlation_test.Y,  correlation_test.Z, ...
+    text_string = sprintf('X / Y / Z Cross Correlation = %0.3f / %0.3f / %0.3f \nQRS = %3.0f ms \nQT = %3.0f ms', correlation_test.X,  correlation_test.Y,  correlation_test.Z, ...
         (medianbeat.S-medianbeat.Q)*(1000/vcg.hz), (medianbeat.Tend-medianbeat.Q)*(1000/vcg.hz)); 
     text(find(median_vcg.VM == max(median_vcg.VM)) + round(100*(vcg.hz/1000)), 0.8*median_vcg.VM(find(median_vcg.VM == max(median_vcg.VM))),text_string,'fontsize',12);
     
@@ -76,7 +76,7 @@ summaryecg_fig = figure('name',filename,'numbertitle','off');
     line([0 length(X)],[0 0], 'Color','red','LineStyle','--','linewidth', 0.5);
    
     set(gca,'YTickLabel',[]);
-    xticks(0:1000:5000);
+    xticks(0:1000:length(VM));
     a = get(gca,'XTickLabel');
     set(gca,'XTickLabel',a,'fontsize',10);
     ylabel('X (mV)');
@@ -112,7 +112,7 @@ summaryecg_fig = figure('name',filename,'numbertitle','off');
     line([0 length(Y)],[0 0], 'Color','black','LineStyle','--','linewidth', 0.5);
     
     set(gca,'YTickLabel',[]);
-    xticks(0:1000:5000);
+    xticks(0:1000:length(VM));
     a = get(gca,'XTickLabel');
     set(gca,'XTickLabel',a,'fontsize',10);
     ylabel('Y (mV)');
@@ -145,7 +145,7 @@ summaryecg_fig = figure('name',filename,'numbertitle','off');
     line([0 length(Z)],[0 0], 'Color','black','LineStyle','--','linewidth', 0.5);
     
     set(gca,'YTickLabel',[]);
-    xticks(0:1000:5000);
+    xticks(0:1000:length(VM));
     a = get(gca,'XTickLabel');
     set(gca,'XTickLabel',a,'fontsize',10);
     ylabel('Z (mV)');
@@ -177,7 +177,7 @@ summaryecg_fig = figure('name',filename,'numbertitle','off');
     plot(VM, 'color', [0 0.4470 0.7410], 'linewidth', 1)
     scatter(beats.QRS,VM(beats.QRS));
     set(gca,'YTickLabel',[]);
-    xticks(0:1000:5000);
+    xticks(0:1000:length(VM));
     a = get(gca,'XTickLabel');
     set(gca,'XTickLabel',a,'fontsize',10);
     

@@ -63,7 +63,13 @@ line([0 length(sig.(fn_sig{i}))],[m.(fn_m{(7*(i-3))+2}) m.(fn_m{(7*(i-3))+2})],'
 line([0 length(sig.(fn_sig{i}))],[0 0], 'linestyle',':', 'color','k')
 xlim([0 length(sig.(fn_sig{i})) + 125])
 scale = abs(max(sig.(fn_sig{i}))) + abs(min(sig.(fn_sig{i})));
-ylim([min(sig.(fn_sig{i}))-0.2*scale max(sig.(fn_sig{i}))+0.2*scale])
+
+if sum(isnan(sig.(fn_sig{i}))) ~= length(sig.(fn_sig{i}))  % If signal NOT missing and therefore NOT all Nan
+    ylim([min(sig.(fn_sig{i}))-0.2*scale max(sig.(fn_sig{i}))+0.2*scale]);
+else
+    ylim([-1 1]);   % If signal is all Nan, have to make some interval for ylim to avoid error
+end
+
 line([length(sig.(fn_sig{i}))+5 length(sig.(fn_sig{i}))+5],[m.(fn_m{(7*(i-3))+2}) m.(fn_m{(7*(i-3))+1})],'color','k')
 text(length(sig.(fn_sig{i}))+10, 0.5*(m.(fn_m{(7*(i-3))+1}) + m.(fn_m{(7*(i-3))+2})), strcat("\Delta = ", num2str(round(m.(fn_m{(7*(i-3))+3}),2))),'fontsize',9)
 text(length(sig.(fn_sig{i}))+10, m.(fn_m{(7*(i-3))+1}), strcat("R = ", num2str(round(m.(fn_m{(7*(i-3))+1}),2))),'fontsize',9)
