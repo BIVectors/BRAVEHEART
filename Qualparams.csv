@@ -1,0 +1,12 @@
+qrs,60,200,,Min/max range of QRS duration,,,,"Blank cells = -infinity if in col 2, and + infinity if in col 3.  Can also input -Inf or Inf"
+qt,200,700,,Min/max range of QT interval,,,,
+tpqt,0.5,Inf,,Min/max range of T peak/QT ratio (nominal is min only),,,,
+t_mag,0.05,Inf,,Min/max range for T wave magnitude (nominal is min only),,,,
+hr,30,150,,Min/max range for HR,,,,
+num_beats,4,Inf,,# of beats left after PVC and outlier beats are removed,,,,
+pct_beats_removed, -Inf,60,,% of total number of beats removed to trigger,,,,
+corr,0.8,Inf,,Min/max range for average normalized cross correlation (nomimal min only),,,,
+baseline, -Inf,0.1,,Min/max range for baseline at the end of the T wave (nominal max only),,,,
+hf_noise,10,Inf,,SNR for HF noise cutoff,,,,
+lf_noise, -Inf,0.02,,mV for cutoff in variance in LF noise,,,,
+prob,0.8,Inf,,Logistic regression probability (range 0-1),,,,

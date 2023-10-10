@@ -130,8 +130,7 @@ disable_read = 'disable';  % hard code this in so doesnt matter what string/valu
     
     
 else
-    disp('Wrong Number of Inputs!!  Takes either 0, 12, 13, or 14 inputs')
-    return;
+    error('Wrong Number of Inputs: %d.  Takes either 0, 12, 13, or 14 inputs', nargin);
 end
 
 
@@ -162,7 +161,7 @@ end
 % without the toolbox.  This really is the only way to allow both parallel
 % and serial waitbars to work
 
-if isempty( ver('parallel')) || isdeployed      % Disable bug with parallel if deployed - on list to fix!
+if isempty( ver('parallel')) 
     parallel_proc = 0;
 end
 
@@ -270,6 +269,9 @@ else
     default_ap = Annoparams();
 end
 
+% Load Qualparams (will load Qualparams.csv if deployed)
+qp = Qualparams();
+
 % If want to change median beat annotater (not recomended!)
 % default_ap.median_reanno_method = 'Std';
 
@@ -290,7 +292,7 @@ end
 
 P = 1;      % Parallel iterating counter
 
-parfor (i = 1:num_files, workers)
+ parfor (i = 1:num_files, workers)
     note = output_note;
 	
     % Parse out filename and extension -- don't want extension in file/figure names
@@ -321,7 +323,7 @@ parfor (i = 1:num_files, workers)
                 % If apfile includes beats, then pass beats & anno parameters into batch_calc
 				
                 [hr, num_initial_beats, ~, quality, corr, medianvcg1, beatsig_vcg, median_12L, beatsig_12L, medianbeat, beat_stats, ecg_raw, vcg_raw, filtered_ecg, filtered_vcg, noise, sumfig] = ...
-                batch_calc(ecg, beats, [], [], [], [], ap, save_figures, basename, []);
+                batch_calc(ecg, beats, [], [], [], [], ap, qp, save_figures, basename, []);
                 
 
                 [geh, lead_morph, vcg_morph] = module_output(median_12L, medianvcg1, medianbeat, ap, flags);
@@ -331,7 +333,7 @@ parfor (i = 1:num_files, workers)
                 % If apfile only includes anno parameters and no beats, pass the annoparameters into batch_calc
                 
                 [hr, num_initial_beats, beats, quality, corr, medianvcg1, beatsig_vcg, median_12L, beatsig_12L, medianbeat, beat_stats, ecg_raw, vcg_raw, filtered_ecg, filtered_vcg, noise, sumfig] = ...
-                batch_calc(ecg, [], [], [], [], [], ap, save_figures, basename, []);
+                batch_calc(ecg, [], [], [], [], [], ap, qp, save_figures, basename, []);
                 
 				    
             [geh, lead_morph, vcg_morph] = module_output(median_12L, medianvcg1, medianbeat, ap, flags);
@@ -344,7 +346,7 @@ parfor (i = 1:num_files, workers)
             
             % Pass ecg and anno parameters into batch_calc
             [hr, num_initial_beats, beats, quality, corr, medianvcg1, beatsig_vcg, median_12L, beatsig_12L, medianbeat, beat_stats, ecg_raw, vcg_raw, filtered_ecg, filtered_vcg, noise, sumfig] = ...
-                batch_calc(ecg, beats, [], [], [], [], ap, save_figures, basename, []);
+                batch_calc(ecg, beats, [], [], [], [], ap, qp, save_figures, basename, []);
             
             
             [geh, lead_morph, vcg_morph] = module_output(median_12L, medianvcg1, medianbeat, ap, flags);

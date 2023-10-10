@@ -25,13 +25,21 @@ classdef Quality
 % Tries to flag annotation results which are suspicious or unlikely to be correct
 % This is not 100% specific or sensitive, but ECGs which are flagged by the detector are generally worth reviewing
 % The properties below are checked to see if they are too high or too low; if so the ECG is flagged
-% High/low limits are set in quality_presets.csv
+% High/low limits are set in Qualparams.m or Qualparams.csv (if deployed)
 % Separately there is a estimate of probability that the ECG is of good
 % quality based on logistic regression
 % Information on the sensitivity/specificity etc can be found in the documentation
+
+% The parameters in Quality should match those in Qualparams except for:
+% 1. prob_value
+% 2. nnet_flag
+% 3. nnet_flag
+% 4. missing_lead
+% Which are Quality flags that are not set in Qualparams 
   
 properties (SetAccess = private)
 
+    % Same parameters as in Qualparams.
     qt                  % QT interval (ms)
     qrs                 % QRS duration (ms)
     tpqt                % Ratio of location of VM Tpeak to VM Tend
@@ -41,10 +49,12 @@ properties (SetAccess = private)
     pct_beats_removed   % How many beats were removed from analysis (PVCs and outliers)
     corr                % MINIMUM mean cross correlation for X, Y, and Z beats (0-1)
     baseline            % Median value of Tend:Tend+D where D is up to 30 ms (mV)
-    missing_lead        % Is there evidence of signal missing from a lead (yes/no result NOT set via quality_presets.csv)
     hf_noise            % SNR ratio of raw signal to LPF filtered signal
     lf_noise            % Variance in the baseline wander (HPF) at level 8
     prob                % Cutoff from probabilty to trigger outlier (0-1)
+       
+    % Not set in Qualparams
+    missing_lead        % Is there evidence of signal missing from a lead (yes/no result NOT set via quality_presets.csv)
     prob_value          % Actual probability (range 0-1) for 'good' quality
     nnet_flag           % NNet probabilities found more than 1 possible fiducial point
     nnet_nan            % NNet couldnt find a fiducial point (usually Tend)
@@ -53,7 +63,7 @@ end
     
 methods
         
-function obj = Quality(med_vcg, ecg_raw, beats, medianbeat, hr, num_initial_beats, corr, noise, aps)
+function obj = Quality(med_vcg, ecg_raw, beats, medianbeat, hr, num_initial_beats, corr, noise, aps, qps)
     
 % med_vcg = median beat VCG.
 % ecg_raw = original ECG12, no filtering
@@ -64,6 +74,7 @@ function obj = Quality(med_vcg, ecg_raw, beats, medianbeat, hr, num_initial_beat
 % corr = minimum cross correlation for median X, Y, Z beats
 % noise = vector containing estimates of lowest SNR and highest wander
 % aps = Annoparams
+% qps = Qualparams
 
 if nargin == 0; return; end    % Create empty Quality class if no input
 
@@ -77,13 +88,12 @@ if any(isnan(medianbeat.beatmatrix()))
     return;
 end
 
-
-
 % Calculate all the qualitities that are part of Quality variables
 % Structure for storing values    
 % Can't have empty values, or wksp will not work and will get an error
 wksp = struct;   
 
+% Heart rate
 wksp.hr = hr;
 
 % Don't need to convert tpqt to ms because its already a ratio in 
@@ -104,6 +114,7 @@ wksp.baseline = baseline_voltage(med_vcg, medianbeat);
 
 % Flag for missing lead
 [wksp.missing_lead, ~] = missing_leads(ecg_raw,aps.maxBPM,aps.pkthresh);
+obj.missing_lead = wksp.missing_lead;
 
 % NNet flags
 wksp.nnet_flag = medianbeat.nnet_flag;
@@ -140,73 +151,43 @@ else
     obj.prob_value = wksp.prob_value;
 end
 
-% Fieldnames
-f = fieldnames(Quality());
-
 % Dummy value for prob
 wksp.prob = wksp.prob_value;
-
-% Pull all of the workspace variables into a structure by save/load 
-% save('tmp.mat');
-% V = load('tmp.mat');
-% 
-% for i = 1:length(f)
-%     if ~strcmp('prob_value',f{i})     % prob_value is special case and ignore it in struct
-%         wksp.(f{i}) = V.(f{i}); 
-%     end
-% end
-      
 
 % Generate structure to store the names of Quality variables
 % Qvar_names will have same order as 'wksp' EXCEPT it also includes 'prob_cut'
 Qvar_names = fieldnames(Quality());
 
-% Tests for if results are out of normal range based on values in quality_presets.csv:
 
-% Load preset values into Qvals structure based on names in qiality_presets.csv file
-% Get working directory if running off compiled version
-currentdir = getcurrentdir();
-A = readcell(fullfile(currentdir,'quality_presets.csv')); % read in data from .csv file
-miss = cellfun(@(x) any(isa(x,'missing')), A);
-A(miss) = {NaN};
+% Tests for if results are out of normal range based on values in qps (Qualparams):
+preset_names = fieldnames(qps);
 
-preset_names = A(:,1);
-preset_values_low = cell2mat(A(:,2));
-preset_values_low(isnan(preset_values_low)) = -Inf;
+% Load preset values into Qvals structure based on names in Qualparams
 
-preset_values_high = cell2mat(A(:,3));
-preset_values_high(isnan(preset_values_high)) = Inf;
+% Make sure lengths of file and throw error if not same length (Qualparams has errors) 
+% Subtract the 4 Quality flags that are not in Qualparams
+assert(length(preset_names) == length(Qvar_names)-4, 'Check Qualparams for errors');
 
-%preset_values = [preset_values_low preset_values_high];
-
-% Make sure lengths of file and throw error if not same length (csv has errors) 
-assert(length(preset_names) == length(Qvar_names)-3, 'Check quality_presets.csv for errors');
 
 % Set up variables for low and high cutoffs
 for i = 1:length(preset_names)
     Qnames{i} = matlab.lang.makeValidName(preset_names{i});
-    Qvals.(Qnames{i}) = [preset_values_low(i) preset_values_high(i)];
+    Qvals.(Qnames{i}) = qps.(preset_names{i});
 end
 
-% Now have all of the cutpoints stored in structure Qvals
+% Now have all of the cutpoints from  stored in structure Qvals
 
 % Loop through presets and check if satisfies conditions
 for i = 1:length(preset_names)
-  switch (Qnames{i})
-      case 'missing_lead'
-            obj.missing_lead = wksp.missing_lead;            
-      otherwise
-          if isempty(wksp.(Qnames{i})) || isnan(wksp.(Qnames{i}))
-                obj.(Qnames{i}) = 1;
-          else
-                obj.(Qnames{i}) =  wksp.(Qnames{i}) < Qvals.(Qnames{i})(1) || wksp.(Qnames{i}) > Qvals.(Qnames{i})(2);
-          end
-      end   % end switch
+      if isempty(wksp.(Qnames{i})) || isnan(wksp.(Qnames{i}))
+            obj.(Qnames{i}) = 1;
+      else
+            obj.(Qnames{i}) =  wksp.(Qnames{i}) < Qvals.(Qnames{i})(1) || wksp.(Qnames{i}) > Qvals.(Qnames{i})(2);
+      end
     end     % end for loop
     end   % End constructor
 
 
-    
 % Helper functions:    
 function c = counter(obj)
     c = sum(vector(obj));

@@ -398,7 +398,7 @@ uiwait(msgbox(...
 {'\fontsize{14}\it\bf \color[rgb]{0.09,0.078,0.377}';...
 'BRAVE\color[rgb]{0.89,0.016,0.016}H\fontsize{11}EART';...
 '\fontsize{8}\rm\color{black}(Beth Israel Analysis of Vectors of the Heart)';...
-'Version 1.0.2' ; 
+'Version 1.1.0' ; 
 ' ' ;...
 'Copyright 2016-2023  Hans F. Stabeneau and Jonathan W. Waks' ;...
 ' ' ;...
@@ -426,7 +426,7 @@ uiwait(msgbox(...
 {'\fontsize{18}\it\bf \color[rgb]{0.09,0.078,0.377}';...
 'BRAVE\color[rgb]{0.89,0.016,0.016}H\fontsize{14}EART\fontsize{11}';...
 '\rm\color{black}(Beth Israel Analysis of Vectors of the Heart)';...
-'Version 1.0.2' ; 
+'Version 1.1.0' ; 
 ' ' ;...
 'Copyright 2016-2023  Hans F. Stabeneau and Jonathan W. Waks' ;...
 ' ' ;...
@@ -808,6 +808,9 @@ handles.csv_filename = handles.filename_short(1:end-4);
 aps = pull_guiparams(hObject, eventdata, handles);  % Pull from GUI and update based on what is selected
 handles.aps = aps;
 
+% Load Qualparams
+qps = Qualparams();
+
 % To avoid endless outlier and PVC deletion issue due to more freedom with the GUI,
 % need to NOT remomove outliers and PVCs via batch_calc, and instead call
 % the PVC removal and outlier removal Callbacks that are part of the GUI.
@@ -833,7 +836,7 @@ end
 % This time dont recalc HR as this wont change
 [~, ~, handles.beats, handles.quality, handles.correlation_test, handles.median_vcg, ...
     handles.beatsig_vcg, handles.median_12L, handles.beatsig_12L, handles.medianbeat, handles.beat_stats, ...
-    handles.ecg_raw, handles.vcg_raw, handles.ecg, handles.vcg, handles.noise, ~] = batch_calc(handles.ecg_raw, [], [], [], [], [], aps, 0, "", []);
+    handles.ecg_raw, handles.vcg_raw, handles.ecg, handles.vcg, handles.noise, ~] = batch_calc(handles.ecg_raw, [], [], [], [], [], aps, qps, 0, "", []);
 
 % Get flags for processing different modules
 vcg_calc_flag = get(handles.geh_option_checkbox,'Value');
@@ -1220,6 +1223,9 @@ if length(handles.beats.Q) > 1
     aps = pull_guiparams(hObject, eventdata, handles);  % Pull from GUI and update based on what is selected
     handles.aps = aps;
 
+    % Load Qualparams
+    qps = Qualparams();
+
     % To avoid endless outlier and PVC deletion issue due to more freedom with the GUI,
     % need to NOT remomove outliers and PVCs via batch_calc, and instead call
     % the PVC removal and outlier removal Callbacks that are part of the GUI.
@@ -1234,7 +1240,7 @@ if length(handles.beats.Q) > 1
 
     [~, ~, handles.beats, handles.quality, handles.correlation_test, handles.median_vcg, ...
             handles.beatsig_vcg, handles.median_12L, handles.beatsig_12L, handles.medianbeat, handles.beat_stats, ...
-            ~, ~, ~, ~, handles.noise, ~] = batch_calc(handles.ecg_raw, handles.beats, [], [], [], [], aps, 0, "", []);
+            ~, ~, ~, ~, handles.noise, ~] = batch_calc(handles.ecg_raw, handles.beats, [], [], [], [], aps, qps, 0, "", []);
    
         % Get flags for processing different modules
 vcg_calc_flag = get(handles.geh_option_checkbox,'Value');
@@ -1306,6 +1312,9 @@ handles = guidata(hObject);     % Take handles from the function and transfer to
 aps = pull_guiparams(hObject, eventdata, handles);  % Pull from GUI and update based on what is selected
 handles.aps = aps;
 
+% Load Qualparams
+qps = Qualparams();
+
 % To avoid endless outlier and PVC deletion issue due to more freedom with the GUI,
 % need to NOT remomove outliers and PVCs via batch_calc, and instead call
 % the PVC removal and outlier removal Callbacks that are part of the GUI.
@@ -1321,7 +1330,7 @@ aps.outlier_removal = 0;
 
 [~, ~, handles.beats, handles.quality, handles.correlation_test, handles.median_vcg, ...
     handles.beatsig_vcg, handles.median_12L, handles.beatsig_12L, handles.medianbeat, handles.beat_stats, ...
-    ~, ~, ~, ~, handles.noise, ~] = batch_calc(handles.ecg_raw, handles.beats, [], [], [], [], aps, 0, "", []);
+    ~, ~, ~, ~, handles.noise, ~] = batch_calc(handles.ecg_raw, handles.beats, [], [], [], [], aps, qps, 0, "", []);
 
 % Get flags for processing different modules
 vcg_calc_flag = get(handles.geh_option_checkbox,'Value');
@@ -1366,6 +1375,9 @@ handles = guidata(hObject);     % Take handles from the function and transfer to
 aps = pull_guiparams(hObject, eventdata, handles);  % Pull from GUI and update based on what is selected
 handles.aps = aps;
 
+% Load Qualparams
+qps = Qualparams();
+
 % To avoid endless outlier and PVC deletion issue due to more freedom with the GUI,
 % need to NOT remomove outliers and PVCs via batch_calc, and instead call
 % the PVC removal and outlier removal Callbacks that are part of the GUI.
@@ -1381,7 +1393,7 @@ aps.outlier_removal = 0;
 
 [~, ~, handles.beats, handles.quality, handles.correlation_test, handles.median_vcg, ...
     handles.beatsig_vcg, handles.median_12L, handles.beatsig_12L, handles.medianbeat, handles.beat_stats, ...
-    ~, ~, ~, ~, handles.noise, ~] = batch_calc(handles.ecg_raw, handles.beats, [], [], [], [], aps, 0, "", []);
+    ~, ~, ~, ~, handles.noise, ~] = batch_calc(handles.ecg_raw, handles.beats, [], [], [], [], aps, qps, 0, "", []);
 
 
 % Get flags for processing different modules
@@ -2127,6 +2139,9 @@ handles = guidata(hObject);     % Take handles from the function and transfer to
 % Get Annoparam values as currently stored/checked off in GUI
 aps = pull_guiparams(hObject, eventdata, handles);
 
+% Load Qualparams
+qps = Qualparams();
+
 % Set pvc_removal = 0 for passing into batch_calc
 aps.pvc_removal = 0;
 aps.outlier_removal = 0;
@@ -2134,7 +2149,7 @@ aps.outlier_removal = 0;
 if pvc_rem == 1         % Only update things if actually did outlier removal
     [~, ~, handles.beats, handles.quality, handles.correlation_test, handles.median_vcg, ...
         handles.beatsig_vcg, handles.median_12L, handles.beatsig_12L, handles.medianbeat, handles.beat_stats, ...
-        ~, ~, ~, ~, handles.noise, ~] = batch_calc(handles.ecg_raw, handles.beats, [], [], [], [], aps, 0, "", []);
+        ~, ~, ~, ~, handles.noise, ~] = batch_calc(handles.ecg_raw, handles.beats, [], [], [], [], aps, qps, 0, "", []);
     
  % Get flags for processing different modules
 vcg_calc_flag = get(handles.geh_option_checkbox,'Value');
@@ -2441,6 +2456,9 @@ filename = strcat(csvpathname, csvfilename_short);
 % Load Annoparams +/- fiducial points from .csv file
 [aps, beats] = Annoparams(filename);
 
+% Load Qualparams
+qps = Qualparams();
+
 % If aps.wavelet_level_highpass is > max level, will throw an error
 % This code will add explanation to GUI given error handeling is within
 % ECG12.m independent of GUI
@@ -2477,7 +2495,7 @@ guidata(hObject,handles);  % update handles
 % Calculate using batch_calc and overbeats
 [~, ~, handles.beats, handles.quality, handles.correlation_test, handles.median_vcg, ...
     handles.beatsig_vcg, handles.median_12L, handles.beatsig_12L, handles.medianbeat, handles.beat_stats, ...
-    handles.ecg_raw, handles.vcg_raw, handles.ecg, handles.vcg, handles.noise, ~] = batch_calc(handles.ecg_raw, beats, [], [], [], [], aps, 0, "", []);
+    handles.ecg_raw, handles.vcg_raw, handles.ecg, handles.vcg, handles.noise, ~] = batch_calc(handles.ecg_raw, beats, [], [], [], [], aps, qps, 0, "", []);
 
 
 % Get flags for processing different modules
@@ -3162,6 +3180,9 @@ guidata(hObject, handles);  % update handles
 aps = Annoparams();
 aps = pull_guiparams(hObject, eventdata, handles); 
 
+% Load Qualparams
+qps = Qualparams();
+
 % If loading with safemode = 1, drop pkthresh down to 10% to avoid missing
 % peaks if get a big noise spike
 if safemode  
@@ -3265,7 +3286,7 @@ else
 % the beats may be altered and wont get an accurate HR calculation
 
 [handles.hr, handles.num_initial_beats, ~, ~, ~, ~, ~, ~, ~,~, ...
-   ~, ~, ~, ~, handles.vcg, ~, ~] = batch_calc(handles.ecg_raw, [], [], [], [], [], aps, 0, "", []);
+   ~, ~, ~, ~, handles.vcg, ~, ~] = batch_calc(handles.ecg_raw, [], [], [], [], [], aps, qps, 0, "", []);
  
 % Update handles structure
 guidata(hObject, handles);
@@ -3663,6 +3684,9 @@ handles = guidata(hObject);     % Take handles from the function and transfer to
 % Get Annoparam values as currently stored/checked off in GUI
 aps = pull_guiparams(hObject, eventdata, handles);
 
+% Load Qualparams
+qps = Qualparams();
+
 % Set pvc_removal = 0 for passing into batch_calc
 aps.outlier_removal = 0;
 aps.pvc_removal = 0;
@@ -3670,7 +3694,7 @@ aps.pvc_removal = 0;
 if outlier_rem == 1         % Only update things if actually did outlier removal
     [~, ~, handles.beats, handles.quality, handles.correlation_test, handles.median_vcg, ...
         handles.beatsig_vcg, handles.median_12L, handles.beatsig_12L, handles.medianbeat, handles.beat_stats, ...
-        ~, ~, ~, ~, ~] = batch_calc(handles.ecg_raw, handles.beats, [], [], [], [], handles.aps, 0, "", []);
+        ~, ~, ~, ~, ~] = batch_calc(handles.ecg_raw, handles.beats, [], [], [], [], handles.aps, qps, 0, "", []);
     
     
 % Get flags for processing different modules
@@ -4222,6 +4246,9 @@ handles = guidata(hObject);     % Take handles from the function and transfer to
 aps = pull_guiparams(hObject, eventdata, handles);  % Pull from GUI and update based on what is selected
 handles.aps = aps;
 
+% Load Qualparams
+qps = Qualparams();
+
 aps.pvc_removal = 0;
 aps.outlier_removal = 0;
 
@@ -4247,7 +4274,7 @@ if get(handles.shift_median_checkbox, 'Value')
     guidata(hObject, handles);  % update handles    
     
     handles.quality = Quality(handles.median_vcg, handles.ecg_raw, handles.beats, handles.medianbeat, ...
-            handles.hr, handles.num_initial_beats, handles.correlation_test, handles.noise, aps); % maxRR isnt being used now....set to zero
+            handles.hr, handles.num_initial_beats, handles.correlation_test, handles.noise, aps, qps); % maxRR isnt being used now....set to zero
         
     guidata(hObject, handles);  % update handles
         
@@ -4260,7 +4287,7 @@ else   % IF NOT MEDIAN
 
     [~, ~, handles.beats, handles.quality, handles.correlation_test, handles.median_vcg, ...
         handles.beatsig_vcg, handles.median_12L, handles.beatsig_12L, handles.medianbeat, handles.beat_stats, ...
-        ~, ~, ~, ~, ~] = batch_calc(handles.ecg_raw, handles.beats, [], [], [], [], aps, 0, "", []);
+        ~, ~, ~, ~, ~] = batch_calc(handles.ecg_raw, handles.beats, [], [], [], [], aps, qps, 0, "", []);
     
     
     % Get flags for processing different modules
@@ -4309,6 +4336,9 @@ if isfield(handles, 'median_vcg')
     
     % Pull aps from GUI given choice of median annotater (NNet vs Std)
     aps = pull_guiparams(hObject, eventdata, handles); 
+
+    % Load Qualparams
+    qps = Qualparams();
     
     % Don't need to do any PVC/outlier removal in this case because just
     % adjusting median annotations
@@ -4324,7 +4354,7 @@ if isfield(handles, 'median_vcg')
     
     [~, ~, ~, handles.quality, handles.correlation_test, ~, ~, ~, ~, handles.medianbeat, ~, ~, ~, ~, ~, ~] ...
       = batch_calc(handles.ecg_raw, handles.beats, handles.medianbeat, handles.median_vcg, handles.median_12L, handles.beatsig_vcg, ...
-      aps, 0, "", other);
+      aps, qps, 0, "", other);
   
   
 % Get flags for processing different modules
@@ -4891,7 +4921,7 @@ function check_version_button_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-web('http://github.com')
+web('https://github.com/BIVectors/BRAVEHEART');
 
 
 % --- Executes on button press in convert_format_button.

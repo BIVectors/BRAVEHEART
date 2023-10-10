@@ -35,6 +35,11 @@ function idx = resamp_loc(fa, f0, sa)
 
 % Each sample has distance of 1/freq
 
+if isnan(sa) || isempty(sa)
+    idx = nan;
+    return
+end
+
 % Distance to the selected point in the annotated signal (starting from sample 1)
 Da = (sa-1)/fa;
 
@@ -44,6 +49,4 @@ idx = round(f0*Da)+1;
 % This will round DOWN when a point is equidistant from 2 points on the
 % original signal.
 
-if isnan(sa) || isempty(sa)
-    idx = nan;
 end

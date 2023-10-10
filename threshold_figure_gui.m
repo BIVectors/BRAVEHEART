@@ -44,16 +44,16 @@ color = repmat(color,1,40);
 d = round(freq*60/maxbpm);
 
 [pks, locs] = findpeaks((vm),'MinPeakHeight', q(th), 'MinPeakDistance', d);
-
-P =zeros(1,100);
-vm_trim = vm(501:4500); 
-for i = 1:100
-   [~, QRS] = findpeaks((vm_trim),'MinPeakHeight', q(i), 'MinPeakDistance', d);
-   P(i) =  length(QRS);
-end
-
-pcut = 50;
-P(1:pcut) = [];
+% 
+% P =zeros(1,100);
+% vm_trim = vm(501:4500); 
+% for i = 1:100
+%    [~, QRS] = findpeaks((vm_trim),'MinPeakHeight', q(i), 'MinPeakDistance', d);
+%    P(i) =  length(QRS);
+% end
+% 
+% pcut = 50;
+% P(1:pcut) = [];
 
 YL = ylim;
 

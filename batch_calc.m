@@ -23,7 +23,7 @@
 
 function [hr_orig, NQRS_orig, beats5, quality, correlation_test, medianvcg1, beatsig_vcg, median_12L, beatsig_12L, ...
 	  medianbeat, beat_stats, ecg_raw, vcg_raw, filtered_ecg, filtered_vcg, noise, sumfig] = ...
-      batch_calc(ecg_raw, ovrbeats, ovrmedianbeat, ovrmedianvcg, ovrmedian12L, ovrvcgbeatsig, ap, save_figures, title_name, other)
+      batch_calc(ecg_raw, ovrbeats, ovrmedianbeat, ovrmedianvcg, ovrmedian12L, ovrvcgbeatsig, ap, qp, save_figures, title_name, other)
 
   
 % Annotates and computes all GEH and other statistics on an unfiltered ecg that the caller provides
@@ -33,8 +33,10 @@ function [hr_orig, NQRS_orig, beats5, quality, correlation_test, medianvcg1, bea
 % ovrbeats: manual annotation (or [] if automatic annotation) of the VCG
 % ovrmedianbeat, ovrmedianvcg, ovrmedian12L, other: full control of the median beat, used by GUI
 % ap: Annoparams
+% qp: Qualparams
 % save_figures: plot or not
 % title_name: if generating figures, title for the figures
+% other: stuff for dealing with GUI features
 % 
 % output:
 % geh: VCG measurements
@@ -60,7 +62,6 @@ function [hr_orig, NQRS_orig, beats5, quality, correlation_test, medianvcg1, bea
 % Calc noise indices
 [~, ~, ~, hf_noise_min, ~, ~, ~, lf_noise_max] = noise_test(ecg_raw, 0, 0, ap);
 noise = [hf_noise_min lf_noise_max];
-
 
 % If not supplying median beat information - eg denovo ECG/VCG processing
 if isempty(ovrmedianbeat) && isempty(ovrmedianvcg) && isempty(ovrmedian12L)
@@ -96,7 +97,7 @@ QRS2 = vcg2.peaks(ap);
 NQRS_orig = length(QRS2);
 
 hr_orig = 60000 / mean((diff(QRS2)*(1000/ecg_raw.hz))) ;  % HR from initial peak detection
-maxRR_hr_orig = (60000/vcg2.sample_time())*0.5/max(diff(QRS2)); % the 0.5 is for filtering stuff - no longer used
+%maxRR_hr_orig = (60000/vcg2.sample_time())*0.5/max(diff(QRS2)); % the 0.5 is for filtering stuff - no longer used
 
 % If supply a beats class use these instead of annotating from scratch
 if isa(ovrbeats, 'Beats')
@@ -107,7 +108,7 @@ else
         [vcg3, vcg2] = vcg2.remove_pacer_spikes(QRS2, ap);
         QRS3 = vcg3.peaks(ap);
     else
-        vcg3 = vcg2;
+        vcg3 = vcg2; %#ok<NASGU>
         QRS3 = QRS2;
     end
     
@@ -219,16 +220,8 @@ end
 
 
 % quality testing
-if isa(ovrbeats, 'Beats')
-   % quality = Quality.zero();
-    quality = Quality(medianvcg1, ecg_raw, beats5, medianbeat, ...
-        hr_orig, NQRS_orig, correlation_test, noise, ap);
-else
-%    medvcg_cropped = medianvcg1.crop(medianbeat.Q, medianbeat.Tend);
-    quality = Quality(medianvcg1, ecg_raw, beats5, medianbeat, ...
-        hr_orig, NQRS_orig, correlation_test, noise, ap);
-end
-
+quality = Quality(medianvcg1, ecg_raw, beats5, medianbeat, ...
+    hr_orig, NQRS_orig, correlation_test, noise, ap, qp);
 
 
 if save_figures

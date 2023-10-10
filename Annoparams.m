@@ -231,9 +231,8 @@ classdef Annoparams
 				beatmatrix = [];
 			end
 			
-			% Generate default Annoparam to get property list
-			ap = Annoparams();
-			prop = properties(ap);
+			% Generate Annoparam property list
+			prop = properties(obj);
 			
 			% Process beatmatrix/Beat class if present
 			if ~isempty(beatmatrix)

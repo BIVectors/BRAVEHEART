@@ -23,19 +23,14 @@
 
 function update_gui_quality(Q, aps, hObject, eventdata, handles)
 
-% Get cutoff for probability from quality_presets.csv
+% Get cutoff for probability from Qualparams
 
-A = readcell(fullfile(getcurrentdir(),'quality_presets.csv')); % read in data from .csv file
-miss = cellfun(@(x) any(isa(x,'missing')), A);
-A(miss) = {NaN};
-preset_names = A(:,1);
-preset_vals = A(:,2);
-ind = find(contains(preset_names,'prob'));
-cutpt = cell2mat(preset_vals(ind));
-
+    QP = Qualparams();
+    cutlow = QP.prob(1);
+    cuthigh = QP.prob(2);
 
     % Bad quality - red
-    if Q.prob_value < cutpt | isnan(Q.prob_value)
+    if Q.prob_value < cutlow || Q.prob_value > cuthigh || isnan(Q.prob_value)
         set(handles.quality_panel, 'BackgroundColor', '[1,0,0]');
         set(handles.quality_score_txt, 'BackgroundColor', '[1,0,0]');
         set(handles.quality_score_txt, 'String', sprintf('%3.1f',(100*Q.prob_value)));

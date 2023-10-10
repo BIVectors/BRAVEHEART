@@ -88,6 +88,24 @@ function ap = aparam()
     ap.debug = 0;                       % Debug mode (generates debug annotation figures)
 end
 
+% Reused code for Qualparams values
+function qp = qparam()
+        qp = Qualparams();                  % Blank Qualparams class
+        qp.qrs = [70, 200];                 % Min/max range of QRS duration
+        qp.qt = [250, 700];                 % Min/max range of QT interval
+        qp.tpqt = [0.5, Inf];               % Min/max range of T peak/QT ratio (nominal is min only)
+        qp.t_mag = [0.05, Inf];             % Min/max range for T wave magnitude (nominal is min only)
+        qp.hr = [30, 150];                  % Min/max range for HR
+        qp.num_beats = [4, Inf];            % # of beats left after PVC and outlier beats are removed
+        qp.pct_beats_removed = [-Inf, 60];  % of total number of beats removed to trigger
+        qp.corr = [0.8,1];                  % Min/max range for average normalized cross correlation (nomimal min only)
+        qp.baseline = [-Inf, 0.1];          % Min/max range for baseline at the end of the T wave (nominal max only)
+        qp.hf_noise = [10, Inf];            % SNR for HF noise cutoff
+        qp.prob = [0.8, 1];                 % Logistic regression probability (range 0-1)
+        qp.lf_noise = [-Inf, 0.02];         % mV for cutoff in variance in LF noise
+end
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Individual tests are from this point down:
@@ -115,8 +133,11 @@ ecg = ECG12(char('Example ECGs/example1.xml'), 'muse_xml');
 ap = aparam(); 
 ap.transform_matrix_str = 'Kors';
 
+% Standard Qualparams
+qp = qparam();
+
 % Pass through batch_calc to get vcg_raw
-[~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, vcg_raw, ~, ~, ~, ~] = batch_calc(ecg, [], [], [], [], [], ap, 0, '', []);
+[~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, vcg_raw, ~, ~, ~, ~] = batch_calc(ecg, [], [], [], [], [], ap, qp, 0, '', []);
 
 % Manually obtained 51 sample segments of X, Y, Z
 V = ...
@@ -194,8 +215,11 @@ ecg = ECG12(char('Example ECGs/example1.xml'), 'muse_xml');
 ap = aparam(); 
 ap.transform_matrix_str = 'Kors';
 
+% Standard Qualparams
+qp = qparam();
+
 % Pass through batch_calc to get vcg_raw
-[~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, vcg_raw, ~, ~, ~, ~] = batch_calc(ecg, [], [], [], [], [], ap, 0, '', []);
+[~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, vcg_raw, ~, ~, ~, ~] = batch_calc(ecg, [], [], [], [], [], ap, qp, 0, '', []);
 
 % Check vcg when just use VCG constructor with ecg
 vcg_raw2 = VCG(ecg,ap);
@@ -219,10 +243,13 @@ ecg = ECG12(char('Example ECGs/example1.xml'), 'muse_xml');
 % Standard Annoparams
 ap = aparam(); 
 
+% Standard Qualparams
+qp = qparam();
+
 % Process ECG
 [~, ~, ~, ~, ~, medianvcg1, ~, median_12L, ~, medianbeat, ...
     ~, ~, ~, ~, ~, ~, ~] = ...
-    batch_calc(ecg, [], [], [], [], [], ap, 0, 'example1.xml', []);
+    batch_calc(ecg, [], [], [], [], [], ap, qp, 0, 'example1.xml', []);
 
 % Calculate results
 [geh, ~, ~] = module_output(median_12L, medianvcg1, medianbeat, ap, flags);
@@ -335,10 +362,13 @@ ecg = ECG12(char('Example ECGs/example1.xml'), 'muse_xml');
 % Standard Annoparams
 ap = aparam(); 
 
+% Standard Qualparams
+qp = qparam();
+
 % Process ECG
 [~, ~, ~, ~, ~, medianvcg1, ~, median_12L, ~, medianbeat, ...
     ~, ~, ~, ~, ~, ~, ~] = ...
-    batch_calc(ecg, [], [], [], [], [], ap, 0, '', []);
+    batch_calc(ecg, [], [], [], [], [], ap, qp, 0, '', []);
 
 % Calculate results
 [~, lead_morph, ~] = module_output(median_12L, medianvcg1, medianbeat, ap, flags);
@@ -485,10 +515,13 @@ ecg = ECG12(char('Example ECGs/example1.xml'), 'muse_xml');
 % Standard Annoparams
 ap = aparam(); 
 
+% Standard Qualparams
+qp = qparam();
+
 % Process ECG
 [~, ~, ~, ~, ~, medianvcg1, ~, median_12L, ~, medianbeat, ...
     ~, ~, ~, ~, ~, ~, ~] = ...
-    batch_calc(ecg, [], [], [], [], [], ap, 0, '', []);
+    batch_calc(ecg, [], [], [], [], [], ap, qp, 0, '', []);
 
 % Calculate results
 [~, ~, vcg_morph] = module_output(median_12L, medianvcg1, medianbeat, ap, flags);
@@ -544,9 +577,12 @@ ecg = ECG12(char('Example ECGs/example1.xml'), 'muse_xml');
 % Standard Annoparams
 ap = aparam(); 
 
+% Standard Qualparams
+qp = qparam();
+
 % Process ECG
 [~, ~, beats, ~, ~, ~, ~, ~, ~, medianbeat, ~, ~, ~, ~, ~, ~, ~] = ...
-    batch_calc(ecg, [], [], [], [], [], ap, 0, '', []);
+    batch_calc(ecg, [], [], [], [], [], ap, qp, 0, '', []);
 
 % Verified beat fiducial point results
 % Individual
@@ -586,9 +622,12 @@ ecg = ECG12(char('Example ECGs/example1.xml'), 'muse_xml');
 % Standard Annoparams
 ap = aparam(); 
 
+% Standard Qualparams
+qp = qparam();
+
 % Process ECG
 [~, ~, ~, ~, corr, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~] = ...
-    batch_calc(ecg, [], [], [], [], [], ap, 0, '', []);
+    batch_calc(ecg, [], [], [], [], [], ap, qp, 0, '', []);
 
 %Test
 testCase.verifyEqual(corr.X,0.995);
@@ -617,10 +656,13 @@ ap.lowpass = 0;
 ap.highpass = 0;
 ap.baseline_correct_flag = 0;
 
+% Standard Qualparams
+qp = qparam();
+
 % Process ECG
 [~, ~, ~, ~, ~, medianvcg1, ~, median_12L, ~, medianbeat, ...
     ~, ~, ~, ~, ~, ~, ~] = ...
-    batch_calc(ecg, [], [], [], [], [], ap, 0, 'example1.xml', []);
+    batch_calc(ecg, [], [], [], [], [], ap, qp, 0, 'example1.xml', []);
 
 % Calculate results
 [geh, ~, ~] = module_output(median_12L, medianvcg1, medianbeat, ap, flags);
@@ -738,10 +780,13 @@ ap.lowpass = 0;
 ap.highpass = 0;
 ap.baseline_correct_flag = 0;
 
+% Standard Qualparams
+qp = qparam();
+
 % Process ECG
 [~, ~, ~, ~, ~, medianvcg1, ~, median_12L, ~, medianbeat, ...
     ~, ~, ~, ~, ~, ~, ~] = ...
-    batch_calc(ecg, [], [], [], [], [], ap, 0, 'example1.xml', []);
+    batch_calc(ecg, [], [], [], [], [], ap, qp, 0, 'example1.xml', []);
 
 % Calculate results
 [~, lead_morph, ~] = module_output(median_12L, medianvcg1, medianbeat, ap, flags);
@@ -891,10 +936,13 @@ ap.lowpass = 0;
 ap.highpass = 0;
 ap.baseline_correct_flag = 0;
 
+% Standard Qualparams
+qp = qparam();
+
 % Process ECG
 [~, ~, ~, ~, ~, medianvcg1, ~, median_12L, ~, medianbeat, ...
     ~, ~, ~, ~, ~, ~, ~] = ...
-    batch_calc(ecg, [], [], [], [], [], ap, 0, 'example1.xml', []);
+    batch_calc(ecg, [], [], [], [], [], ap, qp, 0, 'example1.xml', []);
 
 % Calculate results
 [~, ~, vcg_morph] = module_output(median_12L, medianvcg1, medianbeat, ap, flags);
@@ -953,11 +1001,15 @@ flags.vcg_morph_flag = 1;
 
 ecg = ECG12(char('Example ECGs/example2.xml'), 'muse_xml');
 
+% Standard Annoparams
 ap = aparam();
+
+% Standard Qualparams
+qp = qparam();
 
 % Process ECG
 [hr, ~, beats, ~, corr, medianvcg1, ~, median_12L, ~, medianbeat, ~, ~, ~, ~, ~, ~, ~] = ...
-    batch_calc(ecg, [], [], [], [], [], ap, 0, '', []);
+    batch_calc(ecg, [], [], [], [], [], ap, qp, 0, '', []);
 
 % Calculate results
 [geh, lead_morph, vcg_morph] = module_output(median_12L, medianvcg1, medianbeat, ap, flags);
@@ -1262,9 +1314,12 @@ ap = aparam();
 ap.pvc_removal = 0;
 ap.outlier_removal = 0;
 
+% Standard Qualparams
+qp = qparam();
+
 % Process ECG
 [hr, ~, beats, ~, corr, medianvcg1, ~, median_12L, ~, medianbeat, ~, ~, ~, ~, ~, ~, ~] = ...
-    batch_calc(ecg, [], [], [], [], [], ap, 0, '', []);
+    batch_calc(ecg, [], [], [], [], [], ap, qp, 0, '', []);
 
 % Calculate results
 [geh, lead_morph, vcg_morph] = module_output(median_12L, medianvcg1, medianbeat, ap, flags);
@@ -1568,16 +1623,19 @@ ap = aparam();
 ap.pvc_removal = 0;
 ap.outlier_removal = 0;
 
+% Standard Qualparams
+qp = qparam();
+
 % Process ECG
 [hr, ~, beats, ~, corr, medianvcg1, ~, median_12L, ~, medianbeat, ~, ~, ~, ~, ~, ~, ~] = ...
-    batch_calc(ecg, [], [], [], [], [], ap, 0, '', []);
+    batch_calc(ecg, [], [], [], [], [], ap, qp, 0, '', []);
 
 % Remove beat # 10 = PVC
 ovrbeats = beats.delete(10);
 
 % Process again with overbeats 
 [hr, ~, beats, ~, corr, medianvcg1, ~, median_12L, ~, medianbeat, ~, ~, ~, ~, ~, ~, ~] = ...
-    batch_calc(ecg, ovrbeats, [], [], [], [], ap, 0, '', []);
+    batch_calc(ecg, ovrbeats, [], [], [], [], ap, qp, 0, '', []);
 
 % Should get same results as if processed with PVC removal on:
 
@@ -1879,18 +1937,22 @@ flags.vcg_morph_flag = 1;
 
 ecg = ECG12(char('Example ECGs/example2.xml'), 'muse_xml');
 
+% Standard Annoparams
 ap = aparam();
+
+% Standard Qualparams
+qp = qparam();
 
 % Process ECG
 [hr, ~, beats, ~, corr, medianvcg1, ~, median_12L, ~, medianbeat, ~, ~, ~, ~, ~, ~, ~] = ...
-    batch_calc(ecg, [], [], [], [], [], ap, 0, '', []);
+    batch_calc(ecg, [], [], [], [], [], ap, qp, 0, '', []);
 
 % Remove beat # 
 ovrbeats = beats.delete(4);
 
 % Process again with overbeats 
 [hr, ~, beats, ~, corr, medianvcg1, ~, median_12L, ~, medianbeat, ~, ~, ~, ~, ~, ~, ~] = ...
-    batch_calc(ecg, ovrbeats, [], [], [], [], ap, 0, '', []);
+    batch_calc(ecg, ovrbeats, [], [], [], [], ap, qp, 0, '', []);
 
 % Calculate results
 [geh, lead_morph, vcg_morph] = module_output(median_12L, medianvcg1, medianbeat, ap, flags);
@@ -2189,11 +2251,15 @@ flags.vcg_morph_flag = 1;
 
 ecg = ECG12(char('Example ECGs/example1.xml'), 'muse_xml');
 
+% Standard Annoparams
 ap = aparam();
+
+% Standard Qualparams
+qp = qparam();
 
 % Process ECG
 [hr, ~, beats, ~, corr, medianvcg1, ~, median_12L, ~, medianbeat, ~, ~, ~, ~, ~, ~, ~] = ...
-    batch_calc(ecg, [], [], [], [], [], ap, 0, '', []);
+    batch_calc(ecg, [], [], [], [], [], ap, qp, 0, '', []);
 
 [geh_orig, ~, ~] = module_output(median_12L, medianvcg1, medianbeat, ap, flags);
 
@@ -2257,11 +2323,15 @@ function test_braveheart_ex2_shift_individual_fidpts(testCase)
 
 ecg = ECG12(char('Example ECGs/example1.xml'), 'muse_xml');
 
+% Standard Annoparams
 ap = aparam();
+
+% Standard Qualparams
+qp = qparam();
 
 % Process ECG
 [~, ~, beats, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~] = ...
-    batch_calc(ecg, [], [], [], [], [], ap, 0, '', []);
+    batch_calc(ecg, [], [], [], [], [], ap, qp, 0, '', []);
 
 beats_orig = beats;
 
@@ -2270,7 +2340,7 @@ beats_orig = beats;
 %T+10
 ovrbeats = beats.shift_tend(10);
 [~, ~, beats_new, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~] = ...
-    batch_calc(ecg, ovrbeats, [], [], [], [], ap, 0, '', []);
+    batch_calc(ecg, ovrbeats, [], [], [], [], ap, qp, 0, '', []);
 
 % Should only shift Tend +10 in all beats
 testCase.verifyEqual(ovrbeats.Q, beats_orig.Q);
@@ -2283,7 +2353,7 @@ testCase.verifyEqual(ovrbeats, beats_new);
 %Q-6
 ovrbeats = ovrbeats.shift_q(-6);
 [~, ~, beats_new, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~] = ...
-    batch_calc(ecg, ovrbeats, [], [], [], [], ap, 0, '', []);
+    batch_calc(ecg, ovrbeats, [], [], [], [], ap, qp, 0, '', []);
 
 % Should only shift Q -10 in all beats
 testCase.verifyEqual(ovrbeats.Q, beats_orig.Q-6);
@@ -2296,7 +2366,7 @@ testCase.verifyEqual(ovrbeats, beats_new);
 %S+2
 ovrbeats = ovrbeats.shift_s(2);
 [~, ~, beats_new, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~] = ...
-    batch_calc(ecg, ovrbeats, [], [], [], [], ap, 0, '', []);
+    batch_calc(ecg, ovrbeats, [], [], [], [], ap, qp, 0, '', []);
 
 % Should only shift Q -10 in all beats
 testCase.verifyEqual(ovrbeats.Q, beats_orig.Q-6);
@@ -2313,11 +2383,15 @@ function test_braveheart_ex4_pacemaker_spike_detection(testCase)
 
 ecg = ECG12(char('Example ECGs/example4.xml'), 'muse_xml');
 
+% Standard Annoparams
 ap = aparam();
+
+% Standard Qualparams
+qp = qparam();
 
 % Process ECG with spike detection on
 [~, ~, beats_orig, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~] = ...
-    batch_calc(ecg, [], [], [], [], [], ap, 0, '', []);
+    batch_calc(ecg, [], [], [], [], [], ap, qp, 0, '', []);
 
 testCase.verifyEqual(beats_orig.QRS',[441 933 1422 1914 2413 2904 3398 3897 4384]);
 
@@ -2332,9 +2406,12 @@ ecg = ECG12(char('Example ECGs/example3.xml'), 'muse_xml');
 ap = aparam();
 % default z-score cutoff = 4 -- baseline
 
+% Standard Qualparams
+qp = qparam();
+
 % Process ECG 
 [~, ~, beats_orig, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~] = ...
-    batch_calc(ecg, [], [], [], [], [], ap, 0, '', []);
+    batch_calc(ecg, [], [], [], [], [], ap, qp, 0, '', []);
 
 testCase.verifyEqual(beats_orig.QRS',[316 819 1322 1832 2347 3361 3870 4391]);
 
@@ -2344,7 +2421,7 @@ ap.modz_cutoff = 10;
 
 % Process ECG 
 [~, ~, beats_10, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~] = ...
-    batch_calc(ecg, [], [], [], [], [], ap, 0, '', []);
+    batch_calc(ecg, [], [], [], [], [], ap, qp, 0, '', []);
 
 testCase.verifyEqual(beats_10.QRS',[316 819 1322 1832 2347 2856 3361 3870 4391]);
 
@@ -2354,7 +2431,7 @@ ap.modz_cutoff = 0.5;
 
 % Process ECG 
 [~, ~, beats_05, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~] = ...
-    batch_calc(ecg, [], [], [], [], [], ap, 0, '', []);
+    batch_calc(ecg, [], [], [], [], [], ap, qp, 0, '', []);
 
 testCase.verifyEqual(beats_05.QRS',[316 1832]);
 
@@ -2365,7 +2442,7 @@ end
 function test_braveheart_external_files_present(testCase)
 
 testCase.verifyEqual(double(isfile('ecg_formats.csv')),1);
-testCase.verifyEqual(double(isfile('quality_presets.csv')),1);
+testCase.verifyEqual(double(isfile('Qualparams.csv')),1);
 testCase.verifyEqual(double(isfile('search_presets.csv')),1);
 testCase.verifyEqual(double(isfile('transform_mats.csv')),1);
 testCase.verifyEqual(double(isfile('batch_settings.csv')),1);
@@ -2381,8 +2458,8 @@ testCase.verifyEqual(double(isfile('logo_t.bmp')),1);
 end
 
 
-%% Check for necessary internal files (eg files needed to run BRAVEHEART)
-    function test_braveheart_internal_files_present(testCase)
+%% Check for necessary internal files (eg files needed to run BRAVEHEART GUI)
+function test_braveheart_internal_files_present_gui(testCase)
 
 [F,~] = matlab.codetools.requiredFilesAndProducts('braveheart_gui.m');
 
@@ -2391,5 +2468,176 @@ for i = 1:length(F)
     fname = strcat(file,ext);
     testCase.verifyEqual(double(isfile(fname)),1);
 end
+
+end
+
+%% Check for necessary internal files (eg files needed to run BRAVEHEART Batch)
+function test_braveheart_internal_files_present_batch(testCase)
+
+[F,~] = matlab.codetools.requiredFilesAndProducts('braveheart_batch.m');
+
+for i = 1:length(F)
+    [~,file,ext]=fileparts(F{i});
+    fname = strcat(file,ext);
+    testCase.verifyEqual(double(isfile(fname)),1);
+end
+
+end
+
+
+%% Check for Quality testing working correctly
+function test_braveheart_quality_1(testCase)
+
+flags = struct;
+flags.vcg_calc_flag = 1;
+flags.lead_morph_flag = 1;
+flags.vcg_morph_flag = 1;
+
+ecg = ECG12(char('Example ECGs/example1.xml'), 'muse_xml');
+
+% Standard Annoparams
+ap = aparam();
+
+% Standard Qualparams
+qp = qparam();
+
+% Process ECG
+[~, ~, ~, quality, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~] = ...
+    batch_calc(ecg, [], [], [], [], [], ap, qp, 0, '', []);
+
+Q = struct;
+    Q.qt = 0;
+    Q.qrs = 0;
+    Q.tpqt = 0;
+    Q.t_mag = 0;
+    Q.hr = 0;
+    Q.num_beats = 0;
+    Q.pct_beats_removed = 0;
+    Q.corr = 0;
+    Q.baseline = 0;
+    Q.hf_noise = 0;
+    Q.lf_noise = 0;
+    Q.prob = 0;
+    Q.missing_lead = 0;
+    Q.prob_value = 0.9999;
+    Q.nnet_flag = 0;
+    Q.nnet_nan = 0;
+fnQ = fieldnames(Q);
+
+for i = 1:length(fnQ)
+    testCase.verifyEqual(double(quality.(fnQ{i})),Q.(fnQ{i}),"AbsTol",1e-4)
+end
+
+end
+
+
+%% Check for Quality testing working correctly
+function test_braveheart_quality_2(testCase)
+
+flags = struct;
+flags.vcg_calc_flag = 1;
+flags.lead_morph_flag = 1;
+flags.vcg_morph_flag = 1;
+
+ecg = ECG12(char('Example ECGs/example1.xml'), 'muse_xml');
+
+% Standard Annoparams
+ap = aparam();
+
+% Standard Qualparams
+qp = qparam();
+
+% Flag all parameters
+    qp.qrs = [0, 0];                  
+    qp.qt = [0, 0];                  
+    qp.tpqt = [0, 0];                
+    qp.t_mag = [0, 0];              
+    qp.hr = [0, 0];                  
+    qp.num_beats = [0, 0];             
+    qp.pct_beats_removed = [-1, -1];   
+    qp.corr = [0, 0];                   
+    qp.baseline = [0, 0];            
+    qp.hf_noise = [0, 0];             
+    qp.prob = [0, 0];                 
+    qp.lf_noise = [0, 0]; 
+
+% Process ECG
+[~, ~, ~, quality, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~] = ...
+    batch_calc(ecg, [], [], [], [], [], ap, qp, 0, '', []);
+
+Q = struct;
+    Q.qt = 1;
+    Q.qrs = 1;
+    Q.tpqt = 1;
+    Q.t_mag = 1;
+    Q.hr = 1;
+    Q.num_beats = 1;
+    Q.pct_beats_removed = 1;
+    Q.corr = 1;
+    Q.baseline = 1;
+    Q.hf_noise = 1;
+    Q.lf_noise = 1;
+    Q.prob = 1;
+fnQ = fieldnames(Q);
+
+for i = 1:length(fnQ)
+    testCase.verifyEqual(double(quality.(fnQ{i})),Q.(fnQ{i}),"AbsTol",1e-4)
+end
+
+end
+
+
+%% Check for Quality testing working correctly
+function test_braveheart_quality_regression(testCase)
+
+flags = struct;
+flags.vcg_calc_flag = 1;
+flags.lead_morph_flag = 1;
+flags.vcg_morph_flag = 1;
+
+% Standard Annoparams
+ap = aparam();
+
+% Disable PVC AND outlier removal or PVC will be removed
+ap.pvc_removal = 0;
+ap.outlier_removal = 0;
+
+% Standard Qualparams
+qp = qparam();
+
+% Process ECG
+ecg = ECG12(char('Example ECGs/example3.xml'), 'muse_xml');
+[~, ~, ~, q1, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~] = ...
+    batch_calc(ecg, [], [], [], [], [], ap, qp, 0, '', []);
+
+testCase.verifyEqual(double(q1.prob_value), 0.9978, "AbsTol", 1e-4)
+testCase.verifyEqual(double(q1.prob), 0, "AbsTol", 1e-7)
+
+% Change Annoparams
+ap.lowpass = 0;
+ap.highpass = 0;
+
+% Change Qualparams
+qp.prob = [0.05, 1];
+
+% Process ECG
+ecg = ECG12(char('Example ECGs/example2.xml'), 'muse_xml');
+[~, ~, ~, q1, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~] = ...
+    batch_calc(ecg, [], [], [], [], [], ap, qp, 0, '', []);
+
+testCase.verifyEqual(double(q1.prob_value), 0.0420, "AbsTol", 1e-4)
+testCase.verifyEqual(double(q1.prob), 1, "AbsTol", 1e-7)
+
+
+% Change Qualparams
+qp.prob = [0.03, 1];
+
+% Process ECG
+ecg = ECG12(char('Example ECGs/example2.xml'), 'muse_xml');
+[~, ~, ~, q1, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~] = ...
+    batch_calc(ecg, [], [], [], [], [], ap, qp, 0, '', []);
+
+testCase.verifyEqual(double(q1.prob), 0, "AbsTol", 1e-7)
+
 
 end

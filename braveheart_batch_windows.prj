@@ -8,13 +8,13 @@
       <file>${PROJECT_ROOT}\braveheart_batch_windows_resources\icon_24.png</file>
       <file>${PROJECT_ROOT}\braveheart_batch_windows_resources\icon_16.png</file>
     </param.icons>
-    <param.version>1.0.2</param.version>
+    <param.version>1.1.0</param.version>
     <param.authnamewatermark>Hans F. Stabenau and Jonathan W. Waks</param.authnamewatermark>
     <param.email>braveheart.ecg@gmail.com</param.email>
     <param.company />
     <param.summary />
     <param.description>BRAVHEART ECG/VCG Analysis Software -- Command Line Version
-Version 1.0.2</param.description>
+Version 1.1.0</param.description>
     <param.screenshot>${PROJECT_ROOT}\braveheart_splash.png</param.screenshot>
     <param.guid />
     <param.installpath.string>\braveheart_batch\</param.installpath.string>
@@ -37,8 +37,8 @@ Version 1.0.2</param.description>
     <param.package.mcr.name>MyAppInstaller_mcr</param.package.mcr.name>
     <param.no.mcr.name>MyAppInstaller_app</param.no.mcr.name>
     <param.windows.command.prompt>true</param.windows.command.prompt>
-    <param.create.log>false</param.create.log>
-    <param.log.file />
+    <param.create.log>true</param.create.log>
+    <param.log.file>logfile.txt</param.log.file>
     <param.native.matlab>false</param.native.matlab>
     <param.checkbox>false</param.checkbox>
     <param.example />
@@ -50,7 +50,7 @@ Version 1.0.2</param.description>
 	 varargin  input arguments 
  Description 
  	 BRAVHEART ECG/VCG Analysis Software -- Command Line Version
-Version 1.0.2</param.help.text>
+Version 1.1.0</param.help.text>
     <unset>
       <param.company />
       <param.summary />
@@ -74,8 +74,6 @@ Version 1.0.2</param.help.text>
       <param.package.mcr.name />
       <param.no.mcr.name />
       <param.windows.command.prompt />
-      <param.create.log />
-      <param.log.file />
       <param.native.matlab />
       <param.checkbox />
       <param.example />
@@ -89,6 +87,7 @@ Version 1.0.2</param.help.text>
       <file>${PROJECT_ROOT}\braveheart_variables.pdf</file>
       <file>${PROJECT_ROOT}\findHighpassLvl.m</file>
       <file>${PROJECT_ROOT}\load_cardiosoftxml.m</file>
+      <file>${PROJECT_ROOT}\Qualparams.m</file>
       <file>${PROJECT_ROOT}\resamp_loc.m</file>
     </fileset.resources>
     <fileset.package>
@@ -98,6 +97,7 @@ Version 1.0.2</param.help.text>
       <file>${PROJECT_ROOT}\ecg_formats.csv</file>
       <file>${PROJECT_ROOT}\Example ECGs</file>
       <file>${PROJECT_ROOT}\quality_presets.csv</file>
+      <file>${PROJECT_ROOT}\Qualparams.csv</file>
       <file>${PROJECT_ROOT}\search_presets.csv</file>
       <file>${PROJECT_ROOT}\transform_mats.csv</file>
     </fileset.package>
