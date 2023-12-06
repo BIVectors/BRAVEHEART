@@ -306,7 +306,7 @@ classdef Lead_Morphology
                 twave_max_loc = round((1000/freq)*(twave_max_loc - fidpts(1)));
 
                 % Calculate areas for 12L medians
-                [qrs_area, t_area, ~, ~, ~, ~] = mean_vector(signal, [], [], (1000/freq), fidpts(3), aps.baseline_flag);
+                [qrs_area, t_area] = mean_vector_leadmorph(signal, (1000/freq), fidpts, aps.baseline_flag);
 
                 
                 % Take median values for all beats to report (ignoring NaN)
