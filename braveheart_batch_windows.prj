@@ -89,6 +89,7 @@ Version 1.1.1</param.help.text>
       <file>${PROJECT_ROOT}\ecg_axis.m</file>
       <file>${PROJECT_ROOT}\findHighpassLvl.m</file>
       <file>${PROJECT_ROOT}\load_cardiosoftxml.m</file>
+      <file>${PROJECT_ROOT}\mean_vector_leadmorph.m</file>
       <file>${PROJECT_ROOT}\Qualparams.m</file>
       <file>${PROJECT_ROOT}\resamp_loc.m</file>
     </fileset.resources>
