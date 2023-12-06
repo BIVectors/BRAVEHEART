@@ -491,6 +491,34 @@ L = struct;
     L.VM_t_max_loc = 344;
     L.cornell_lvh_mv = 1.1228419975116;
     L.sokolow_lvh_mv = 2.54545067148279;
+    L.qrs_frontal_axis = 19.9753948024832;
+
+    % Areas for 12L ECG medians
+    L.L1_qrs_area = 28.1003931225416;
+    L.L1_t_area = 57.7329984008567;
+    L.L2_qrs_area = 20.1236377134321;
+    L.L2_t_area = 67.5366336288957;
+    L.L3_qrs_area = -8.49650205933498;
+    L.L3_t_area = 7.68491051003201;
+    L.avR_qrs_area = -24.1660746697623;
+    L.avR_t_area = -63.0986402735869; 
+    L.avL_qrs_area = 17.9052765743132;
+    L.avL_t_area = 24.1173865163576;
+    L.avF_qrs_area = 5.84870764377137;
+    L.avF_t_area = 38.8422127543986;
+    L.V1_qrs_area = -33.6031152912225;
+    L.V1_t_area = 11.9758640956197;
+    L.V2_qrs_area = -28.1786819538885;
+    L.V2_t_area = 146.661302903621;
+    L.V3_qrs_area = 16.9711967282594;
+    L.V3_t_area = 73.389313799091;
+    L.V4_qrs_area = 25.8717561277319;
+    L.V4_t_area = 69.889155832591;
+    L.V5_qrs_area = 29.1880080850187;
+    L.V5_t_area = 69.3436440589344;
+    L.V6_qrs_area = 26.0939491978212;
+    L.V6_t_area = 61.0392735800257;
+
 fnL = fieldnames(L);
 
 % Loop through Structure L and compare to same field name in lead_morph
@@ -2452,7 +2480,7 @@ testCase.verifyEqual(double(isfile('braveheart_variables.pdf')),1);
 testCase.verifyEqual(double(isfile('braveheart_equations.pdf')),1);
 testCase.verifyEqual(double(isfile('braveheart_userguide.pdf')),1);
 testCase.verifyEqual(double(isfile('braveheart_firstpass.pdf')),1);
-testCase.verifyEqual(double(isfile('angles.png')),1);
+testCase.verifyEqual(double(isfile('anglesfig.pdf')),1);
 testCase.verifyEqual(double(isfile('logo_t.bmp')),1);
 
 end

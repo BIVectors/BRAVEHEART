@@ -49,12 +49,26 @@ y = y - ((y(1)+y(end))/2);
 z = z - ((z(1)+z(end))/2);
 end
 
+if ~isempty(x)
+    XQ_mean = sample_time*trapz(x(1:qend));
+    XT_mean = sample_time*trapz(x(qend:end));
+else
+    XQ_mean = [];
+    XT_mean = [];
+end
 
-XQ_mean = sample_time*trapz(x(1:qend));
-XT_mean = sample_time*trapz(x(qend:end));
+if ~isempty(y)
+    YQ_mean = sample_time*trapz(y(1:qend));
+    YT_mean = sample_time*trapz(y(qend:end));
+else
+    YQ_mean = [];
+    YT_mean = [];
+end
 
-YQ_mean = sample_time*trapz(y(1:qend));
-YT_mean = sample_time*trapz(y(qend:end));
-
-ZQ_mean = sample_time*trapz(z(1:qend));
-ZT_mean = sample_time*trapz(z(qend:end));
+if ~isempty(z)
+    ZQ_mean = sample_time*trapz(z(1:qend));
+    ZT_mean = sample_time*trapz(z(qend:end));
+else
+    ZQ_mean = [];
+    ZT_mean = [];
+end

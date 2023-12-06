@@ -55,7 +55,7 @@ The software has been used for ECG/VCG analysis in the following publications:
 
 5. [A. N. Rosas Diaz, H. F. Stabenau, G. P. Hurtado, S. Warack, J. W. Waks, and A. Asnani. The spatial ventricular gradient is an independent predictor of anthracycline-associated cardiotoxicity. _JACC: Adv_, 2(2):100269, 2023.](https://www.jacc.org/doi/10.1016/j.jacadv.2023.100269)
 
-6. [H. F. Stabenau, A. Sau, D. B. Kramer, N. S. Peters, F. S. Ng, and J. W. Waks. Limits of the Spatial Ventricular Gradient and QRST Angles in Patients with Normal Electrocardiograms and No Known Cardiovascular Disease Stratified by Age, Sex, and Race. _J Cardiovasc Electrophysiol_, Sep 8, 2023, In Press.](https://doi.org/10.1111/jce.16062)
+6. [H. F. Stabenau, A. Sau, D. B. Kramer, N. S. Peters, F. S. Ng, and J. W. Waks. Limits of the Spatial Ventricular Gradient and QRST Angles in Patients with Normal Electrocardiograms and No Known Cardiovascular Disease Stratified by Age, Sex, and Race. _J Cardiovasc Electrophysiol_, 2023 Nov;34(11):2305-2315.](https://doi.org/10.1111/jce.16062)
 
 If you have used BRAVEHEART for your research project we would be happy to include a reference to your manuscript!
 
