@@ -1,7 +1,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % BRAVEHEART - Open source software for electrocardiographic and vectorcardiographic analysis
 % braveheart_gui.m -- BRAVEHEART GUI
-% Copyright 2016-2023 Hans F. Stabenau and Jonathan W. Waks
+% Copyright 2016-2024 Hans F. Stabenau and Jonathan W. Waks
 % 
 % Source code/executables: https://github.com/BIVectors/BRAVEHEART
 % Contact: braveheart.ecg@gmail.com
@@ -398,9 +398,9 @@ uiwait(msgbox(...
 {'\fontsize{14}\it\bf \color[rgb]{0.09,0.078,0.377}';...
 'BRAVE\color[rgb]{0.89,0.016,0.016}H\fontsize{11}EART';...
 '\fontsize{8}\rm\color{black}(Beth Israel Analysis of Vectors of the Heart)';...
-'Version 1.1.1' ; 
+'Version 1.1.2' ; 
 ' ' ;...
-'Copyright 2016-2023  Hans F. Stabeneau and Jonathan W. Waks' ;...
+'Copyright 2016-2024  Hans F. Stabeneau and Jonathan W. Waks' ;...
 ' ' ;...
 'Software updates available at http://github.com/BIVectors/BRAVEHEART' ;...
 ' ' ;...
@@ -426,9 +426,9 @@ uiwait(msgbox(...
 {'\fontsize{18}\it\bf \color[rgb]{0.09,0.078,0.377}';...
 'BRAVE\color[rgb]{0.89,0.016,0.016}H\fontsize{14}EART\fontsize{11}';...
 '\rm\color{black}(Beth Israel Analysis of Vectors of the Heart)';...
-'Version 1.1.1' ; 
+'Version 1.1.2' ; 
 ' ' ;...
-'Copyright 2016-2023  Hans F. Stabeneau and Jonathan W. Waks' ;...
+'Copyright 2016-2024  Hans F. Stabeneau and Jonathan W. Waks' ;...
 ' ' ;...
 'Software updates available at http://github.com/BIVectors/BRAVEHEART' ;...
 ' ' ;...
@@ -1971,7 +1971,7 @@ function orientation_button_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-open_ext_file('anglesfig.pdf');
+open_ext_pdf('anglesfig.pdf', 'other');
 
 
 % --- Executes on button press in frontal_view_button.
@@ -2097,7 +2097,7 @@ function fid_param_help_button_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-open_ext_file('braveheart_firstpass.pdf');
+open_ext_pdf('braveheart_firstpass.pdf', 'other');
 
 
 % --- Executes on button press in pushbutton46.
@@ -2857,7 +2857,7 @@ function pushbutton77_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-open_ext_file(fullfile(getcurrentdir(),'braveheart_userguide.pdf'));
+open_ext_pdf('braveheart_userguide.pdf', 'userguide');
 
 
 % --- Executes on selection change in preset_fidpts.
@@ -2905,7 +2905,7 @@ function equation_button_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-open_ext_file('braveheart_equations.pdf');
+open_ext_pdf('braveheart_equations.pdf', 'other');
 
 
 % --- Executes on button press in wavelet_filter_box_lf.
@@ -4564,7 +4564,7 @@ function norm_values_buton_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-winopen('normal_values.pdf');
+%winopen('normal_values.pdf');
 
 
 
@@ -4977,7 +4977,7 @@ function usermanual_button_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-open_ext_file(fullfile(getcurrentdir(),'braveheart_userguide.pdf'));
+open_ext_pdf('braveheart_userguide.pdf', 'userguide');
 
 
 % --- Executes on button press in errorlog_checkbox.
@@ -5199,4 +5199,4 @@ function variables_button_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-open_ext_file('braveheart_variables.pdf');
+open_ext_pdf('braveheart_variables.pdf', 'other');

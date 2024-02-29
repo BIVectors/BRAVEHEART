@@ -1,7 +1,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % BRAVEHEART - Open source software for electrocardiographic and vectorcardiographic analysis
 % load_philipsxml.m -- Load Philips XML format ECGs
-% Copyright 2016-2023 Hans F. Stabenau and Jonathan W. Waks
+% Copyright 2016-2024 Hans F. Stabenau and Jonathan W. Waks
 %
 % Code adapted from: github.com/sixlettervariables/sierra-ecg-tools
 % 
@@ -24,7 +24,13 @@
 
 function [hz, I, II, V1, V2, V3, V4, V5, V6] = load_philipsxml(filename)
 % Philips XML format
-
+% Note: There appears to be variations in the signals that are present in
+% different institution's ECGs - some are standard 10 second ECGs, while
+% others have 10 second ECG data and then 1 second calibration signal which
+% needs to be removed.  Have tried to make this load module as robust as
+% possible, but because we are not sure of all possibilities, there is a
+% possibility that your file may fail due to some assert statements which
+% we included to ensure you don't get any unexpected behaviors.
 
 % Deal with parsing issues with xmlread
 % Create Document Builder
@@ -32,19 +38,58 @@ builder = javax.xml.parsers.DocumentBuilderFactory.newInstance;
 % Disable dtd validation
 % builder.setFeature('http://apache.org/xml/features/nonvalidating/load-external-dtd', false);
 
+% Read in XML
 tree = xmlread(filename, builder);
 
-% Verify some details about the file
+% Get Hz
 hz = elgetn(tree, 'samplingrate');
-assert(hz==500);
 
-% get the mv per unit
+% Get the mv per unit (resolution)
 gain = elgetn(tree, 'resolution');
-assert(gain==5);    % Assume 5 uV/unit = 0.005 mV/unit
 gain = gain/1000;
 
-% convert from java string array
+% Convert from java string array
 data = char(elget(tree, 'parsedwaveforms'));
+
+% Get atrtributes out of XML parsedwaveforms tag and convert into structure
+num_attributes = tree.getElementsByTagName('parsedwaveforms').item(0).getAttributes.getLength;
+attribute_name = strings(num_attributes,1);
+attribute_value = strings(num_attributes,1);
+attr = struct;
+
+for i = 1:num_attributes
+    attribute_name(i) = tree.getElementsByTagName('parsedwaveforms').item(0).getAttributes.item(i-1).getName;
+    attribute_value(i) = tree.getElementsByTagName('parsedwaveforms').item(0).getAttributes.item(i-1).getValue;
+    attr.(attribute_name(i)) = attribute_value(i);
+end
+
+% Get lead labels in a string array
+leadLabels = split(attr.leadlabels);
+
+% Get length of signal in each lead (in ms)
+lead_duration = str2num(attr.durationperchannel);
+% Given that some ECGs are 10 sec and some are 11 sec with 10 sec of ECG
+% and 1 sec of calibration signal at end, we take the first 10 sec only.
+% If ECG is not 10 or 11 seconds, not sure what we have and will need to
+% expore the signals in more detail.
+assert(lead_duration == 10000 | lead_duration == 11000);
+
+% Get number of leads
+num_leads = str2num(attr.numberofleads);
+
+% Double check things are consistent
+
+% Hz for lead data should be same as Hz from XML tags
+assert(hz == str2num(attr.samplespersecond));
+
+% Gain for lead data should be same as gain from XML tags
+assert(gain*1000 == str2num(attr.resolution));    % Previously divided by 1000
+
+% This function assumes that data is stored in Base64 with XLI compression
+% If these are not true module won't work!
+assert(attr.compression == "XLI")
+assert(attr.dataencoding == "Base64")
+
 
 % following code courtesy of
 % https://github.com/sixlettervariables/sierra-ecg-tools/blob/master/examples/matlab/sierra_ecg.m
@@ -62,7 +107,7 @@ decoded = uint8(matlab.net.base64decode(data));
 %
 leads = {};
 leadOffset = 0;
-for n = 1:12
+for n = 1:num_leads
 
     % Extract chunk header
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -159,31 +204,47 @@ end
 
 % Convert leads cell array to numeric matrix
 leads = cell2mat(leads);
-% assume fixed size
-assert(size(leads, 1)==5500);
-% crop calibration spike
-leads = leads(1:5000,:);
+
+% Assume that each ECG is 10 seconds in duration with possible cal signal at END of signal 
+% Cal signal not always present, so will take the first 10 seconds and crop cal spike if exists
+
+% Force lead duration to be first 10 sec (10000 ms)
+lead_duration = 10000;
+
+% number of samples for each lead
+samp_each_lead = lead_duration*(hz/1000);
+leads = leads(1:samp_each_lead,:);
 
 % Multiply leads by gain
 leads = gain * leads;
 
-I = leads(:,1);
-II = leads(:, 2);
-V1 = leads(:, 7);
-V2 = leads(:, 8);
-V3 = leads(:, 9);
-V4 = leads(:, 10);
-V5 = leads(:, 11);
-V6 = leads(:, 12);
+% Parse out the leads in order into structure L.
+L = struct;
+for i = 1:num_leads
+    L.(leadLabels(i)) = leads(:,i);
+end
 
-
+% Doesnt seem like lead III, avR, avF, avL usually contain any useful
+% information, so will just pull out the independent leads and calculate
+% these other leads in ECG12.m.  When other unique leads like V3R or V7 are
+% included, these can be extracted from structure L and used as needed
+I = L.I;
+II = L.II;
+V1 = L.V1;
+V2 = L.V2;
+V3 = L.V3;
+V4 = L.V4;
+V5 = L.V5;
+V6 = L.V6;
 
 end
+
 
 % utility functions
 function r = elget(l, name)
 r = l.getElementsByTagName(name).item(0).getFirstChild.getNodeValue;
 end
+
 function r = elgetn(l, name)
 r = str2double(elget(l, name));
 end

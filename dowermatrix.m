@@ -1,7 +1,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % BRAVEHEART - Open source software for electrocardiographic and vectorcardiographic analysis
 % dowermatrix.m -- Inverse Dower matrix
-% Copyright 2016-2023 Hans F. Stabenau and Jonathan W. Waks
+% Copyright 2016-2024 Hans F. Stabenau and Jonathan W. Waks
 % 
 % Source code/executables: https://github.com/BIVectors/BRAVEHEART
 % Contact: braveheart.ecg@gmail.com
@@ -21,7 +21,9 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 function D = dowermatrix()
-% Create Inverse Dower matrix D
+
+% Create Inverse Dower matrix D (V1-V6, I, II)
+
 D = [ -0.172 -0.074  0.122  0.231 0.239 0.194  0.156 -0.010 ;
        0.057 -0.019 -0.106 -0.022 0.041 0.048 -0.227  0.887 ;
       -0.229 -0.310 -0.246 -0.063 0.055 0.108  0.022  0.102 ];

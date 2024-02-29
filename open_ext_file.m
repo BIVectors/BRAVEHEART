@@ -1,7 +1,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % BRAVEHEART - Open source software for electrocardiographic and vectorcardiographic analysis
 % open_ext_file.m -- Open an external file for PC or Mac
-% Copyright 2016-2023 Hans F. Stabenau and Jonathan W. Waks
+% Copyright 2016-2024 Hans F. Stabenau and Jonathan W. Waks
 % 
 % Source code/executables: https://github.com/BIVectors/BRAVEHEART
 % Contact: braveheart.ecg@gmail.com
@@ -24,7 +24,7 @@
 function open_ext_file(path)
 
 if ispc
-    winopen(path)
+    winopen(path);
 
 elseif ismac
     system([sprintf('open %s',path)]);

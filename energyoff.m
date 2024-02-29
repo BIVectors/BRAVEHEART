@@ -5,7 +5,7 @@
 % Automated Algorithm for J-Tpeak and Tpeak-Tend Assessment of Drug-Induced Proarrhythmia Risk
 % PLOS ONE | DOI:10.1371/journal.pone.0166925 December 30, 2016
 %
-% Copyright 2016-2023 Hans F. Stabenau and Jonathan W. Waks
+% Copyright 2016-2024 Hans F. Stabenau and Jonathan W. Waks
 % 
 % Source code/executables: https://github.com/BIVectors/BRAVEHEART
 % Contact: braveheart.ecg@gmail.com

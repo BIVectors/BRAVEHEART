@@ -1,7 +1,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % BRAVEHEART - Open source software for electrocardiographic and vectorcardiographic analysis
 % korsmatrix.m -- Kors matrix
-% Copyright 2016-2023 Hans F. Stabenau and Jonathan W. Waks
+% Copyright 2016-2024 Hans F. Stabenau and Jonathan W. Waks
 % 
 % Source code/executables: https://github.com/BIVectors/BRAVEHEART
 % Contact: braveheart.ecg@gmail.com
@@ -22,7 +22,7 @@
 
 function K = korsmatrix()
   
-% Create Kors matrix K
+% Create Kors matrix K (V1-V6, I, II)
 
 K = [ -0.13  0.05 -0.01  0.14   0.06  0.54   0.38  -0.07 ;
        0.06 -0.02 -0.05  0.06  -0.17  0.13  -0.07   0.93 ;

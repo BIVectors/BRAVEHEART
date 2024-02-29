@@ -1,7 +1,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % BRAVEHEART - Open source software for electrocardiographic and vectorcardiographic analysis
 % noise_reduction_figure.m -- Part of BRAVEHEART GUI - Figure assessing noise/filtering
-% Copyright 2016-2023 Hans F. Stabenau and Jonathan W. Waks
+% Copyright 2016-2024 Hans F. Stabenau and Jonathan W. Waks
 % 
 % Source code/executables: https://github.com/BIVectors/BRAVEHEART
 % Contact: braveheart.ecg@gmail.com
@@ -218,7 +218,7 @@ wavelet_level_lowpass = aps.wavelet_level_lowpass;
 
 % Thresholds for calling too much noise 
 % Read quality.csv
-A = readcell(fullfile(getcurrentdir(),'quality_presets.csv')); % read in data from .csv file
+A = readcell(fullfile(getcurrentdir(),'Qualparams.csv')); % read in data from .csv file
 miss = cellfun(@(x) any(isa(x,'missing')), A);
 A(miss) = {NaN};
 
