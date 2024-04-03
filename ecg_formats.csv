@@ -9,3 +9,7 @@ HL7 .xml,hl7_xml,.xml,500
 Unformatted .txt,unformatted,.txt,500
 Generic .csv,generic_csv,.csv,500
 Cardiosoft .xml,cardiosoft_xml,.xml,500
+SCP-ECG .scp,scp_ecg,.scp,500
+EDF .edf,edf,.edf,500
+Claris .txt,claris,.txt,2000
+Physionet .csv,physionet_csv,.csv,500

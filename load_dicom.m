@@ -98,31 +98,33 @@ for s = 1:num_leads
         L(s,i) = (((fullsignal(s + (12*(i-1)))) + baseline(s)) * (mcv_perunit(s)/1000 * correction(s))); 
     end
     % Read lead_str to determine which lead it is
-    switch string(lead_str(s))
-        case 'Lead I'
-              I = L(s,:);
-        case 'Lead II'
-              II = L(s,:);
-        case 'Lead III'
+    % Now will not break if the lead labels are not exactly "Lead x"
+    % But to avoid missing lead II and III had to change order of cases
+    switch true
+        case strfind(string(lead_str(s)),'Lead III') == 1
               III = L(s,:);
-        case 'Lead aVR'
+        case strfind(string(lead_str(s)),'Lead II') == 1
+              II = L(s,:);
+        case strfind(string(lead_str(s)),'Lead I') == 1
+              I = L(s,:);
+        case strfind(string(lead_str(s)),'Lead aVR') == 1
               avR = L(s,:);
-        case 'Lead aVL'
+        case strfind(string(lead_str(s)),'Lead aVL') == 1
               avL = L(s,:);
-        case 'Lead aVF'
+        case strfind(string(lead_str(s)),'Lead aVF') == 1
               avF = L(s,:);
 
-        case 'Lead V1'
+        case strfind(string(lead_str(s)),'Lead V1') == 1
               V1 = L(s,:);
-        case 'Lead V2'
+        case strfind(string(lead_str(s)),'Lead V2') == 1
               V2 = L(s,:);
-        case 'Lead V3'
+        case strfind(string(lead_str(s)),'Lead V3') == 1
               V3 = L(s,:);
-        case 'Lead V4'
+        case strfind(string(lead_str(s)),'Lead V4') == 1
               V4 = L(s,:);
-        case 'Lead V5'
+        case strfind(string(lead_str(s)),'Lead V5') == 1
               V5 = L(s,:);
-        case 'Lead V6'
+        case strfind(string(lead_str(s)),'Lead V6') == 1
               V6 = L(s,:);
     end
 end

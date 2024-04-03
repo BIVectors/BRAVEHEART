@@ -123,6 +123,22 @@ classdef ECG12
                    case 'cardiosoft_xml'
 						[obj.hz, obj.I, obj.II, obj.III, obj.avR, obj.avF, obj.avL, ...
                             obj.V1, obj.V2, obj.V3, obj.V4, obj.V5, obj.V6] = load_cardiosoftxml(filename);
+
+                    case 'scp_ecg'
+                        [obj.hz, obj.I, obj.II, obj.III, obj.avR, obj.avF, obj.avL, ...
+                            obj.V1, obj.V2, obj.V3, obj.V4, obj.V5, obj.V6] = load_scpecg(filename);
+
+                    case 'edf'
+                        [obj.hz, obj.I, obj.II, obj.III, obj.avR, obj.avF, obj.avL, ...
+                            obj.V1, obj.V2, obj.V3, obj.V4, obj.V5, obj.V6] = load_edf(filename);
+
+                    case 'claris'
+                        [obj.hz, obj.I, obj.II, obj.III, obj.avR, obj.avF, obj.avL, ...
+                            obj.V1, obj.V2, obj.V3, obj.V4, obj.V5, obj.V6] = load_claris(filename);
+
+                    case 'physionet_csv'
+                       [obj.hz, obj.I, obj.II, obj.III, obj.avR, obj.avF, obj.avL, ...
+                            obj.V1, obj.V2, obj.V3, obj.V4, obj.V5, obj.V6] = load_physionet_csv(filename);
 					
                     otherwise
                         error('unknown format %s', format);
@@ -184,7 +200,7 @@ classdef ECG12
 
         end
         
-        function c = write(obj, file, format, freq)
+        function c = write(obj, file, format)
             [fid, err] = fopen(file, 'w');
             if fid == -1; error('opening %s for writing: %s', file, err); end
             switch format   % Note: doesn't account for differences in gain between input and output formats
@@ -201,10 +217,10 @@ classdef ECG12
                 case 'unformatted'
                     u = 1;
                     c = fprintf(fid, '%f %f %f %f %f %f %f %f %f %f %f %f\n', ...
-                        [[freq; u*obj.I] [freq; u*obj.II]  [freq; u*obj.III] ...
-                        [freq; u*obj.avR] [freq; u*obj.avF] [freq; u*obj.avL] ...
-                        [freq; u*obj.V1]  [freq; u*obj.V2]  [freq; u*obj.V3] ...
-                        [freq; u*obj.V4]  [freq; u*obj.V5]  [freq; u*obj.V6]]'); 
+                        [[obj.hz; u*obj.I] [obj.hz; u*obj.II]  [obj.hz; u*obj.III] ...
+                        [obj.hz; u*obj.avR] [obj.hz; u*obj.avF] [obj.hz; u*obj.avL] ...
+                        [obj.hz; u*obj.V1]  [obj.hz; u*obj.V2]  [obj.hz; u*obj.V3] ...
+                        [obj.hz; u*obj.V4]  [obj.hz; u*obj.V5]  [obj.hz; u*obj.V6]]'); 
 %                 case 'muse_xml'   % Not ready yet
 %                     u = 205;   % 4.88 uV resolution
 %                     xml = write_muse_xml_file(obj);

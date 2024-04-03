@@ -85,7 +85,7 @@ else
         end
 
 
-        fullfile(getcurrentdir(),file)
+        fullfile(getcurrentdir(),file);
 
         open_ext_file(fullfile(getcurrentdir(),file));
     end
