@@ -38,7 +38,7 @@ assert(isa(ap, 'Annoparams'), 'Fourth argument is not an Annoparams class');
 if flags.vcg_calc_flag == 1
     try
         geh = VCG_Calc(median_vcg, medianbeat, ap);
-    catch
+    catch ME
         geh = VCG_Calc.allnan();
     end
 else
@@ -49,7 +49,7 @@ end
 if flags.lead_morph_flag == 1
     try
       lead_morph = Lead_Morphology(median_12L, median_vcg, medianbeat, ap);
-    catch
+    catch ME
       lead_morph = Lead_Morphology.allnan();
     end
 else

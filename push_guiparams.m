@@ -186,7 +186,8 @@ function push_guiparams(aps, hObject, eventdata, handles)
     set(handles.rmse_thresh_txt, 'String', aps.rmse_pvcthresh);
     
 % Blanking samples for speed graph
-    set(handles.speed_blank_txt, 'String', aps.blanking_samples);
+    set(handles.speed_blank_txt, 'String', aps.blanking_window_q);
+    set(handles.speed_t_blank_txt, 'String', aps.blanking_window_t);
     
 % Annotation parameters    
     set(handles.autocl_checkbox, 'Value', aps.autoMF);

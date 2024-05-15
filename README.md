@@ -57,6 +57,8 @@ The software has been used for ECG/VCG analysis in the following publications:
 
 6. [H. F. Stabenau, A. Sau, D. B. Kramer, N. S. Peters, F. S. Ng, and J. W. Waks. Limits of the Spatial Ventricular Gradient and QRST Angles in Patients with Normal Electrocardiograms and No Known Cardiovascular Disease Stratified by Age, Sex, and Race. _J Cardiovasc Electrophysiol_, 2023 Nov;34(11):2305-2315.](https://doi.org/10.1111/jce.16062)
 
+7. [N. Isaza, H. F. Stabenau, D. B. Kramer, A. Sau, P. Tung, T. R. Maher, A. H. Locke, P. Zimetbaum, A. d’Avila, N. S. Peters, L. G. Tereshchenko, F. S. Ng, A. E. Buxton, and J. W. Waks. The Spatial Ventricular Gradient is Associated with Inducibility of Ventricular Arrhythmias During Electrophysiology Study. _Heart Rhythm_, 2024 In Press.](https://doi.org/10.1016/j.hrthm.2024.05.005)
+
 If you have used BRAVEHEART for your research project we would be happy to include a reference to your manuscript!
 
 ## Contributing

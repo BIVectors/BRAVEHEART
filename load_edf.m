@@ -26,6 +26,29 @@ data = edfread(filename);
 info = edfinfo(filename);
 
 labels = lower(info.SignalLabels);
+%labels_old = labels;
+
+true_labels = {'iii', 'ii', 'i', 'avr', 'avl', 'avf', 'v1', 'v2', 'v3', 'v4', 'v5', 'v6'};
+
+% Need to clean up some variations in ECG lead labeling
+% Some ECGs just use the lead names, but other ECGs have more descriptive
+% labels that mess up using structures to parse the data
+
+% Check if labels are more than 3 characters (so not just lead names)
+for i = 1:length(labels)
+    if length(labels{i}) > 3
+        for j = 1:length(true_labels)
+             if ~isempty(strfind(string(labels{i}),true_labels{j}))
+                labels{i} = true_labels{j};
+                break;
+             end
+        end
+
+    end
+
+end
+
+
 num_leads = info.NumSignals;
 
 gain_str = [];

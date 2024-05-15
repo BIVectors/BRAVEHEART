@@ -134,7 +134,8 @@ aps = Annoparams;       % Declare as Annoparams class (will pull in default valu
     aps.keep_pvc =  get(handles.keeppvc_button,'Value');
     
 % Blanking samples for speed graph
-    aps.blanking_samples = str2num(get(handles.speed_blank_txt, 'String'));
+    aps.blanking_window_q = str2num(get(handles.speed_blank_txt, 'String'));
+    aps.blanking_window_t = str2num(get(handles.speed_t_blank_txt, 'String'));
     
 % Annotation parameters    
     aps.autoMF = logical(get(handles.autocl_checkbox, 'Value'));

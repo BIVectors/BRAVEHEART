@@ -95,7 +95,8 @@ classdef Annoparams
 		keep_pvc = 0;                    % Set = 1 if PVC removal removes native QRS instead of PVCs
 		
 		% Speed calculations
-		blanking_samples = 0;            % Blanking window (in samples) to ignore in speed calculations
+		blanking_window_q = 0;           % Blanking window after QRS onset (in ms) to ignore in speed calcs
+        blanking_window_t = 20;          % Blanking window after TW onset (in ms) to ignore in TW speed calcs
         
 		% Misc
 		debug = 0;                       % Debug mode (generates debug annotation figures)

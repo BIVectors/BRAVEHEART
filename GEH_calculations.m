@@ -31,8 +31,13 @@ function [svg_x, svg_y, svg_z, svg_area_mag, sai_x, sai_y, sai_z, sai_qrst, svg_
     speed_max, speed_min, speed_med, time_speed_max, time_speed_min,...
     speed_qrs_max, speed_qrs_min, speed_qrs_med, time_speed_qrs_max, time_speed_qrs_min,...
     speed_t_max, speed_t_min, speed_t_med, time_speed_t_max, time_speed_t_min, svg_area_qrs_peak_angle,...
-    qrst_distance_area, qrst_distance_peak...
-    ] = GEH_calculations(x, y, z, vm, sample_time, qend, baseline_flag, blanking_samples, origin_flag)
+    qrst_distance_area, qrst_distance_peak, VMQ_area, VMT_area, sti_qrst, sti_qrs, sti_t...
+    ] = GEH_calculations(x, y, z, vm, sample_time, qend, aps)
+
+baseline_flag = aps.baseline_flag; 
+blanking_window_q = round(aps.blanking_window_q/sample_time);     % Convert ms to samples
+blanking_window_t = round(aps.blanking_window_t/sample_time);     % Convert ms to samples
+origin_flag = aps.origin_flag;
 
 % SAI QRST
 % Need to use x, y, z BEFORE shifted to origin
@@ -122,9 +127,7 @@ qrst_angle_area_frontal = rad2deg(atan2(norm(cross(VectorQmean_frontal,VectorTme
 % (defined by main axis of QRS and T loops)
 % Define this as SVG-SVG angle
 
-
 svg_svg_angle = rad2deg(atan2(norm(cross(SVG_Mean_Vector,SVG_Max_Vector)),dot(SVG_Mean_Vector,SVG_Max_Vector)));
-
 
 
 %%%% SPEEDS of entire QRST, QRS loop, and T loop
@@ -142,32 +145,68 @@ svg_svg_angle = rad2deg(atan2(norm(cross(SVG_Mean_Vector,SVG_Max_Vector)),dot(SV
 %Freq is 1000 hz, then speed_3d(3) is the speed between sample 2 (time
 %point 1 = 1 ms) and sample 3 (time point 2 = 2 ms) and is equal to 1.5 ms.
 
- speed_3d=zeros(1,length(x));
+speed_3d=zeros(1,length(x));
 
   for i=1:length(speed_3d)-1
         speed_3d(i+1)= sqrt((x(i+1)-x(i)).^2+(y(i+1)-y(i)).^2+(z(i+1)-z(i)).^2)/sample_time; 
   end
 
-  speed_3d(1)=nan; %sample 1 is meaningless and is always 0
+speed_3d(1)=nan; %sample 1 is meaningless and is always 0
 
-  speed_max = max(speed_3d(blanking_samples+1:end));
-  speed_min = min(speed_3d(blanking_samples+1:end));
-  speed_med = median(speed_3d(blanking_samples+1:end),'omitnan');
+% Get speed data using new function and save to structures
+[speed_qrst_max_struct, speed_qrst_min_struct, speed_qrst_median_struct] = min_max_locs(speed_3d, 1, length(speed_3d), blanking_window_q, 1000/sample_time);  
+[speed_qrs_max_struct, speed_qrs_min_struct, speed_qrs_median_struct] = min_max_locs(speed_3d, 1, qend, blanking_window_q, 1000/sample_time);  
+[speed_t_max_struct, speed_t_min_struct, speed_t_median_struct] = min_max_locs(speed_3d, qend, length(speed_3d), blanking_window_t, 1000/sample_time); 
 
-  speed_qrs_max = max(speed_3d(blanking_samples+1:qend));
-  speed_qrs_min = min(speed_3d(blanking_samples+1:qend));
-  speed_qrs_med = median(speed_3d(blanking_samples+1:qend),'omitnan');
+speed_max = speed_qrst_max_struct.val;
+speed_min = speed_qrst_min_struct.val;
+speed_med = speed_qrst_median_struct;
 
-  speed_t_max = max(speed_3d(qend:end));
-  speed_t_min = min(speed_3d(qend:end));
-  speed_t_med = median(speed_3d(qend:end),'omitnan');
+speed_qrs_max = speed_qrs_max_struct.val;
+speed_qrs_min = speed_qrs_min_struct.val;
+speed_qrs_med = speed_qrs_median_struct;
 
-  time_speed_max = 0.5*sample_time * ((find(speed_3d(blanking_samples+1:end) == speed_max)-1) + blanking_samples + (find(speed_3d(blanking_samples+1:end) == speed_max)-2) + blanking_samples);  %takes average between point n and n-1 - answer in msec
-  time_speed_min = 0.5*sample_time * ((find(speed_3d(blanking_samples+1:end) == speed_min)-1) + blanking_samples + (find(speed_3d(blanking_samples+1:end) == speed_min)-2) + blanking_samples);
+speed_t_max = speed_t_max_struct.val;
+speed_t_min = speed_t_min_struct.val;
+speed_t_med = speed_t_median_struct;
 
-  time_speed_qrs_max = 0.5*sample_time * ((find(speed_3d(blanking_samples+1:qend) == speed_qrs_max)-1) + blanking_samples + (find(speed_3d(blanking_samples+1:qend) == speed_qrs_max)-2) + blanking_samples);  %takes average between point n and n-1 - answer in msec
-  time_speed_qrs_min = 0.5*sample_time * ((find(speed_3d(blanking_samples+1:qend) == speed_qrs_min)-1) + blanking_samples + (find(speed_3d(blanking_samples+1:qend) == speed_qrs_min)-2) + blanking_samples); 
+time_speed_max = speed_qrst_max_struct.loc_time;
+time_speed_min = speed_qrst_min_struct.loc_time;
 
-  time_speed_t_max = ((find(speed_3d(qend:end) == speed_t_max)+qend-2) + (find(speed_3d(qend:end) == speed_t_max)+qend-3))*0.5*sample_time; %takes average between point n and n-1 - answer in msec
-  time_speed_t_min = ((find(speed_3d(qend:end) == speed_t_min)+qend-2) + (find(speed_3d(qend:end) == speed_t_min)+qend-3))*0.5*sample_time;
+time_speed_qrs_max = speed_qrs_max_struct.loc_time;
+time_speed_qrs_min = speed_qrs_min_struct.loc_time;
+
+time_speed_t_max = speed_t_max_struct.loc_time;
+time_speed_t_min = speed_t_min_struct.loc_time;
+
+
+  % Speed-time integral (STI) -- Area under speed_3d -- Have to ignore sample 1 because its a NaN.
+  % Voltage-time integral (VTI) -- Area under VM
+  % Note: speed_3d was already corrected for sample_time when it was created
+
+  % Divide into QRS and T wave
+  speed_qrst = speed_3d;
+  speed_qrs = speed_3d(1:qend);
+  speed_t = speed_3d(qend:end);
+
+  % Remove NaN from speed (sample 1)
+  speed_qrst = speed_qrst(~isnan(speed_qrst));
+  speed_qrs = speed_qrs(~isnan(speed_qrs));
+  speed_t = speed_t(~isnan(speed_t));
+
+
+  % Calculate areas
+  % Speed does not need to account for sample_time because was already done
+  % when speed_3d was created above, but VTI's do need to be multiplied by
+  % sample_time.  Using same naming convention for VTIs as with SVG
+  % components
+ 
+  sti_qrst = trapz(speed_qrst);
+  sti_qrs = trapz(speed_qrs);
+  sti_t = trapz(speed_t);
+
+  % VM Voltage-time Integrals
+  % VM_area is the same as sai_vm since VM is always positive
+  [~, VMQ_area, VMT_area] = vm_integral(vm, qend, sample_time, baseline_flag);
+
 

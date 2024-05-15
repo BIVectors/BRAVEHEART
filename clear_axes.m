@@ -38,3 +38,5 @@ handles = guidata(hObject);
     cla(handles.face_axis)
     cla(handles.selectedbeat_axis)
     cla(handles.vcg_morph_axis)
+    cla(handles.speed_axis)
+    cla(handles.speed_axis,'reset')

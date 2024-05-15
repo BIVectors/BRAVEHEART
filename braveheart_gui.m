@@ -44,7 +44,7 @@ function varargout = braveheart_gui(varargin)
 
 % Edit the above text to modify the response to help braveheart_gui
 
-% Last Modified by GUIDE v2.5 20-Mar-2023 21:51:42
+% Last Modified by GUIDE v2.5 07-May-2024 12:15:33
 
 % Update the current L&F for mac button issues...
 % Windows will use the normal Windows theme
@@ -398,7 +398,7 @@ uiwait(msgbox(...
 {'\fontsize{14}\it\bf \color[rgb]{0.09,0.078,0.377}';...
 'BRAVE\color[rgb]{0.89,0.016,0.016}H\fontsize{11}EART';...
 '\fontsize{8}\rm\color{black}(Beth Israel Analysis of Vectors of the Heart)';...
-'Version 1.1.3' ; 
+'Version 1.2.0' ; 
 ' ' ;...
 'Copyright 2016-2024  Hans F. Stabeneau and Jonathan W. Waks' ;...
 ' ' ;...
@@ -426,7 +426,7 @@ uiwait(msgbox(...
 {'\fontsize{18}\it\bf \color[rgb]{0.09,0.078,0.377}';...
 'BRAVE\color[rgb]{0.89,0.016,0.016}H\fontsize{14}EART\fontsize{11}';...
 '\rm\color{black}(Beth Israel Analysis of Vectors of the Heart)';...
-'Version 1.1.3' ; 
+'Version 1.2.0' ; 
 ' ' ;...
 'Copyright 2016-2024  Hans F. Stabeneau and Jonathan W. Waks' ;...
 ' ' ;...
@@ -2567,21 +2567,18 @@ function speed_graph_button_Callback(hObject, eventdata, handles)
 % clear speed_axis
 cla(handles.speed_axis);
 
-if get(handles.save_speedfig_checkbox, 'Value') == 1
-    save_flag = 1;
-else
-    save_flag = 0;
-end
-
+save_flag = get(handles.save_speedfig_checkbox,'Value');
 accel_flag = get(handles.accel_box,'Value');
+legend_flag = get(handles.speed_legend_checkbox,'Value');
 
 filename = handles.filename_short;
 save_folder = get(handles.save_dir_txt,'String');
 filename_short = strcat(filename(1:end-4),'_speed.png');
 speed_filename = fullfile(save_folder,filename_short);
 
-speed_graph_gui(hObject, eventdata, handles, speed_filename, [], 0, str2num(get(handles.speed_blank_txt, 'String')), accel_flag);
+popout = 0;
 
+speed_graph_gui(hObject, eventdata, handles, speed_filename, save_flag, 0, str2num(get(handles.speed_blank_txt, 'String')), str2num(get(handles.speed_t_blank_txt, 'String')), accel_flag, legend_flag, popout);
 
 
 % --- Executes on button press in tab3_button.
@@ -3060,7 +3057,10 @@ function reload_Callback(hObject, eventdata, handles)
 % load frequency from txt box in GUI and store in handles
 
 % Don't do anything if there is no previously loaded file
-if ~isempty(get(handles.filename_txt, 'String'));
+if ~isempty(get(handles.filename_txt, 'String'))
+
+% Clear axes
+clear_axes(hObject, eventdata, handles);
     
 % Take the file from the filename_txt textbox -- allows manual editing 
 filename = get(handles.filename_txt, 'String');
@@ -3431,7 +3431,9 @@ function refresh_speed_button_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
+% Recalculates variables and updates the speed graph
 calculate_Callback(hObject, eventdata, handles)
+speed_graph_button_Callback(hObject, eventdata, handles)
  
 
 % --- Executes on button press in accel_box.
@@ -4532,29 +4534,18 @@ function speedgraph_popout_button_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-if get(handles.save_speedfig_checkbox, 'Value') == 1
-    save_flag = 1;
-else
-    save_flag = 0;
-end
-
+save_flag = get(handles.save_speedfig_checkbox,'Value');
 accel_flag = get(handles.accel_box,'Value');
+legend_flag = get(handles.speed_legend_checkbox,'Value');
 
 filename = handles.filename_short;
 save_folder = get(handles.save_dir_txt,'String');
 filename_short = strcat(filename(1:end-4),'_speed.png');
 speed_filename = fullfile(save_folder,filename_short);
 
-speed_graph(hObject, eventdata, handles, speed_filename, 0, 0, str2num(get(handles.speed_blank_txt, 'String')), accel_flag);
+popout = 1;
 
-filename = handles.filename_short;
-save_folder = get(handles.save_dir_txt,'String');
-
-% Save as png if save checkbox selected
-if save_flag == 1
-    print(gcf,'-dpng',speed_filename,'-r600');
-else
-end
+speed_graph_gui(hObject, eventdata, handles, speed_filename, save_flag, 0, str2num(get(handles.speed_blank_txt, 'String')), str2num(get(handles.speed_t_blank_txt, 'String')), accel_flag, legend_flag, popout);
 
 
 
@@ -5200,3 +5191,35 @@ function variables_button_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 open_ext_pdf('braveheart_variables.pdf', 'other');
+
+
+
+function speed_t_blank_txt_Callback(hObject, eventdata, handles)
+% hObject    handle to speed_t_blank_txt (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of speed_t_blank_txt as text
+%        str2double(get(hObject,'String')) returns contents of speed_t_blank_txt as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function speed_t_blank_txt_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to speed_t_blank_txt (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on button press in speed_legend_checkbox.
+function speed_legend_checkbox_Callback(hObject, eventdata, handles)
+% hObject    handle to speed_legend_checkbox (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of speed_legend_checkbox

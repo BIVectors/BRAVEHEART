@@ -251,7 +251,7 @@ if save_figures
     a = get(gca,'XTickLabel');
     set(gca,'XTickLabel',a,'fontsize',6)
     ylabel('mV')
-    title_txt = sprintf('%s', title_name);
+    title_txt = sprintf('%s', char(title_name));
     title(title_txt,'Interpreter','none','fontsize',13)
     
     legend([ppvm ppx ppy ppz ppqon ppqoff pptoff ppdot]) % Add partial legend to figure

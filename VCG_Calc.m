@@ -147,7 +147,16 @@ classdef VCG_Calc
 		vm_tpeak_tend_abs_diff
 		vm_tpeak_tend_ratio
 		vm_tpeak_tend_jt_ratio
-		
+
+        % VM Voltage-time Integrals
+        VMQ_area            % Area under VM QRS Complex
+        VMT_area            % Area under VM T Wave
+
+        % Speed-time Integrals
+		sti_qrst            % Speed-time integral QRST complex
+        sti_qrs             % Speed-time integral QRS complex
+        sti_t               % Speed-time integral T wave
+
 		% QRS/QT intervals (in ms)
 		qrs_int
 		qt_int
@@ -193,8 +202,8 @@ classdef VCG_Calc
 				obj.speed_max, obj.speed_min, obj.speed_med, obj.time_speed_max, obj.time_speed_min, ...
 				obj.speed_qrs_max, obj.speed_qrs_min, obj.speed_qrs_med, obj.time_speed_qrs_max, obj.time_speed_qrs_min, ...
 				obj.speed_t_max, obj.speed_t_min, obj.speed_t_med, obj.time_speed_t_max, obj.time_speed_t_min, obj.svg_area_qrs_peak_angle, ...
-				obj.qrst_distance_area, obj.qrst_distance_peak...
-				] =  GEH_calculations(v_cropped.X, v_cropped.Y, v_cropped.Z, v_cropped.VM, v_cropped.sample_time(), qend, aps.baseline_flag, aps.blanking_samples, aps.origin_flag);
+				obj.qrst_distance_area, obj.qrst_distance_peak, obj.VMQ_area, obj.VMT_area, obj.sti_qrst, obj.sti_qrs, obj.sti_t...
+				] =  GEH_calculations(v_cropped.X, v_cropped.Y, v_cropped.Z, v_cropped.VM, v_cropped.sample_time(), qend, aps);
 			
 			obj.vcg_length_qrs = curve_length(v_cropped.X, v_cropped.Y, v_cropped.Z, 1, qend);
 			obj.vcg_length_t = curve_length(v_cropped.X, v_cropped.Y, v_cropped.Z, qend, length(v_cropped.X));

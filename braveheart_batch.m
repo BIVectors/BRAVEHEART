@@ -292,11 +292,13 @@ end
 
 P = 1;      % Parallel iterating counter
 
- parfor (i = 1:num_files, workers)
+parfor (i = 1:num_files, workers)
     note = output_note;
 	
     % Parse out filename and extension -- don't want extension in file/figure names
     [~, basename, fext] = fileparts(file_list{i});
+    basename = char(basename);
+    fext = char(fext);
 	
 	try   % To deal with if ECG wont load due to some error in formatting
 		
@@ -311,7 +313,7 @@ P = 1;      % Parallel iterating counter
 		apfile = strcat(fullfile(orig_directory, basename), anno_ext);
 		
         % If the apfile exists, parse out the beats and anno parameters
-		if exist(apfile, 'file')
+		if exist(char(apfile), 'file')
 			[ap, beats] = Annoparams(apfile);
 			ap.debug = false;
             ap.outlier_removal = 0;      % Dont want to remove PVCs and outliers automatically, because this has been done manually already
@@ -362,8 +364,8 @@ P = 1;      % Parallel iterating counter
 		quality_mat{i} = quality;
 		
         % Figure file names/path for saving
-		fig_filename = strcat(basename,'.png');
-		fig_full_path = fullfile(fig_full_directory, fig_filename);
+		fig_filename = char(strcat(basename,'.png'));
+		fig_full_path = char(fullfile(fig_full_directory, fig_filename));
 		
         % If some quality object was flagged, will add the ECG/figure to
         % the check ECG list
@@ -403,8 +405,8 @@ P = 1;      % Parallel iterating counter
 		end
 		
 		if save_annotations
-			annotation_filename = strcat(basename, anno_ext);
-			annotation_full_path = fullfile(annotation_directory, annotation_filename);
+			annotation_filename = char(strcat(basename, anno_ext));
+			annotation_full_path = char(fullfile(annotation_directory, annotation_filename));
 			ap.to_file(beats, annotation_full_path);
 		end
 

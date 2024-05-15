@@ -34,5 +34,6 @@ pvc_removal,1
 pvcthresh,0.95
 rmse_pvcthresh,0.1
 keep_pvc,0
-blanking_samples,0
+blanking_window_q,0
+blanking_window_t,20
 debug,0

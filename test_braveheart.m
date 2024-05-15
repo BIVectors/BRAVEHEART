@@ -84,7 +84,8 @@ function ap = aparam()
     ap.pvcthresh = 0.95;                % Cross correlation threshold for PVC removal
     ap.rmse_pvcthresh = 0.1;            % Normalized RMSE threshold for PVC removal
     ap.keep_pvc = 0;                    % Set = 1 if PVC removal removes native QRS instead of PVCs
-    ap.blanking_samples = 0;            % Blanking window (in samples) to ignore in speed calculations
+    ap.blanking_window_q = 0;           % QRS blanking window (in samples) to ignore in speed calculations
+    ap.blanking_window_t = 0;           % T wave blanking window (in samples) to ignore in speed calculations - different from usual value of 20
     ap.debug = 0;                       % Debug mode (generates debug annotation figures)
 end
 
@@ -2666,6 +2667,112 @@ ecg = ECG12(char('Example ECGs/example2.xml'), 'muse_xml');
     batch_calc(ecg, [], [], [], [], [], ap, qp, 0, '', []);
 
 testCase.verifyEqual(double(q1.prob), 0, "AbsTol", 1e-7)
+
+
+end
+
+
+%% Check output of speed calculations when adjust blanking windows
+% NOTE that this results in outliers being removed
+function test_braveheart_ex1_speed_blanking(testCase)
+
+flags = struct;
+flags.vcg_calc_flag = 1;
+flags.lead_morph_flag = 0;
+flags.vcg_morph_flag = 0;
+
+ecg = ECG12(char('Example ECGs/example1.xml'), 'muse_xml');
+
+% Annoparams
+ap = aparam(); 
+ap.wavelet_level_lowpass = 1;   % Since changed from 2 to 1 when methods published
+ap.blanking_window_q = 80;
+ap.blanking_window_t = 20;
+
+% Standard Qualparams
+qp = qparam();
+
+% Process ECG
+[~, ~, ~, ~, ~, medianvcg1, ~, median_12L, ~, medianbeat, ...
+    ~, ~, ~, ~, ~, ~, ~] = ...
+    batch_calc(ecg, [], [], [], [], [], ap, qp, 0, 'example1.xml', []);
+
+% Calculate results
+[geh, ~, ~] = module_output(median_12L, medianvcg1, medianbeat, ap, flags);
+
+% Verified results will be put into a structure because cant add to a
+% VCG_Calc class (read only)
+
+V = struct;
+    V.speed_max = 0.0366327526445943;
+    V.speed_min = 0.000374593132152242;
+    V.speed_med = 0.00361815220549066;
+    V.time_speed_max = 79;
+    V.time_speed_min = 121;
+    V.speed_qrs_max = 0.0366327526445943;
+    V.speed_qrs_min = 0.00502491058588775; 
+    V.speed_qrs_med = 0.0111276043861322;
+    V.time_speed_qrs_max = 79;
+    V.time_speed_qrs_min = 91;
+    V.speed_t_max = 0.0135865607981169;
+    V.speed_t_min = 0.000374593132152242;
+    V.speed_t_med = 0.00347456446449969;
+    V.time_speed_t_max = 377;
+    V.time_speed_t_min = 121;
+    V.sti_qrst = 3.19664015580616;
+    V.sti_qrs = 2.36660596366007;
+    V.sti_t = 0.830034192146089;
+    V.VMQ_area = 54.7173873343673;
+    V.VMT_area = 93.7383885888455;
+fnV = fieldnames(V);
+
+
+for i = 1:length(fnV)
+    testCase.verifyEqual(geh.(fnV{i}),V.(fnV{i}),"AbsTol",1e-7)
+end
+
+% Adjust blanking windows
+ap.blanking_window_q = 5;
+ap.blanking_window_t = 320;
+
+% Process ECG
+[~, ~, ~, ~, ~, medianvcg1, ~, median_12L, ~, medianbeat, ...
+    ~, ~, ~, ~, ~, ~, ~] = ...
+    batch_calc(ecg, [], [], [], [], [], ap, qp, 0, 'example1.xml', []);
+
+% Calculate results
+[geh, ~, ~] = module_output(median_12L, medianvcg1, medianbeat, ap, flags);
+
+% Verified results will be put into a structure because cant add to a
+% VCG_Calc class (read only)
+
+V = struct;
+    V.speed_max = 0.15911614274499;
+    V.speed_min = 0.000374593132152242;
+    V.speed_med = 0.0050242698821452;
+    V.time_speed_max = 55;
+    V.time_speed_min = 121;
+    V.speed_qrs_max = 0.15911614274499;
+    V.speed_qrs_min = 0.00502491058588775; 
+    V.speed_qrs_med = 0.0427882494112749;
+    V.time_speed_qrs_max = 55;
+    V.time_speed_qrs_min = 91;
+    V.speed_t_max = 0.00771772855606161;
+    V.speed_t_min = 0.00201357814832003;
+    V.speed_t_med = 0.00404475511636745;
+    V.time_speed_t_max = 413;
+    V.time_speed_t_min = 443;
+    V.sti_qrst = 3.19664015580616;
+    V.sti_qrs = 2.36660596366007;
+    V.sti_t = 0.830034192146089;
+    V.VMQ_area = 54.7173873343673;
+    V.VMT_area = 93.7383885888455;
+fnV = fieldnames(V);
+
+
+for i = 1:length(fnV)
+    testCase.verifyEqual(geh.(fnV{i}),V.(fnV{i}),"AbsTol",1e-7)
+end
 
 
 end

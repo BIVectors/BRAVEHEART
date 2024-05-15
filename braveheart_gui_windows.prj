@@ -1,5 +1,5 @@
 <deployment-project plugin="plugin.ezdeploy" plugin-version="1.0">
-  <configuration build-checksum="3635582981" file="C:\Users\jwaks\Documents\GitHub\BRAVEHEART_DEV\braveheart_gui_windows.prj" location="C:\Users\jwaks\Documents\GitHub\BRAVEHEART_DEV" name="braveheart_gui_windows" preferred-package-location="C:\Users\jwaks\Documents\GitHub\BRAVEHEART_DEV\braveheart_gui_windows\for_redistribution" preferred-package-type="package.type.exe" target="target.ezdeploy.standalone" target-name="Application Compiler">
+  <configuration build-checksum="2196503333" file="C:\Users\jwaks\Documents\GitHub\BRAVEHEART_DEV\braveheart_gui_windows.prj" location="C:\Users\jwaks\Documents\GitHub\BRAVEHEART_DEV" name="braveheart_gui_windows" preferred-package-location="C:\Users\jwaks\Documents\GitHub\BRAVEHEART_DEV\braveheart_gui_windows\for_redistribution" preferred-package-type="package.type.exe" target="target.ezdeploy.standalone" target-name="Application Compiler">
     <param.appname>braveheart_gui</param.appname>
     <param.icon>${PROJECT_ROOT}\braveheart_gui_windows_resources\icon.ico</param.icon>
     <param.icons>
@@ -8,13 +8,13 @@
       <file>${PROJECT_ROOT}\braveheart_gui_windows_resources\icon_24.png</file>
       <file>${PROJECT_ROOT}\braveheart_gui_windows_resources\icon_16.png</file>
     </param.icons>
-    <param.version>1.1.3</param.version>
+    <param.version>1.2.0</param.version>
     <param.authnamewatermark>Hans F. Stabenau and Jonathan W. Waks</param.authnamewatermark>
     <param.email>bravheart.ecg@gmail.com</param.email>
     <param.company />
     <param.summary />
     <param.description>BRAVEHEART ECG/VCG Analysis Software -- GUI Version
-Version 1.1.3</param.description>
+Version 1.2.0</param.description>
     <param.screenshot>${PROJECT_ROOT}\braveheart_splash.png</param.screenshot>
     <param.guid />
     <param.installpath.string>\braveheart_gui\</param.installpath.string>
@@ -50,7 +50,7 @@ Version 1.1.3</param.description>
 	 varargin  input arguments 
  Description 
  	 BRAVEHEART ECG/VCG Analysis Software -- GUI Version
-Version 1.1.3</param.help.text>
+Version 1.2.0</param.help.text>
     <unset>
       <param.company />
       <param.summary />
@@ -89,7 +89,6 @@ Version 1.1.3</param.help.text>
       <file>${PROJECT_ROOT}\braveheart_firstpass.pdf</file>
       <file>${PROJECT_ROOT}\braveheart_gui.fig</file>
       <file>${PROJECT_ROOT}\braveheart_gui.m</file>
-      <file>${PROJECT_ROOT}\braveheart_userguide.pdf</file>
       <file>${PROJECT_ROOT}\braveheart_variables.pdf</file>
       <file>${PROJECT_ROOT}\ECG12.m</file>
       <file>${PROJECT_ROOT}\ecg_axis.m</file>
@@ -195,6 +194,7 @@ Version 1.1.3</param.help.text>
       <file>${PROJECT_ROOT}\medianbeat.m</file>
       <file>${PROJECT_ROOT}\medianloc.m</file>
       <file>${PROJECT_ROOT}\middlethird.m</file>
+      <file>${PROJECT_ROOT}\min_max_locs.m</file>
       <file>${PROJECT_ROOT}\minQRSTwindow.m</file>
       <file>${PROJECT_ROOT}\mirror.m</file>
       <file>${PROJECT_ROOT}\missing_leads.m</file>
@@ -232,7 +232,6 @@ Version 1.1.3</param.help.text>
       <file>${PROJECT_ROOT}\shift_annotations_GUI.m</file>
       <file>${PROJECT_ROOT}\shift_xyz.m</file>
       <file>${PROJECT_ROOT}\show_fiducialpts_gui.m</file>
-      <file>${PROJECT_ROOT}\speed_graph.m</file>
       <file>${PROJECT_ROOT}\speed_graph_gui.m</file>
       <file>${PROJECT_ROOT}\standard_dcm.m</file>
       <file>${PROJECT_ROOT}\summary_figure.m</file>
@@ -255,6 +254,7 @@ Version 1.1.3</param.help.text>
       <file>${PROJECT_ROOT}\view_median12lead_ecg.m</file>
       <file>${PROJECT_ROOT}\view_vcgloops.m</file>
       <file>${PROJECT_ROOT}\view_xyz_ecg.m</file>
+      <file>${PROJECT_ROOT}\vm_integral.m</file>
       <file>${PROJECT_ROOT}\wander_remove.m</file>
       <file>${PROJECT_ROOT}\waveEnd.m</file>
       <file>${PROJECT_ROOT}\waveEnd2.m</file>

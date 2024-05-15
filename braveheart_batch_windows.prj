@@ -1,5 +1,5 @@
 <deployment-project plugin="plugin.ezdeploy" plugin-version="1.0">
-  <configuration build-checksum="4249213498" file="C:\Users\jwaks\Documents\GitHub\BRAVEHEART_DEV\braveheart_batch_windows.prj" location="C:\Users\jwaks\Documents\GitHub\BRAVEHEART_DEV" name="braveheart_batch_windows" preferred-package-location="C:\Users\jwaks\Documents\GitHub\BRAVEHEART_DEV\braveheart_batch_windows\for_redistribution" preferred-package-type="package.type.exe" target="target.ezdeploy.standalone" target-name="Application Compiler">
+  <configuration build-checksum="1991326526" file="C:\Users\jwaks\Documents\GitHub\BRAVEHEART_DEV\braveheart_batch_windows.prj" location="C:\Users\jwaks\Documents\GitHub\BRAVEHEART_DEV" name="braveheart_batch_windows" preferred-package-location="C:\Users\jwaks\Documents\GitHub\BRAVEHEART_DEV\braveheart_batch_windows\for_redistribution" preferred-package-type="package.type.exe" target="target.ezdeploy.standalone" target-name="Application Compiler">
     <param.appname>braveheart_batch</param.appname>
     <param.icon>${PROJECT_ROOT}\braveheart_batch_windows_resources\icon.ico</param.icon>
     <param.icons>
@@ -8,13 +8,13 @@
       <file>${PROJECT_ROOT}\braveheart_batch_windows_resources\icon_24.png</file>
       <file>${PROJECT_ROOT}\braveheart_batch_windows_resources\icon_16.png</file>
     </param.icons>
-    <param.version>1.1.3</param.version>
+    <param.version>1.2.0</param.version>
     <param.authnamewatermark>Hans F. Stabenau and Jonathan W. Waks</param.authnamewatermark>
     <param.email>braveheart.ecg@gmail.com</param.email>
     <param.company />
     <param.summary />
     <param.description>BRAVHEART ECG/VCG Analysis Software -- Command Line Version
-Version 1.1.3</param.description>
+Version 1.2.0</param.description>
     <param.screenshot>${PROJECT_ROOT}\braveheart_splash.png</param.screenshot>
     <param.guid />
     <param.installpath.string>\braveheart_batch\</param.installpath.string>
@@ -50,7 +50,7 @@ Version 1.1.3</param.description>
 	 varargin  input arguments 
  Description 
  	 BRAVHEART ECG/VCG Analysis Software -- Command Line Version
-Version 1.1.3</param.help.text>
+Version 1.2.0</param.help.text>
     <unset>
       <param.company />
       <param.summary />
@@ -165,6 +165,7 @@ Version 1.1.3</param.help.text>
       <file>${PROJECT_ROOT}\medianbeat.m</file>
       <file>${PROJECT_ROOT}\medianloc.m</file>
       <file>${PROJECT_ROOT}\middlethird.m</file>
+      <file>${PROJECT_ROOT}\min_max_locs.m</file>
       <file>${PROJECT_ROOT}\minQRSTwindow.m</file>
       <file>${PROJECT_ROOT}\mirror.m</file>
       <file>${PROJECT_ROOT}\missing_leads.m</file>
@@ -194,6 +195,7 @@ Version 1.1.3</param.help.text>
       <file>${PROJECT_ROOT}\VCG_Calc.m</file>
       <file>${PROJECT_ROOT}\VCG_Morphology.m</file>
       <file>${PROJECT_ROOT}\vector.m</file>
+      <file>${PROJECT_ROOT}\vm_integral.m</file>
       <file>${PROJECT_ROOT}\wander_remove.m</file>
       <file>${PROJECT_ROOT}\waveEnd.m</file>
       <file>${PROJECT_ROOT}\waveEnd2.m</file>
