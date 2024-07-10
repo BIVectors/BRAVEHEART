@@ -33,7 +33,7 @@ classdef Lead_Morphology
         L1_rs_ratio    % R/(R+S) ratio
         L1_sr_ratio    % S/(R+S) ratio
         L1_t_max       % Max amplitude (pos or neg) of T wave
-        L1_t_max_loc   % sample of T max
+        L1_t_max_loc   % Location of T max (ms after QRS onset)
         L1_qrs_area    % Area of QRS complex
         L1_t_area      % Area of T wave
         L1_qrst_area   % Area of QRST complex
@@ -192,6 +192,7 @@ classdef Lead_Morphology
         VM_sr_ratio
         VM_t_max
         VM_t_max_loc
+        VM_max_rpk_loc     % Location of maximum R peak (ms after QRS onset)
      
          
 %         % Individual beat SAI and SVG (X Y Z VM leads)
@@ -305,6 +306,9 @@ classdef Lead_Morphology
                 % before Qon and convert to ms from samples
                 twave_max_loc = round((1000/freq)*(twave_max_loc - fidpts(1)));
 
+                % Rpeak location after QRS onset (just VM lead for now)
+                obj.VM_max_rpk_loc = round((1000/freq)*(fidpts(2) - fidpts(1)));
+
                 % Calculate areas for 12L medians
                 [qrs_area, t_area] = mean_vector_leadmorph(signal, (1000/freq), fidpts, aps.baseline_flag);
 
@@ -316,7 +320,7 @@ classdef Lead_Morphology
                 obj.(lead_morph_fields{step+4+(num_12L_params*(j-1))}) = rs_ratio;       % R/(R+S) ratio
                 obj.(lead_morph_fields{step+5+(num_12L_params*(j-1))}) = sr_ratio;       % S/(R+S) ratio
                 obj.(lead_morph_fields{step+6+(num_12L_params*(j-1))}) = twave_max;      % T max amplitude
-                obj.(lead_morph_fields{step+7+(num_12L_params*(j-1))}) = twave_max_loc;  % T max location (sample)
+                obj.(lead_morph_fields{step+7+(num_12L_params*(j-1))}) = twave_max_loc;  % T max location (ms after QRS onset)
                 obj.(lead_morph_fields{step+8+(num_12L_params*(j-1))}) = qrs_area;       % QRS area
                 obj.(lead_morph_fields{step+9+(num_12L_params*(j-1))}) = t_area;         % T area
                 obj.(lead_morph_fields{step+10+(num_12L_params*(j-1))}) = qrs_area + t_area;  % QRST area
@@ -341,7 +345,7 @@ classdef Lead_Morphology
                 obj.(lead_morph_fields{step+4+(num_vcg_params*(j-1))}) = rs_ratio;    % R/(R+S) ratio
                 obj.(lead_morph_fields{step+5+(num_vcg_params*(j-1))}) = sr_ratio;    % S/(R+S) ratio
                 obj.(lead_morph_fields{step+6+(num_vcg_params*(j-1))}) = twave_max;      % T max amplitude
-                obj.(lead_morph_fields{step+7+(num_vcg_params*(j-1))}) = twave_max_loc;  % T max location (sample)
+                obj.(lead_morph_fields{step+7+(num_vcg_params*(j-1))}) = twave_max_loc;  % T max location (ms after QRS onset)
                 
             end
             

@@ -20,14 +20,7 @@
 % This software is for research purposes only and is not intended to diagnose or treat any disease.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function vals = normal_ranges(c_age, gender, c_bmi, c_hr, white)
-
-% Gender
-if strcmp(gender,'MALE')
-    male = 1;
-else
-    male = 0;
-end
+function vals = normal_ranges(c_age, male, c_bmi, c_hr, white)
 
 % Split continuous variables into groups"
 

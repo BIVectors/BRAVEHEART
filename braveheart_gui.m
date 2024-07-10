@@ -44,7 +44,7 @@ function varargout = braveheart_gui(varargin)
 
 % Edit the above text to modify the response to help braveheart_gui
 
-% Last Modified by GUIDE v2.5 07-May-2024 12:15:33
+% Last Modified by GUIDE v2.5 20-Jun-2024 10:57:50
 
 % Update the current L&F for mac button issues...
 % Windows will use the normal Windows theme
@@ -234,6 +234,9 @@ set(handles.save_dir_txt, 'String', pathname(1:end-1));
 clear_axes(hObject, eventdata, handles);
 
 % If 'Load Dir' checkbox checked will load directory file list
+% Default to file 1/1
+set(handles.file_num_txt,'String', '# 1 / 1');
+
 if get(handles.load_dir_checkbox,'Value')
 
     % Load in all files from directory
@@ -264,6 +267,16 @@ if get(handles.load_dir_checkbox,'Value')
     handles.file_index = ind;
     handles.file_list = file_list;
     guidata(hObject, handles);                 % Save to handles.
+
+    % Update file number text box
+    set(handles.file_num_txt,'String', sprintf('# %i / %i',ind,length(handles.file_list)));
+    set(handles.file_num_txt,'FontSize', 8);
+    if length(handles.file_list) <= 999
+        set(handles.file_num_txt,'FontSize', 9);
+    end
+    if length(handles.file_list) >= 10000
+        set(handles.file_num_txt,'FontSize', 7);
+    end
 
     % Enable/disable prev/next ECG button based on index
     if handles.file_index == 1
@@ -398,7 +411,7 @@ uiwait(msgbox(...
 {'\fontsize{14}\it\bf \color[rgb]{0.09,0.078,0.377}';...
 'BRAVE\color[rgb]{0.89,0.016,0.016}H\fontsize{11}EART';...
 '\fontsize{8}\rm\color{black}(Beth Israel Analysis of Vectors of the Heart)';...
-'Version 1.2.0' ; 
+'Version 1.2.1' ; 
 ' ' ;...
 'Copyright 2016-2024  Hans F. Stabeneau and Jonathan W. Waks' ;...
 ' ' ;...
@@ -426,7 +439,7 @@ uiwait(msgbox(...
 {'\fontsize{18}\it\bf \color[rgb]{0.09,0.078,0.377}';...
 'BRAVE\color[rgb]{0.89,0.016,0.016}H\fontsize{14}EART\fontsize{11}';...
 '\rm\color{black}(Beth Israel Analysis of Vectors of the Heart)';...
-'Version 1.2.0' ; 
+'Version 1.2.1' ; 
 ' ' ;...
 'Copyright 2016-2024  Hans F. Stabeneau and Jonathan W. Waks' ;...
 ' ' ;...
@@ -2817,15 +2830,6 @@ function BRAVEHEART_GUI_SizeChangedFcn(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 
-% --- Executes on button press in gender_checkbox.
-function gender_checkbox_Callback(hObject, eventdata, handles)
-% hObject    handle to gender_checkbox (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hint: get(hObject,'Value') returns toggle state of gender_checkbox
-
-
 function age_txt_Callback(hObject, eventdata, handles)
 % hObject    handle to age_txt (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -3143,20 +3147,54 @@ handles.source_str = source_str;
 handles.source_ext = source_ext;
 guidata(hObject, handles);  % Save to handles.
 
-% Obtain age/gender from xml if available
-% If age and/or gender cannot be found in the xml
-% or if the forma does not contain any demographic data, the age defualts
-% to 50 and the gender defaults to male
-[age, gender] = xml_demographics(handles.filename, handles.source_str);
+% Obtain age/sex/race from xml if available
+% If age/sex/race cannot be found in the xml
+% Versions prior to 1.2.1 would set missing age = 50 and missing race =
+% white, but since version 1.2.1 only include demographic data that is
+% present.  If data is missing display as missing, and normal calculations
+% will use the margins assuming the missing data is the mean from the
+% normals manuscript.  see https://onlinelibrary.wiley.com/doi/10.1111/jce.16062
+% BMI was basically never found in any of the XML files we reviewed, so
+% will not abstract it and if missing will assume it is the population mean
+% for calculations as noted above.  Can manually add BMI to the GUI textbox
+% to get more accurate normal ranges.
+M = xml_demographics(handles.filename, handles.source_str);
+age = M.Age;
+sex = M.Sex;
+race = M.Race;
 
 % Update GUI utilities values
-set(handles.age_txt, 'String', num2str(age));
+set(handles.age_txt, 'String', age);
 
-if strcmp(gender, "MALE")
-    set(handles.gender_checkbox, 'Value', 0);
-else   % If FEMALE
-    set(handles.gender_checkbox, 'Value', 1);
+% Sex
+if strcmpi(sex, 'f') || strcmpi(sex, 'female')
+    set(handles.gender_dropdown, 'Value', 1);
+elseif strcmpi(sex, 'm') || strcmpi(sex, 'male')
+    set(handles.gender_dropdown, 'Value', 2); 
+elseif strcmp(sex, 'N/A')
+    set(handles.gender_dropdown, 'Value', 4);
+else
+    % Not listed as male or female but not missing
+    % We did not have enough non-binary patients to include in normal value
+    % regression, so list as "O" in dropdown and will assume gender is
+    % missing for normal value regression calculations as noted above
+    set(handles.gender_dropdown, 'Value', 3)
 end
+
+% Race
+if strcmpi(race, "white") || strcmpi(race, "caucasian")
+    set(handles.race_dropdown, 'Value', 1);
+elseif strcmp(race, 'N/A') || strcmpi(race, "unknown") || strcmpi(race, "unk") ...
+        || strcmpi(race, "u") || strcmpi(race, "undefined") || strcmpi(race, "und")
+    % Unknown
+    set(handles.race_dropdown, 'Value', 3);
+else
+    set(handles.race_dropdown, 'Value', 2);
+end
+
+% Does not support BMI yet -- can add in future but most ECGs dont have BMI
+% recorded in metadata 
+    set(handles.bmi_txt, 'String', 'N/A');
 
 guidata(hObject, handles);  % Save to handles.
     
@@ -4205,16 +4243,12 @@ filename = handles.filename_short;
 save_folder = get(handles.save_dir_txt,'String');
 save_flag = get(handles.save_12lead_checkbox,'Value');
 
+[age, male, white, bmi] = pull_gui_demographics(hObject, eventdata, handles);
 
-% Import gender
-if get(handles.gender_checkbox, 'Value')
-    gender = 'FEMALE';
-else
-    gender = 'MALE';
-end
+% Get nurmal ranges based on the demographics
+nval = NormalVals(age, male, white, bmi, handles.hr);
 
-nval = NormalVals(str2num(get(handles.age_txt,'String')), gender, get(handles.white_checkbox,'Value'), str2num(get(handles.bmi_txt,'String')), handles.hr);
-
+% Generate polar figure with normal values included
 polar_figures(handles.geh, nval, handles.filename_short)
 
 % Save figure as .png if save checkbox selected
@@ -5002,14 +5036,6 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
-% --- Executes on button press in white_checkbox.
-function white_checkbox_Callback(hObject, eventdata, handles)
-% hObject    handle to white_checkbox (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hint: get(hObject,'Value') returns toggle state of white_checkbox
-
 
 % --- Executes on button press in load_prev_ecg_button.
 function load_prev_ecg_button_Callback(hObject, eventdata, handles)
@@ -5026,6 +5052,16 @@ handles.filename = new_file;
 handles.filename_short = strcat(f,e);
 
 guidata(hObject, handles);  % Save to handles
+
+% Update file number text box
+set(handles.file_num_txt,'String', sprintf('# %i / %i',handles.file_index,length(handles.file_list)));
+set(handles.file_num_txt,'FontSize', 8);
+    if length(handles.file_list) <= 999
+        set(handles.file_num_txt,'FontSize', 9);
+    end
+    if length(handles.file_list) >= 10000
+        set(handles.file_num_txt,'FontSize', 7);
+    end
 
 % Change path text box to new file
 set(handles.filename_txt,'String',new_file);
@@ -5068,6 +5104,16 @@ guidata(hObject, handles);  % Save to handles
 
 % Change path text box to new file
 set(handles.filename_txt,'String',new_file);
+
+% Update file number text box
+set(handles.file_num_txt,'String', sprintf('# %i / %i',handles.file_index,length(handles.file_list)));
+set(handles.file_num_txt,'FontSize', 8);
+    if length(handles.file_list) <= 999
+        set(handles.file_num_txt,'FontSize', 9);
+    end
+    if length(handles.file_list) >= 10000
+        set(handles.file_num_txt,'FontSize', 7);
+    end
 
 % Enable/disable prev/next ECG button based on index
 if handles.file_index == 1
@@ -5223,3 +5269,171 @@ function speed_legend_checkbox_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 % Hint: get(hObject,'Value') returns toggle state of speed_legend_checkbox
+
+
+% --- Executes on button press in read_xml_metadata_button.
+function read_xml_metadata_button_Callback(hObject, eventdata, handles)
+% hObject    handle to read_xml_metadata_button (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+M = xml_demographics(handles.filename, handles.source_str);
+
+% Convert structure into table data
+Mtable = struct2table(M, 'AsArray',1);
+rnames = Mtable.Properties.VariableNames;
+Mtable = rows2vars(Mtable);
+Mtable.Properties.RowNames = rnames;
+Mtable.OriginalVariableNames = [];
+Mtable.Properties.VariableNames = {'XML Data'};
+
+% Display figure in GUI
+fig = uifigure('name','ECG Data Summary','Position',[500,500, 390 280]);
+uit = uitable(fig,"Data",Mtable,"Position",[10 10 380 270]);
+s = uistyle('HorizontalAlignment','left');
+addStyle(uit,s);
+uit.ColumnWidth = 'auto';
+
+
+
+% --- Executes on button press in open_ecg_file_button.
+function open_ecg_file_button_Callback(hObject, eventdata, handles)
+% hObject    handle to open_ecg_file_button (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Open ECG file with system viewer
+open_ext_file(handles.filename);
+
+
+% --- Executes on selection change in gender_dropdown.
+function gender_dropdown_Callback(hObject, eventdata, handles)
+% hObject    handle to gender_dropdown (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: contents = cellstr(get(hObject,'String')) returns gender_dropdown contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from gender_dropdown
+
+
+% --- Executes during object creation, after setting all properties.
+function gender_dropdown_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to gender_dropdown (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: popupmenu controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on selection change in race_dropdown.
+function race_dropdown_Callback(hObject, eventdata, handles)
+% hObject    handle to race_dropdown (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: contents = cellstr(get(hObject,'String')) returns race_dropdown contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from race_dropdown
+
+
+% --- Executes during object creation, after setting all properties.
+function race_dropdown_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to race_dropdown (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: popupmenu controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on key press with focus on BRAVEHEART_GUI or any of its controls.
+function BRAVEHEART_GUI_WindowKeyPressFcn(hObject, eventdata, handles)
+% hObject    handle to BRAVEHEART_GUI (see GCBO)
+% eventdata  structure with the following fields (see MATLAB.UI.FIGURE)
+%	Key: name of the key that was pressed, in lower case
+%	Character: character interpretation of the key(s) that was pressed
+%	Modifier: name(s) of the modifier key(s) (i.e., control, shift) pressed
+% handles    structure with handles and user data (see GUIDATA)
+
+switch eventdata.Key
+
+    case 'f1'           % Open user guide
+        usermanual_button_Callback(hObject, eventdata, handles);
+    
+    case 'rightarrow'   % Next ECG -- CTRL+arrow
+        % Only do anything if the button is enabled
+        if strcmp(eventdata.Modifier,'control')
+            if strcmp(handles.load_next_ecg_button.Enable, 'on')
+                load_next_ecg_button_Callback(hObject, eventdata, handles);
+            end
+        end
+
+    case 'leftarrow'    % Prev ECG -- CTRL+arrow
+        % Only do anything if the button is enabled
+        if strcmp(eventdata.Modifier,'control')
+            if strcmp(handles.load_prev_ecg_button.Enable, 'on')
+                load_prev_ecg_button_Callback(hObject, eventdata, handles);
+            end
+        end
+    
+    case 'e'           % Calculate -- uses CTRL+e (not using CRL+c due to system copy function)
+        if strcmp(eventdata.Modifier,'control') 
+            calculate_Callback(hObject, eventdata, handles);
+        end
+    
+    case 's'           % Export to file -- uses CTRL+s
+        if strcmp(eventdata.Modifier,'control') 
+            export_button_Callback(hObject, eventdata, handles);
+        end
+
+    case 'l'            % Load button -- uses CTRL+l
+        if strcmp(eventdata.Modifier,'control') 
+            load_button_Callback(hObject, eventdata, handles);
+        end
+
+    case 'r'            % Reload button -- uses CTRL+r
+        if strcmp(eventdata.Modifier,'control') 
+            reload_Callback(hObject, eventdata, handles);
+        end
+
+    case 'b'            % Batch button -- uses CTRL+b
+        if strcmp(eventdata.Modifier,'control') 
+            batch_load_button_Callback(hObject, eventdata, handles);
+        end
+
+    case 'downarrow'    % Next beat -- uses CTRL+DOWN        
+        if strcmp(eventdata.Modifier,'control') & strcmp(handles.next_beat_button.Enable, 'on')
+            next_beat_button_Callback(hObject, eventdata, handles);
+        end
+
+    case 'uparrow'      % Previous beat -- uses CTRL+UP
+        if strcmp(eventdata.Modifier,'control') & strcmp(handles.prev_beat_button.Enable, 'on')
+            prev_beat_button_Callback(hObject, eventdata, handles);
+        end
+
+    case 'd'            % Delete selected beat -- uses CTRL+d
+        if strcmp(eventdata.Modifier,'control') & strcmp(handles.remove_selectbeat_button.Enable, 'on')
+            remove_selectbeat_button_Callback(hObject, eventdata, handles);
+        end
+
+    case 'a'            % Enable/Disable 'All Auto' checkbox -- uses CTRL+a
+            if strcmp(eventdata.Modifier,'control')
+                if get(handles.all_auto_checkbox, 'Value') == 0
+                    set(handles.auto_remove_outliers_checkbox, 'Value', 1);
+                    set(handles.auto_pvc_removal_checkbox, 'Value', 1);
+                    set(handles.all_auto_checkbox, 'Value', 1);
+                else
+                    set(handles.auto_remove_outliers_checkbox, 'Value', 0);
+                    set(handles.auto_pvc_removal_checkbox, 'Value', 0);
+                    set(handles.all_auto_checkbox, 'Value', 0);
+                end
+            end
+end
+
+

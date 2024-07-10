@@ -21,13 +21,14 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-function open_ext_file(path)
+function open_ext_file(p)
 
 if ispc
-    winopen(path);
+    winopen(p);
 
 elseif ismac
-    system([sprintf('open %s',path)]);
+    p = strrep(p, ' ', '\ ');
+    system([sprintf("open %s",p)]);
 
 else
     % Do nothing

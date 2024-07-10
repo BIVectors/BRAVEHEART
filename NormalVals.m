@@ -26,7 +26,7 @@ classdef NormalVals
 	properties (SetAccess=immutable)
         % These properties are used to obtain the normal values
 		age
-        gender
+        male
         bmi
         white
         hr
@@ -63,28 +63,30 @@ classdef NormalVals
 		
 		function obj = NormalVals(varargin)
 			
-        if nargin ~= 5 && nargin ~= 0; error('Expected 5 arguments to NormalVals constructor: Age (number),  Gender (string -- MALE or FEMALE), White race (1 or 0),  BMI (number), and HR (number).  If no input arguments will default to 50 yo white male with BMI 25 and HR 60'); end
+        if nargin ~= 5 && nargin ~= 0; error(['Expected 5 arguments to NormalVals constructor: Age (number),  ...' ...
+                'Male (1 or 0), White race (1 or 0),  BMI (number), and HR (number).  ...' ...
+                'If no input arguments will default to means from https://onlinelibrary.wiley.com/doi/10.1111/jce.16062']); end
 			
             if nargin == 0   
                 return;
             else
                 obj.age = varargin{1};
-                obj.gender = varargin{2};
+                obj.male = varargin{2};
                 obj.white = varargin{3};
                 obj.bmi = varargin{4};
                 obj.hr = varargin{5};
                 
                 % Deal with missing values and assign defaults
                 if isempty(obj.age)
-                    obj.age = 50;
+                    obj.age = 47.9;
                 end
                 
-                if isempty(obj.gender)
-                    obj.gender = 'MALE';
+                if isempty(obj.male)
+                    obj.male = 0.38;
                 end
                 
                 if isempty(obj.bmi)
-                    obj.bmi = 25;
+                    obj.bmi = 28.4;
                 end
                 
                 if isempty(obj.hr)
@@ -92,14 +94,14 @@ classdef NormalVals
                 end
                 
                 if isempty(obj.white)
-                    obj.white = 1;
+                    obj.white = 0.56;
                 end
                 
                 
             end
                        
             % Get the age/gender/GMI/race/HR normal ranges and store in 'nvals'
-            nvals = normal_ranges(obj.age, obj.gender, obj.bmi, obj.hr, obj.white);
+            nvals = normal_ranges(obj.age, obj.male, obj.bmi, obj.hr, obj.white);
             
             fn = fieldnames(NormalVals());
             

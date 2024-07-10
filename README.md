@@ -38,6 +38,19 @@ A detailed user guide that covers installation and use of the software, includin
 [![badge](https://img.shields.io/badge/Methods%20Manuscript-F7DF1E?logo=elsevier&style=flat&logoColor=white&labelColor=555)](https://doi.org/10.1016/j.cmpb.2023.107798)    
 A manuscript describing the software methods in detail is available in the file [braveheart_methods.pdf](https://github.com/BIVectors/BRAVEHEART/blob/main/braveheart_methods.pdf) and as a [manuscript in Computer Methods and Programs in Biomedicine (DOI: https://doi.org/10.1016/j.cmpb.2023.107798)](https://doi.org/10.1016/j.cmpb.2023.107798). 
 
+## Frequently Encountered Issue - GUI Not Displaying Correctly
+If the GUI is not displaying completely first check that your **monitor resolution is at least 1920 x 1080**.  If your monitor resolution is adequate but the GUI is still not fully displaying, 
+your computer display settings likely have some form of scaling turned on; this setting increases the size of text to improve readability, but also effectively reduces the screen resolution.
+Instructions for how to disable this setting can be found below or in the user guide section 29.1:
+
+To disable screen scaling:   
++ **Windows 10:** Open the Ease of Access settings with Windows key + U. Under
+Make everything bigger on the Display tab, change to 100%.   
++ **Windows 11:** Open Settings and then Display. Under Scale & layout, expand the Scale
+menu and change to 100%.   
++ **Mac OS:** Open System Preferences and then Display. Choose Scaled Resolution and then
+More Space
+
 ## How to Cite Use of BRAVEHEART
 Please include the link to this GitHub repository and cite our [manuscript in Computer Methods and Programs in Biomedicine](https://doi.org/10.1016/j.cmpb.2023.107798).  The upper right section of this repository has a [CITATION file](https://github.com/BIVectors/BRAVEHEART/blob/main/CITATION.cff) that will provide the appropriate references:  
 
@@ -45,19 +58,21 @@ Please include the link to this GitHub repository and cite our [manuscript in Co
 
 ## Publications
 The software has been used for ECG/VCG analysis in the following publications:  
-1. [H. F. Stabenau, C. Shen, L. G. Tereshchenko, and J. W. Waks. Changes in global electrical heterogeneity associated with dofetilide, quinidine, ranolazine, and verapamil. _Heart Rhythm_, 2020 Mar;17(3):460-467.](https://www.heartrhythmjournal.com/article/S1547-5271(19)30850-1/fulltext)
+1. [HF Stabenau, C Shen, LG Tereshchenko, and JW. Waks. Changes in global electrical heterogeneity associated with dofetilide, quinidine, ranolazine, and verapamil. _Heart Rhythm_, 2020 Mar;17(3):460-467.](https://www.heartrhythmjournal.com/article/S1547-5271(19)30850-1/fulltext)
 
-2. [H. F. Stabenau, C. Shen, P. Zimetbaum, A. E. Buxton, L. G. Tereshchenko, and J. W. Waks. Global electrical heterogeneity associated with drug-induced torsades de pointes. _Heart Rhythm_, 2021 Jan;18(1):57-62.](https://www.heartrhythmjournal.com/article/S1547-5271(20)30754-2/fulltext)
+2. [HF Stabenau, C Shen, P Zimetbaum, AE Buxton, LG Tereshchenko, and JW Waks. Global electrical heterogeneity associated with drug-induced torsades de pointes. _Heart Rhythm_, 2021 Jan;18(1):57-62.](https://www.heartrhythmjournal.com/article/S1547-5271(20)30754-2/fulltext)
 
-3. [H. F. Stabenau, C. P. Bridge, and J. W. Waks. ECGAug: A novel method of generating augmented annotated electrocardiogram QRST complexes and rhythm strips. _Comput Biol Med_, 2021 Jul;134:104408.](https://www.sciencedirect.com/science/article/abs/pii/S001048252100202X)
+3. [HF Stabenau, CP Bridge, and JW Waks. ECGAug: A novel method of generating augmented annotated electrocardiogram QRST complexes and rhythm strips. _Comput Biol Med_, 2021 Jul;134:104408.](https://www.sciencedirect.com/science/article/abs/pii/S001048252100202X)
 
-4. [H. F. Stabenau, M. Marcus, J. D. Matos, I. McCormick, D. Litmanovich, W. J. Manning, B. J. Carroll, and J. W. Waks. The spatial ventricular gradient is associated with adverse outcomes in acute pulmonary embolism. _Ann Noninvasive Electrocardiol_, 2023, Jan 24;e13041.](https://onlinelibrary.wiley.com/doi/10.1111/anec.13041)
+4. [HF Stabenau, M Marcus, JD Matos, I McCormick, D Litmanovich, WJ Manning, BJ Carroll, and JW Waks. The spatial ventricular gradient is associated with adverse outcomes in acute pulmonary embolism. _Ann Noninvasive Electrocardiol_, 2023, Jan 24;e13041.](https://onlinelibrary.wiley.com/doi/10.1111/anec.13041)
 
-5. [A. N. Rosas Diaz, H. F. Stabenau, G. P. Hurtado, S. Warack, J. W. Waks, and A. Asnani. The spatial ventricular gradient is an independent predictor of anthracycline-associated cardiotoxicity. _JACC: Adv_, 2(2):100269, 2023.](https://www.jacc.org/doi/10.1016/j.jacadv.2023.100269)
+5. [AN Rosas Diaz, HF Stabenau, GP Hurtado, S Warack, JW Waks, and A Asnani. The spatial ventricular gradient is an independent predictor of anthracycline-associated cardiotoxicity. _JACC: Adv_, 2(2):100269, 2023.](https://www.jacc.org/doi/10.1016/j.jacadv.2023.100269)
 
-6. [H. F. Stabenau, A. Sau, D. B. Kramer, N. S. Peters, F. S. Ng, and J. W. Waks. Limits of the Spatial Ventricular Gradient and QRST Angles in Patients with Normal Electrocardiograms and No Known Cardiovascular Disease Stratified by Age, Sex, and Race. _J Cardiovasc Electrophysiol_, 2023 Nov;34(11):2305-2315.](https://doi.org/10.1111/jce.16062)
+6. [HF Stabenau, A Sau, DB Kramer, NS Peters, FS Ng, and JW Waks. Limits of the Spatial Ventricular Gradient and QRST Angles in Patients with Normal Electrocardiograms and No Known Cardiovascular Disease Stratified by Age, Sex, and Race. _J Cardiovasc Electrophysiol_, 2023 Nov;34(11):2305-2315.](https://doi.org/10.1111/jce.16062)
 
-7. [N. Isaza, H. F. Stabenau, D. B. Kramer, A. Sau, P. Tung, T. R. Maher, A. H. Locke, P. Zimetbaum, A. d’Avila, N. S. Peters, L. G. Tereshchenko, F. S. Ng, A. E. Buxton, and J. W. Waks. The Spatial Ventricular Gradient is Associated with Inducibility of Ventricular Arrhythmias During Electrophysiology Study. _Heart Rhythm_, 2024 In Press.](https://doi.org/10.1016/j.hrthm.2024.05.005)
+7. [N Isaza, HF Stabenau, DB Kramer, A Sau, P Tung, TR Maher, AH Locke, P Zimetbaum, A d’Avila, NS Peters, LG Tereshchenko, FS Ng, AE Buxton, and JW Waks. The Spatial Ventricular Gradient is Associated with Inducibility of Ventricular Arrhythmias During Electrophysiology Study. _Heart Rhythm_, 2024 In Press.](https://doi.org/10.1016/j.hrthm.2024.05.005)
+
+8. [L Pastika, A Sau, K Patlatzoglou, E Sieliwonczyk, AH Ribeiro, KA McGurk, S Khan, D Mandic, WR Scott, JS Ware, NS Peters, ALP Ribeiro, DB Kramer, JW Waks, and FS Ng. Deep Neural Network-derived Electrocardiographic Body Mass Index as a Predictor of Cardiometabolic Disease. _NPJ Digit. Med._ 2024 Jun 25;7(1):167.](https://doi.org/10.1038/s41746-024-01170-0)
 
 If you have used BRAVEHEART for your research project we would be happy to include a reference to your manuscript!
 

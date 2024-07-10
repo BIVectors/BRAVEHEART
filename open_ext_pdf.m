@@ -42,20 +42,12 @@ if strcmp(type, 'userguide')
         % This is where the main directory is which contains the actual
         % executable and other provided files
         P = P(1:Ploc-2);
-    
-        % Add escape character \ for spaces
-        P = strrep(P, ' ', '\ ');
-    
+       
         open_ext_file(fullfile(P,file));
     
     % Either PC or Mac not deployed - just get current directory    
     else        
-        path = fullfile(getcurrentdir(),file);
-
-        if ismac
-            path = strrep(path, ' ', '\ ');
-        end
-
+        fpath = fullfile(getcurrentdir(),file);
         open_ext_file(fullfile(getcurrentdir(),file));
     
     end
@@ -67,9 +59,8 @@ else
 
     if ismac && isdeployed
         % Find this directory inside ctfroot and escape character any spaces
-        path = fullfile(ctfroot,'braveheart_g',file);
-        path = strrep(path, ' ', '\ ');
-        open_ext_file(path);
+        fpath = fullfile(ctfroot,'braveheart_g',file);
+        open_ext_file(fpath);
     
         
     elseif ispc && isdeployed
@@ -77,14 +68,7 @@ else
 
 
     else        % Not deployed
-        %open_ext_file(file);
-        path = fullfile(getcurrentdir(),file);
-
-        if ismac
-            path = strrep(path, ' ', '\ ');
-        end
-
-
+        fpath = fullfile(getcurrentdir(),file);
         fullfile(getcurrentdir(),file);
 
         open_ext_file(fullfile(getcurrentdir(),file));

@@ -31,7 +31,7 @@ classdef AbnormalVals
         
         % These properties are used to obtain the normal values
 		age
-        gender
+        male
         bmi
         white
         hr
@@ -76,7 +76,7 @@ classdef AbnormalVals
             nml = varargin{2};
             
             obj.age = nml.age;
-            obj.gender = nml.gender;
+            obj.male = nml.male;
             obj.bmi = nml.bmi;
             obj.hr = nml.hr;
             obj.white = nml.white;

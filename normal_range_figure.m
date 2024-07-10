@@ -24,14 +24,9 @@ function normal_range_figure(hObject, eventdata, handles)
 
 geh = handles.geh;
 
-% Pull out normal values based on demographics
-if get(handles.gender_checkbox, 'Value')
-    gender = 'FEMALE';
-else
-    gender = 'MALE';
-end
+[age, male, white, bmi] = pull_gui_demographics(hObject, eventdata, handles);
 
-nml = NormalVals(str2num(get(handles.age_txt,'String')), gender, get(handles.white_checkbox,'Value'), str2num(get(handles.bmi_txt,'String')), handles.hr);
+nml = NormalVals(age, male, white, bmi, handles.hr);
 
 fields = nml.labels();
 
@@ -41,15 +36,23 @@ angleplot = [7 8 14 15];    % Indices within NormalVals class that are angles
 
 textlabels = [{'SVG Magnitude'},{'SVG Azimuth'}, {'SVG Elevation'}, {'SAI VM'}, {'SAI QRST'}, {'SVG X'}, {'SVG Y'}, {'SVG Z'}, {'Area QRST Angle'}, {'Peak QRST Angle'}];
 
-race = 'Not White';
-if get(handles.white_checkbox,'Value')
-    race = 'White';   
+race = 'N/A';
+if white == 1
+    race = 'White'; 
+elseif white == 0
+    race = 'Not White';
 end    
 
-gender_short = gender(1);
+if male == 1
+    gender_short = 'M';
+elseif male == 0
+    gender_short = 'F';
+else
+    gender_short = 'N/A';
+end
 
 figure   
-sgtitle(sprintf('Selected Normal Ranges: %s%s, BMI = %s, Race = %s',...
+sgtitle(sprintf('Selected Normal Ranges: Age = %s, Sex = %s, BMI = %s, Race = %s',...
     get(handles.age_txt,'String'), gender_short, get(handles.bmi_txt,'String'), race),...
     'fontsize',14,'fontweight','bold');
 

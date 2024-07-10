@@ -8,13 +8,13 @@
       <file>${PROJECT_ROOT}\braveheart_gui_windows_resources\icon_24.png</file>
       <file>${PROJECT_ROOT}\braveheart_gui_windows_resources\icon_16.png</file>
     </param.icons>
-    <param.version>1.2.0</param.version>
+    <param.version>1.2.1</param.version>
     <param.authnamewatermark>Hans F. Stabenau and Jonathan W. Waks</param.authnamewatermark>
     <param.email>bravheart.ecg@gmail.com</param.email>
     <param.company />
     <param.summary />
     <param.description>BRAVEHEART ECG/VCG Analysis Software -- GUI Version
-Version 1.2.0</param.description>
+Version 1.2.1</param.description>
     <param.screenshot>${PROJECT_ROOT}\braveheart_splash.png</param.screenshot>
     <param.guid />
     <param.installpath.string>\braveheart_gui\</param.installpath.string>
@@ -50,7 +50,7 @@ Version 1.2.0</param.description>
 	 varargin  input arguments 
  Description 
  	 BRAVEHEART ECG/VCG Analysis Software -- GUI Version
-Version 1.2.0</param.help.text>
+Version 1.2.1</param.help.text>
     <unset>
       <param.company />
       <param.summary />
@@ -103,11 +103,14 @@ Version 1.2.0</param.help.text>
       <file>${PROJECT_ROOT}\load_dicom.m</file>
       <file>${PROJECT_ROOT}\load_edf.m</file>
       <file>${PROJECT_ROOT}\load_physionet_csv.m</file>
+      <file>${PROJECT_ROOT}\load_schillerxml.m</file>
       <file>${PROJECT_ROOT}\load_scpecg.m</file>
       <file>${PROJECT_ROOT}\open_ext_pdf.m</file>
       <file>${PROJECT_ROOT}\parse_claris_txt.m</file>
       <file>${PROJECT_ROOT}\physicalunits.m</file>
+      <file>${PROJECT_ROOT}\pull_gui_demographics.m</file>
       <file>${PROJECT_ROOT}\Qualparams.m</file>
+      <file>${PROJECT_ROOT}\read_xml_metadata.m</file>
       <file>${PROJECT_ROOT}\resamp_loc.m</file>
       <file>${PROJECT_ROOT}\scpopen.m</file>
       <file>${PROJECT_ROOT}\sopen.m</file>

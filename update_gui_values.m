@@ -182,16 +182,9 @@ set(handles.qrst_dihedral_ang_txt,'String',round(handles.vcg_morph.qrst_dihedral
 
 % Only do if checkbox in Utilities is checked off
 
-if get(handles.normal_values_ckbox,'Value')
+[age, male, white, bmi] = pull_gui_demographics(hObject, eventdata, handles);
 
-% Import gender
-if get(handles.gender_checkbox, 'Value')
-    gender = 'FEMALE';
-else
-    gender = 'MALE';
-end
-
-nml = NormalVals(str2num(get(handles.age_txt,'String')), gender, get(handles.white_checkbox,'Value'), str2num(get(handles.bmi_txt,'String')), handles.hr);
+nml = NormalVals(age, male, white, bmi, handles.hr);
 abnml = AbnormalVals(geh,nml);
 fields = nml.labels();
 

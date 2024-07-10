@@ -34,6 +34,7 @@ if isnan(fidpts(3)) || isnan(fidpts(4))
     return;
 end
 
+% If don't supply a VM T peak location (either it is missing or set to 0 as convention
 if isempty(vm) || vm == 0 
 
     % blank for 50 ms after QRS offset
@@ -57,23 +58,25 @@ if isempty(vm) || vm == 0
     v = signal(fidpts(3));
     
     diff_pos = abs(twave_pos - v);
-    diff_neg = abs(-twave_neg - v);
-%     
-%     
-    if diff_pos >= diff_neg
-        twave_max = twave_pos;  
-        twave_max_loc = twave_pos_index;
-    else
-        twave_max = -twave_neg;  % need extra negative sign here
-        twave_max_loc = twave_neg_index;
-    end
+    % diff_neg = abs(-twave_neg - v);
     
-%     locs = 1;
-    
+    % VM T Wave is always positive, so don't even check for negative T wave
+    % to avoid issues with large ST segment deviation - in most cases it
+    % isn't an issue, but if the voltage at QRS off is very large due to
+    % significant ST elevation, this can result in diff_pos being SMALLER
+    % than diff_neg, which then chooses the wrong location of the VM T
+    % peak.  The diff_neg code was to make this more generalizable, but
+    % will remove it as of v1.2.1
+
+    twave_max = twave_pos;  
+    twave_max_loc = twave_pos_index;
+
+ 
+% Not a VM beat -- need to look in window around the location of the VM T max 
+% and need to look for positive and negative T waves for the other leads        
 else
     
-    
-     % open window around T peak of VM
+    % open window around T peak of VM
     blank = round(80*freq/1000);
     
     win_st = vm - blank;

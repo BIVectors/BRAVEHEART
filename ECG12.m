@@ -120,9 +120,13 @@ classdef ECG12
                         [obj.I, obj.II, obj.III, obj.avR, obj.avF, obj.avL, ...
                             obj.V1, obj.V2, obj.V3, obj.V4, obj.V5, obj.V6] = load_generic_csv(filename, unitspermv);
 
-                   case 'cardiosoft_xml'
+                    case 'cardiosoft_xml'
 						[obj.hz, obj.I, obj.II, obj.III, obj.avR, obj.avF, obj.avL, ...
                             obj.V1, obj.V2, obj.V3, obj.V4, obj.V5, obj.V6] = load_cardiosoftxml(filename);
+
+                    case 'schiller_xml'
+						[obj.hz, obj.I, obj.II, obj.III, obj.avR, obj.avF, obj.avL, ...
+                            obj.V1, obj.V2, obj.V3, obj.V4, obj.V5, obj.V6] = load_schillerxml(filename);
 
                     case 'scp_ecg'
                         [obj.hz, obj.I, obj.II, obj.III, obj.avR, obj.avF, obj.avL, ...

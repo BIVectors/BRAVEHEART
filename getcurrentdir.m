@@ -27,8 +27,36 @@ if isdeployed && ispc % Compiled PC
     currentDir = char(regexpi(result, 'Path=(.*?);', 'tokens', 'once'));
 
 elseif isdeployed && ismac % Compiled Mac
-	% Assumes relevant 
-	currentDir = char(string(java.lang.System.getProperty('user.home')) + "/braveheart");
+    % v1.2.1 onward
+    % Allows .csv files to remain in executable directory rather than Mac
+    % home directory
+
+    % Find ctf directory substring
+    % This has to be done in a round about way....
+    
+    % Find ctfroot directory - this is NOT the directory we need
+    P = char(ctfroot);
+
+    % Find the location in the string that references the Mac .app
+    % compressed executable
+    Ploc = strfind(ctfroot,'braveheart_gui.app');   
+
+    % If running compiled batch not compiled GUI
+    if isempty(Ploc)
+        Ploc = strfind(ctfroot,'braveheart_batch.app');  
+    end
+
+    % Get the directory before the .app compressed executable
+    % This is where the main directory is which contains the actual
+    % executable and other provided files
+    P = P(1:Ploc-2);
+
+    currentDir = P;
+
+	% v1.2.0 and prior
+	%currentDir = char(string(java.lang.System.getProperty('user.home')) + "/braveheart");
+
+
 %     NameOfDeployedApp = 'BRAVEHEART_GUI'; % do not include the '.app' extension
 %     [~, result] = system(['top -n100 -l1 | grep ' NameOfDeployedApp ' | awk ''{print $1}''']);
 %     result=strtrim(result);
