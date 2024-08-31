@@ -56,7 +56,7 @@ delete_index  = find(beats.outlier == 1);
 qrs_outliers = QRS(delete_index);
 qrs_outliers = [qrs_outliers ; existing_outliers];    % Add existing outliers to old outliers
 handles.qrs_outliers = qrs_outliers;
-beats = beats.delete(delete_index);  
+beats = beats.delete(delete_index,"outlier");  
 handles.beats = beats;
 guidata(hObject, handles);
 

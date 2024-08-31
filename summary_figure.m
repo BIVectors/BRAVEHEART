@@ -21,12 +21,14 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-function summary_figure(vcg, beats, beats_pvc, beats_outlier, median_vcg, medianbeat, correlation_test, filename)
+function summary_figure(vcg, beats, median_vcg, medianbeat, correlation_test, prob, filename)
 
-%%% NEED TO HAVE GUI STORE beats3 and beats4 when activate PVC and/or outlier removal
+% Previously needed to have GUI store beats3 and beats4 when activate PVC and/or outlier removal
+% Starting in v1.3.0 the Beats class stores the R peaks for deleted beats
+% and why they were deleted.
 
-%summaryecg_fig = figure('name',handles.filename_short,'numbertitle','off');
-summaryecg_fig = figure('name',filename,'numbertitle','off');
+    summaryecg_fig = figure('name',filename,'numbertitle','off');
+
 
     subplot(7,1,[1 2 3])
     
@@ -50,8 +52,8 @@ summaryecg_fig = figure('name',filename,'numbertitle','off');
     
     line([0 length(median_vcg.X')],[-0.05 -0.05], 'Color','black','LineStyle',':');
     
-    text_string = sprintf('X / Y / Z Cross Correlation = %0.3f / %0.3f / %0.3f \nQRS = %3.0f ms \nQT = %3.0f ms', correlation_test.X,  correlation_test.Y,  correlation_test.Z, ...
-        (medianbeat.S-medianbeat.Q)*(1000/vcg.hz), (medianbeat.Tend-medianbeat.Q)*(1000/vcg.hz)); 
+    text_string = sprintf('X / Y / Z Cross Correlation = %0.3f / %0.3f / %0.3f \nGood Quality Probability = %3.1f%% \nQRS = %3.0f ms \nQT = %3.0f ms', correlation_test.X,  correlation_test.Y,  correlation_test.Z, ...
+        100*prob, (medianbeat.S-medianbeat.Q)*(1000/vcg.hz), (medianbeat.Tend-medianbeat.Q)*(1000/vcg.hz)); 
     text(find(median_vcg.VM == max(median_vcg.VM)) + round(100*(vcg.hz/1000)), 0.8*median_vcg.VM(find(median_vcg.VM == max(median_vcg.VM))),text_string,'fontsize',12);
     
     a = get(gca,'XTickLabel');
@@ -84,8 +86,8 @@ summaryecg_fig = figure('name',filename,'numbertitle','off');
     ylim([min(min(X))-(0.1*scalex) max(max(X))+(0.1*scalex)]);
     
     pvc_QRS = [];
-    if any(beats_pvc)
-        pvc_QRS = beats_pvc;
+    if any(beats.QRS_rem_pvc)
+        pvc_QRS = beats.QRS_rem_pvc;
         t1 = text(pvc_QRS,X(pvc_QRS),' PVC');
         
         for j = 1:length(t1)
@@ -95,8 +97,8 @@ summaryecg_fig = figure('name',filename,'numbertitle','off');
     end
     
     outlier_QRS = [];
-    if any(beats_outlier)
-        outlier_QRS = beats_outlier;
+    if any(beats.QRS_rem_outlier)
+        outlier_QRS = beats.QRS_rem_outlier;
         t2 = text(outlier_QRS,X(outlier_QRS),' Out');
         
         for j = 1:length(t2)

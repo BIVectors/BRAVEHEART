@@ -176,6 +176,10 @@ set(handles.TCRT_angle_txt,'String',round(handles.vcg_morph.TCRT_angle,2));
 
 set(handles.qrst_dihedral_ang_txt,'String',round(handles.vcg_morph.qrst_dihedral_ang,2));
 
+set(handles.TMD_txt,'String',round(handles.vcg_morph.TMD,2));
+set(handles.TWR_abs_txt,'String',round(handles.vcg_morph.TWR_abs,3));
+set(handles.TWR_rel_txt,'String',round(handles.vcg_morph.TWR_rel,3));
+
 
 
 % Star abnormal values in GUI

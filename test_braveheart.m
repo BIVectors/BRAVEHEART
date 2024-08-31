@@ -2476,6 +2476,7 @@ testCase.verifyEqual(double(isfile('search_presets.csv')),1);
 testCase.verifyEqual(double(isfile('transform_mats.csv')),1);
 testCase.verifyEqual(double(isfile('batch_settings.csv')),1);
 testCase.verifyEqual(double(isfile('Annoparams.csv')),1);
+testCase.verifyEqual(double(isfile('generic_csv_params.csv')),1);
 
 testCase.verifyEqual(double(isfile('braveheart_variables.pdf')),1);
 testCase.verifyEqual(double(isfile('braveheart_equations.pdf')),1);

@@ -51,10 +51,49 @@ menu and change to 100%.
 + **Mac OS:** Open System Preferences and then Display. Choose Scaled Resolution and then
 More Space
 
-## How to Cite Use of BRAVEHEART
-Please include the link to this GitHub repository and cite our [manuscript in Computer Methods and Programs in Biomedicine](https://doi.org/10.1016/j.cmpb.2023.107798).  The upper right section of this repository has a [CITATION file](https://github.com/BIVectors/BRAVEHEART/blob/main/CITATION.cff) that will provide the appropriate references:  
+## Supported ECG Formats:
+BRAVEHEART can read a wide variety of 12-lead ECG formats including:
+1. GE MUSE XML
+2. Philips XML
+3. HL7 XML
+4. DICOM
+5. ISHNE
+6. GE Marquette ASCII
+7. Cardiosoft XML
+8. Schiller XML
+9. SCP-ECG
+10. EDF
+11. Physionet .dat
+12. Physionet .csv
+13. GE Prucka
+14. Abbott Workmate Claris ASCII
+15. Unformatted .txt and .csv
 
+If you need BRAVEHEART to read another ECG format let us know and we will help add it.
+
+## How to Cite Use of BRAVEHEART
+Please include the link to this GitHub repository and cite our [manuscript in Computer Methods and Programs in Biomedicine](https://doi.org/10.1016/j.cmpb.2023.107798).  The upper right section of this repository has a [CITATION file](https://github.com/BIVectors/BRAVEHEART/blob/main/CITATION.cff) that will provide the appropriate references which are also reproduced here:  
+
+Citation:   
 [Hans F. Stabenau and Jonathan W. Waks. BRAVEHEART: Open-source software for automated electrocardiographic and vectorcardiographic analysis. _Computer Methods and Programs in Biomedicine_. Volume 242, Dec 2023, 107798. DOI: https://doi.org/10.1016/j.cmpb.2023.107798](https://doi.org/10.1016/j.cmpb.2023.107798)  
+```
+Stabenau, HF and Waks, JW. BRAVEHEART: Open-source software for automated electrocardiographic and vectorcardiographic analysis. Comput Methods Programs Biomed. Volume 242, Dec 2023, 107798. DOI: https://doi.org/10.1016/j.cmpb.2023.107798
+```
+
+Bibtex:
+```
+@Article{BRAVEHEART,
+   Author="Stabenau, H. F.  and Waks, J. W. ",
+   Title="{{B}{R}{A}{V}{E}{H}{E}{A}{R}{T}: {O}pen-source software for automated electrocardiographic and vectorcardiographic analysis}",
+   Journal="Comput Methods Programs Biomed",
+   Year="2023",
+   Volume="242",
+   Pages="107798",
+   Month="Dec",
+   doi = {https://doi.org/10.1016/j.cmpb.2023.107798}
+}
+
+```
 
 ## Publications
 The software has been used for ECG/VCG analysis in the following publications:  
@@ -73,6 +112,10 @@ The software has been used for ECG/VCG analysis in the following publications:
 7. [N Isaza, HF Stabenau, DB Kramer, A Sau, P Tung, TR Maher, AH Locke, P Zimetbaum, A d’Avila, NS Peters, LG Tereshchenko, FS Ng, AE Buxton, and JW Waks. The Spatial Ventricular Gradient is Associated with Inducibility of Ventricular Arrhythmias During Electrophysiology Study. _Heart Rhythm_, 2024 In Press.](https://doi.org/10.1016/j.hrthm.2024.05.005)
 
 8. [L Pastika, A Sau, K Patlatzoglou, E Sieliwonczyk, AH Ribeiro, KA McGurk, S Khan, D Mandic, WR Scott, JS Ware, NS Peters, ALP Ribeiro, DB Kramer, JW Waks, and FS Ng. Deep Neural Network-derived Electrocardiographic Body Mass Index as a Predictor of Cardiometabolic Disease. _NPJ Digit. Med._ 2024 Jun 25;7(1):167.](https://doi.org/10.1038/s41746-024-01170-0)
+
+9. [A Sau, L Pastika, E Sieliwonczyk, K Patlatzoglou, AH Ribeiro, KA McGurk, B Zeidaabadi, H Zhang, K Macierzanka, D Mandic, E Sabino, L Giatti, SM Barreto, L do Valle Camelo, I Tzoulaki, DP O’Regan, NS Peters, JS Ware, ALP Ribeiro, DB Kramer, JW Waks, and FS Ng.  Artificial Intelligence–Enabled Electrocardiogram for Mortality and Cardiovascular Risk Estimation: An Actionable, Explainable and Biologically Plausible Platform. _Lancet Digit Health_. 2024. In Press]()
+
+10. [A Sau, AH Ribeiro, KA McGurk, L Pastika, N Bajaj, M Gurnani, E Sieliwonczyk, K Patlatzoglou, M Ardissino, JY Chen, H Wu, X Shi, K Hnatkova, S Zheng, A Britton, M Shipley, I Andršová, T Novotný, E Sabino, L Giatti, SM Barreto, JW Waks, DB Kramer, D Mandic, NS Peters, DP O’Regan, M Malik, JS Ware, ALP Ribeiro, and FS Ng.  Neural Network-Derived Electrocardiographic Features have Prognostic Significance and Important Phenotypic and Genotypic Associations. _Circ Cardiovasc Qual Outcomes_. 2024. In Press]()
 
 If you have used BRAVEHEART for your research project we would be happy to include a reference to your manuscript!
 

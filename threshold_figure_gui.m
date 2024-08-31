@@ -24,7 +24,7 @@
 function threshold_figure_gui(vm, th, maxbpm, freq)
 
 up = vm;
-down = vm;
+%down = vm;
 
 q = quantile(abs(vm), 100);
 

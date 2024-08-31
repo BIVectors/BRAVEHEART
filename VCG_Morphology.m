@@ -60,6 +60,10 @@ properties (SetAccess=private)
         qrs_loop_normal         % Vector normal to best fit QRS loop plane
         t_loop_normal           % Vector normal to best fit T loop plane
         qrst_dihedral_ang       % Dihedral angle between best fit QRS loop and T loop planes
+
+        TMD                     % T-Wave Morphology Dispersion (deg)
+        TWR_abs                 % Absolute T-wave residuum (mv2)
+        TWR_rel                 % Relative T-wave residuum (%)
 end
     
     
@@ -89,6 +93,9 @@ methods
 
         % Dihedral angle between QRS and T loop planes
         obj.qrst_dihedral_ang = dihedral(obj.t_loop_normal, obj.qrs_loop_normal);
+
+        % TMD/TWR
+        [obj.TMD, obj.TWR_abs, obj.TWR_rel] = svd_twave(ecg,fidpts);
 
            
     end     % End main VCG_Morphology methods 

@@ -411,7 +411,7 @@ uiwait(msgbox(...
 {'\fontsize{14}\it\bf \color[rgb]{0.09,0.078,0.377}';...
 'BRAVE\color[rgb]{0.89,0.016,0.016}H\fontsize{11}EART';...
 '\fontsize{8}\rm\color{black}(Beth Israel Analysis of Vectors of the Heart)';...
-'Version 1.2.1' ; 
+'Version 1.2.2' ; 
 ' ' ;...
 'Copyright 2016-2024  Hans F. Stabeneau and Jonathan W. Waks' ;...
 ' ' ;...
@@ -439,7 +439,7 @@ uiwait(msgbox(...
 {'\fontsize{18}\it\bf \color[rgb]{0.09,0.078,0.377}';...
 'BRAVE\color[rgb]{0.89,0.016,0.016}H\fontsize{14}EART\fontsize{11}';...
 '\rm\color{black}(Beth Israel Analysis of Vectors of the Heart)';...
-'Version 1.2.1' ; 
+'Version 1.2.2' ; 
 ' ' ;...
 'Copyright 2016-2024  Hans F. Stabeneau and Jonathan W. Waks' ;...
 ' ' ;...
@@ -4085,32 +4085,35 @@ if isfield(handles,'median_vcg')
     beats = handles.beats;
     medianbeat = handles.medianbeat;
 
-    if isfield(handles,'qrs_pvcs')
-        pvc_index = handles.qrs_pvcs;
-    else
-        pvc_index = [];
-    end
-
-    if isfield(handles,'qrs_outliers')
-        outlier_index = handles.qrs_outliers;
-    else 
-        outlier_index = [];
-    end
-
+%     if isfield(handles,'qrs_pvcs')
+%         pvc_index = handles.qrs_pvcs;
+%     else
+%         pvc_index = [];
+%     end
+% 
+%     if isfield(handles,'qrs_outliers')
+%         outlier_index = handles.qrs_outliers;
+%     else 
+%         outlier_index = [];
+%     end
+% 
     % cross correlation for printing on figure
     correlation_test = handles.correlation_test;
-    
-    X = vcg.X;
-    Y = vcg.Y;
-    Z = vcg.Z;
-    VM = vcg.VM;
 
-    medianX = median_vcg.X;
-    medianY = median_vcg.Y;
-    medianZ = median_vcg.Z;
-    medianVM = median_vcg.VM;
+    % Quality probability for printing on figure
+    prob = handles.quality.prob_value;
+%     
+%     X = vcg.X;
+%     Y = vcg.Y;
+%     Z = vcg.Z;
+%     VM = vcg.VM;
+% 
+%     medianX = median_vcg.X;
+%     medianY = median_vcg.Y;
+%     medianZ = median_vcg.Z;
+%     medianVM = median_vcg.VM;
 
-    summary_figure(vcg, beats, pvc_index, outlier_index, median_vcg, medianbeat, correlation_test, filename)
+    summary_figure(vcg, beats, median_vcg, medianbeat, correlation_test, prob, filename)
     
     % Save as png if save checkbox selected
     if save_flag == 1
@@ -4188,7 +4191,6 @@ vcg_raw = handles.vcg_raw;
 ecg = handles.ecg;
 vcg = handles.vcg;
 
-
 beats = handles.beats;
 beat_stats = handles.beat_stats;
 medianbeat = handles.medianbeat;
@@ -4205,12 +4207,21 @@ vcg_morph = handles.vcg_morph;
 
 export_filename = fullfile(save_folder,strcat(handles.filename_short(1:end-4), '_data.mat'));
 
+ecg_filename = handles.filename;
+
+aps = handles.aps;
+
+quality = handles.quality;
+
 data = struct( ...
+    'filename',ecg_filename, ...
+    'annoparams', aps, ...
     'ecg_raw', ecg_raw, ...
     'ecg_filtered', ecg, ...
-    'vcg_filtered', vcg, ...
     'vcg_raw', vcg_raw, ...
+    'vcg_filtered', vcg, ...
     'beats', beats, ...
+    'beat_stats', beat_stats, ...
     'geh', geh, ...
     'median_vcg', median_vcg, ...
     'median_12L', median_12L, ...
@@ -4218,7 +4229,8 @@ data = struct( ...
     'beats_median_vcg', beatsig_vcg, ...
     'beats_median_12L', beatsig_12L, ...
     'lead_morph', lead_morph, ...
-    'vcg_morph', vcg_morph);
+    'vcg_morph', vcg_morph, ...
+    'quality', quality);
 
 save(export_filename,'data');
 

@@ -115,10 +115,13 @@ classdef ECG12
                             obj.V1, obj.V2, obj.V3, obj.V4, obj.V5, obj.V6] = load_hl7xml(filename); 
 
                     case 'generic_csv'
-                        unitspermv=200;
-                        obj.hz=500;
+                        % Pull formatting details out of generic_csv_params.csv
+                        % This way can edit frequency, unitspermv, and 
+                        % orientation if running via MATLAB or compiled version
+                        [obj.hz, unitspermv, orientation] = read_generic_csv_params();
+
                         [obj.I, obj.II, obj.III, obj.avR, obj.avF, obj.avL, ...
-                            obj.V1, obj.V2, obj.V3, obj.V4, obj.V5, obj.V6] = load_generic_csv(filename, unitspermv);
+                            obj.V1, obj.V2, obj.V3, obj.V4, obj.V5, obj.V6] = load_generic_csv(filename, unitspermv, orientation);
 
                     case 'cardiosoft_xml'
 						[obj.hz, obj.I, obj.II, obj.III, obj.avR, obj.avF, obj.avL, ...
@@ -143,6 +146,10 @@ classdef ECG12
                     case 'physionet_csv'
                        [obj.hz, obj.I, obj.II, obj.III, obj.avR, obj.avF, obj.avL, ...
                             obj.V1, obj.V2, obj.V3, obj.V4, obj.V5, obj.V6] = load_physionet_csv(filename);
+
+                   case 'physionet_dat'
+                       [obj.hz, obj.I, obj.II, obj.III, obj.avR, obj.avF, obj.avL, ...
+                            obj.V1, obj.V2, obj.V3, obj.V4, obj.V5, obj.V6] = load_physionet_dat(filename);
 					
                     otherwise
                         error('unknown format %s', format);

@@ -122,7 +122,7 @@ else
     % beats3 is everything pre-pvc removal
     if ap.pvc_removal
         beats3 = beats3.find_pvcs(vcg2, ap);
-        beats4 = beats3.delete(beats3.pvc);
+        beats4 = beats3.delete(beats3.pvc,"pvc");
     else
         beats4 = beats3;
     end
@@ -132,7 +132,7 @@ else
     % beats4 is everything pre-outlier removal
     if ap.outlier_removal
         beats4 = beats4.find_outliers(vcg2,ap);
-        beats5 = beats4.delete(beats4.outlier);
+        beats5 = beats4.delete(beats4.outlier,"outlier");
     else
         beats5 = beats4;
     end
@@ -244,8 +244,8 @@ if save_figures
     ppqoff = line([medianbeat.S medianbeat.S],[min_line max_line],'Color','b','LineStyle','--', 'Displayname','QRS End','linewidth', 1.15);
     pptoff = line([medianbeat.Tend medianbeat.Tend],[min_line max_line],'Color','r','LineStyle','--', 'Displayname','Tend','linewidth', 1.15);
     line([0 length(medianvcg1.X')],[-0.05 -0.05], 'Color','black','LineStyle',':');
-    text_string = sprintf('X / Y / Z Cross Correlation = %0.3f / %0.3f / %0.3f \nQRS = %i ms \nQT = %i ms', correlation_test.X,  correlation_test.Y,  correlation_test.Z, ...
-        (medianbeat.S-medianbeat.Q)*(1000/medianvcg1.hz), (medianbeat.Tend-medianbeat.Q)*(1000/medianvcg1.hz)); 
+    text_string = sprintf('X / Y / Z Cross Correlation = %0.3f / %0.3f / %0.3f \nGood Quality Probability = %3.1f%% \nQRS = %i ms \nQT = %i ms', correlation_test.X,  correlation_test.Y,  correlation_test.Z, ...
+       100*quality.prob_value, (medianbeat.S-medianbeat.Q)*(1000/medianvcg1.hz), (medianbeat.Tend-medianbeat.Q)*(1000/medianvcg1.hz)); 
     text(find(medianvcg1.VM == max(medianvcg1.VM)) + round(100*(medianvcg1.hz/1000)), 0.8*medianvcg1.VM(find(medianvcg1.VM == max(medianvcg1.VM))),text_string,'fontsize',8);
  
     a = get(gca,'XTickLabel');

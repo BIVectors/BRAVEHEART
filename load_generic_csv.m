@@ -23,9 +23,22 @@
 % Loads .csv ECG Format Files which can have variable frequency or units per mV
 
 function [L1, L2, L3, avR, avF, avL, V1, V2, V3, V4, V5, V6] =...
-    load_generic_csv(filename, unitspermv)
+    load_generic_csv(filename, unitspermv, orientation)
+
+% Orientation sets if data is arranged in rows or columns
+% Regardless of if orientated in rows or columns, order of leads must be
+% I, II, III, avR, avL, avF, V1, V2, V3, V4, V5, V6
 
 M = readmatrix(filename);
+
+if strcmp(orientation,'cols')
+    % do nothing
+elseif strcmp(orientation,'rows')
+    % Transpose
+    M = M';
+else
+    error('generic CSV orientation is not set as rows or cols')
+end
 
 M = M / unitspermv;     % Convert to mV
 

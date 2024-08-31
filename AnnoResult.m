@@ -35,6 +35,10 @@ classdef AnnoResult
 		num_samples
 		num_beats
         initial_num_beats
+        num_pvcs_removed
+        num_outliers_removed
+        num_manual_removed
+        num_bad_removed
 		hr
         cross_corr 
         noise_hf
@@ -84,10 +88,14 @@ classdef AnnoResult
 					obj.freq = {ecg.hz};
 					obj.num_samples = {ecg.length()};
 					obj.num_beats = {beats.length()};
-					obj.date = {datestr(now,'mm/dd/yyyy')};
-					obj.time = {datestr(now,'HH:MM')};
+					obj.date = {datetime('now','Format','MM/dd/yyyy')};
+					obj.time = {datetime('now','Format','HH:mm')};
 					
                     obj.initial_num_beats = num2cell(num_initial_beats);
+                    obj.num_pvcs_removed = num2cell(length(beats.QRS_rem_pvc));
+                    obj.num_outliers_removed = num2cell(length(beats.QRS_rem_outlier));
+                    obj.num_manual_removed = num2cell(length(beats.QRS_rem_manual));
+                    obj.num_bad_removed = num2cell(length(beats.QRS_rem_bad));
                     obj.hr = num2cell(hr);  
                     
                     obj.cross_corr = num2cell(min([cross_corr.X cross_corr.Y cross_corr.Z]));
@@ -98,7 +106,7 @@ classdef AnnoResult
                     obj.missing_lead = num2cell(missing_lead);
 
                     % VERSION MANUALLY UPDATED HERE
-                    obj.version = {'1.2.1'};
+                    obj.version = {'1.2.2'};
                    
 			end
 		end
@@ -113,7 +121,8 @@ classdef AnnoResult
 				aps_blank = Annoparams();
 				
 				
-				info_labels = [{'filename'} {'version'} {'note'} {'proc_date'} {'proc_time'} {'source'} {'freq'} {'num_samples'} {'num_beats'} {'initial_num_beats'} {'hr'} {'cross_corr'} {'noise_hf'} {'noise_lf'} {'quality_prob'} {'missing_lead'}];
+				info_labels = [{'filename'} {'version'} {'note'} {'proc_date'} {'proc_time'} {'source'} {'freq'} {'num_samples'} {'num_beats'} {'initial_num_beats'} {'num_pvcs_removed'} ...
+                    {'num_outliers_removed'} {'num_manual_removed'} {'num_bad_removed'} {'hr'} {'cross_corr'} {'noise_hf'} {'noise_lf'} {'quality_prob'} {'missing_lead'}];
 				% you have to do it this way in order to deal properly with the nested cells and with empty cells								
 				excel_header = [info_labels vcg_blank.labels() aps_blank.labels() beat_stats_blank.labels() beats_blank.labels() lead_morph_blank.labels() vcg_morph_blank.labels()];				
 				p = properties(obj);

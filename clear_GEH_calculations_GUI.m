@@ -152,6 +152,10 @@ set(handles.TCRT_angle_txt,'String',0);
 
 set(handles.qrst_dihedral_ang_txt,'String',0);
 
+set(handles.TMD_txt,'String',0);
+set(handles.TWR_abs_txt,'String',0);
+set(handles.TWR_rel_txt,'String',0);
+
 
 % Quality display
 set(handles.quality_panel, 'BackgroundColor', '[0.3922 0.8314 0.0745]')

@@ -34,10 +34,14 @@ classdef Beats
         S
         T
         Tend
-        outlier      % logical flags for beats: is outlier beat?
-        pvc          % is pvc?
-        nnet_flag    % problem with nnet annotation?
-        nnet_nan
+        outlier         % logical flags for beats: is outlier beat?
+        pvc             % logical flags for beats: is PVC?
+        nnet_flag       % problem with nnet annotation?
+        nnet_nan        % NNet can't find a fiducial point in the median beat
+        QRS_rem_pvc     % List of beats that were removed as PVCs
+        QRS_rem_outlier % List of beats that were removed as outliers
+        QRS_rem_manual  % List of beats that were manually removed
+        QRS_rem_bad     % List of beats that were removed due to other issues (too close to start/end of recording)
         
     end
     
@@ -89,6 +93,22 @@ classdef Beats
                             aps.autoMF, aps.MF_width_samp(hz), aps.autoMF_thresh, hz, aps.debug); 
                     end
                     
+                    % Add to "bad" beats if anno didnt like a beat too
+                    % close to start or end of the signal (eg they were cut
+                    % off and were only included in the HR calculation).
+
+                    if length(QRS) > length(obj.QRS) && length(QRS) ~= 1
+                        C = setxor(QRS,obj.QRS);
+                        obj.QRS_rem_bad = vertcat(obj.QRS_rem_bad, C);
+                        % If end up with a 0x1 double vector make this empty
+                            if isempty(obj.QRS_rem_bad)
+                                obj.QRS_rem_bad = [];
+                            end
+                        % Sort in ascending order
+                        obj.QRS_rem_bad = sort(obj.QRS_rem_bad);
+                    end
+
+
                     
                     % If using nnet for median reanno
                     if strcmp(aps.median_reanno_method,'NNet') && length(QRS) == 1
@@ -157,7 +177,7 @@ classdef Beats
             bad = bad(1:N-1);
             b.Tend(bad) = round(b.S(bad) + rr(bad)*endw/100);
 
-            if deleteLast; b = b.delete(N); end
+            if deleteLast; b = b.delete(N, "bad"); end
             
         end
            
@@ -196,7 +216,12 @@ classdef Beats
         end
         end
         
-        function obj = delete(obj, ind)
+        function obj = delete(obj, ind, flag)
+
+            % If don't supply a flag it is manual
+            if nargin == 2 && isnumeric(ind)
+                flag = 'manual';
+            end
             
             obj_old = obj;
             
@@ -213,8 +238,47 @@ classdef Beats
                  % Reset to prior to deletion 
                  obj = obj_old; 
              end
-            
-            
+
+             % Moved deleted beat to 'deleted' field 
+
+             if strcmp(flag,"pvc")
+                    obj.QRS_rem_pvc = vertcat(obj.QRS_rem_pvc, obj_old.QRS(ind));
+                    % If end up with a 0x1 double vector make this empty
+                        if isempty(obj.QRS_rem_pvc)
+                            obj.QRS_rem_pvc = [];
+                        end
+                    % Sort in ascending order
+                    obj.QRS_rem_pvc = sort(obj.QRS_rem_pvc);
+
+             elseif strcmp(flag,"outlier")
+                    obj.QRS_rem_outlier = vertcat(obj.QRS_rem_outlier, obj_old.QRS(ind));
+                    % If end up with a 0x1 double vector make this empty
+                        if isempty(obj.QRS_rem_outlier)
+                            obj.QRS_rem_outlier = [];
+                        end
+                    % Sort in ascending order
+                    obj.QRS_rem_outlier = sort(obj.QRS_rem_outlier);
+             
+             elseif strcmp(flag,"bad")
+                    obj.QRS_rem_bad = vertcat(obj.QRS_rem_bad, obj_old.QRS(ind));
+                    % If end up with a 0x1 double vector make this empty
+                        if isempty(obj.QRS_rem_bad)
+                            obj.QRS_rem_bad = [];
+                        end
+                    % Sort in ascending order
+                    obj.QRS_rem_bad = sort(obj.QRS_rem_bad);
+             
+             else
+                    obj.QRS_rem_manual = vertcat(obj.QRS_rem_manual, obj_old.QRS(ind));
+                    % If end up with a 0x1 double vector make this empty
+                        if isempty(obj.QRS_rem_manual)
+                            obj.QRS_rem_manual = [];
+                        end
+                    % Sort in ascending order
+                    obj.QRS_rem_manual = sort(obj.QRS_rem_manual);
+
+             end
+ 
         end
         
         function obj = change(obj, ind, newbeat)

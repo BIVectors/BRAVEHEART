@@ -38,6 +38,25 @@ classdef Beat_Stats
         qt_min
         qt_max
         qt_iqr
+
+        % HRV metrics -- may move these out to be stored a separate results class in
+        % future if start adding more complex measures, but for now will
+        % keep here to avoid having to do too much change to ECG
+        % processing/reporting pipeline
+
+        RR_n                % RR intervals for beats after PVC/outlier/manual beat removal (ms)
+        RR_pct_n            % Percent change in RR_n (beats after PVC/outlier/manual beat removal (ms))
+        RR_sd_n             % Successive differences of RR intervals for beats after PVC/outlier/manual beat removal (ms)
+        
+        RR                  % RR intervals for all beats (ms)
+        RR_pct              % Percent change in RR (all beats (ms))
+        RR_sd               % Successive differences of all RR intervals (ms)
+
+        SDNN                % Standard deviation of RR_n (beats after PVC/outlier/manual beat removal (ms))
+        SDRR                % Standard deviation of RR (all beats (ms))
+
+        RMSSD_n             % RMS of successive differences for beats after PVC/outlier/manual beat removal (ms)
+        RMSSD_all           % RMS of successive differences for all beats (ms)        
         
     end
     
@@ -51,11 +70,11 @@ classdef Beat_Stats
             if nargin == 0; return; end
             
             if nargin == 1
-                error('Too few inputs: Beats_Stats class takes Beats class as only input');
+                error('Too few inputs: Beats_Stats class takes Beats class and sample_time as 2 inputs');
             end
             
             if nargin >2
-                error('Too many inputs: Beats_Stats class takes Beats class as only input');
+                error('Too many inputs: Beats_Stats class takes Beats class and sample_time as 2 inputs');
             end
             
             if nargin == 2
@@ -78,12 +97,34 @@ classdef Beat_Stats
                 obj.qt_min = min(qt);
                 obj.qt_max = max(qt);
                 obj.qt_iqr = iqr(qt);
+
+
+                % HRV Parameters Holding Space -- May move this out in the future
+
+                HRV = HRV_Calc(beats, sample_time);
+
+                obj.RR_n = HRV.RR_n;                
+                obj.RR_pct_n = HRV.RR_pct_n;            
+                obj.RR_sd_n = HRV.RR_sd_n;             
+
+                obj.RR = HRV.RR;                 
+                obj.RR_pct = HRV.RR_pct;             
+                obj.RR_sd = HRV.RR_sd;               
+
+                obj.SDNN = HRV.SDNN;               
+                obj.SDRR = HRV.SDRR;                
+
+                obj.RMSSD_n = HRV.RMSSD_n;             
+                obj.RMSSD_all = HRV.RMSSD_all;          
                 
                 
             end   % End  nargin == 1
             
         end   % End Constructor
         
+
+
+
         
         
         function labels = labels(obj); labels = properties(obj)'; end   
@@ -98,20 +139,38 @@ classdef Beat_Stats
 %              end
 %         end
         
+%         function v = cells(obj)
+%             l = obj.labels();
+%             N = length(l);
+%             v = cell(1, N);
+%             vector_names = []; % these are nested cells
+%             
+%             for i = 1:N
+%                 v{i} = obj.(l{i});
+%                 
+%                 if any(strcmp(l{i}, vector_names))
+%                     v{i} = num2str(obj.(l{i}));
+%                 end
+%                 
+%             end
+%         end
+
+
+
         function v = cells(obj)
-            l = obj.labels();
-            N = length(l);
-            v = cell(1, N);
-            vector_names = []; % these are nested cells
             
-            for i = 1:N
-                v{i} = obj.(l{i});
+            lab = obj.labels();
+            v = cell(1, length(lab));
+            for i = 1:length(lab)
                 
-                if any(strcmp(l{i}, vector_names))
-                    v{i} = num2str(obj.(l{i}));
-                end
+                v{i} = mat2str(obj.(lab{i})');
+                T = v{i};
+                T(T=='[') = [];
+                T(T==']') = [];
+                v{i} = T;
                 
             end
+            
         end
         
         

@@ -53,7 +53,7 @@ delete_index  = find(beats.pvc == 1);
 qrs_pvcs = QRS(delete_index);
 qrs_pvcs = [qrs_pvcs; existing_pvcs];    % Add existing PVCs to old PVCs
 handles.qrs_pvcs = qrs_pvcs;
-beats = beats.delete(delete_index);  
+beats = beats.delete(delete_index,"pvc");  
 handles.beats = beats;
 guidata(hObject, handles);
 
