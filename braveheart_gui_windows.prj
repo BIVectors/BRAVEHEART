@@ -8,13 +8,13 @@
       <file>${PROJECT_ROOT}\braveheart_gui_windows_resources\icon_24.png</file>
       <file>${PROJECT_ROOT}\braveheart_gui_windows_resources\icon_16.png</file>
     </param.icons>
-    <param.version>1.2.2</param.version>
+    <param.version>1.3.0</param.version>
     <param.authnamewatermark>Hans F. Stabenau and Jonathan W. Waks</param.authnamewatermark>
     <param.email>bravheart.ecg@gmail.com</param.email>
     <param.company />
     <param.summary />
     <param.description>BRAVEHEART ECG/VCG Analysis Software -- GUI Version
-Version 1.2.2</param.description>
+Version 1.3.0</param.description>
     <param.screenshot>${PROJECT_ROOT}\braveheart_splash.png</param.screenshot>
     <param.guid />
     <param.installpath.string>\braveheart_gui\</param.installpath.string>
@@ -50,7 +50,7 @@ Version 1.2.2</param.description>
 	 varargin  input arguments 
  Description 
  	 BRAVEHEART ECG/VCG Analysis Software -- GUI Version
-Version 1.2.2</param.help.text>
+Version 1.3.0</param.help.text>
     <unset>
       <param.company />
       <param.summary />
@@ -95,6 +95,7 @@ Version 1.2.2</param.help.text>
       <file>${PROJECT_ROOT}\ecg_formats.csv</file>
       <file>${PROJECT_ROOT}\elecpos.mat</file>
       <file>${PROJECT_ROOT}\findHighpassLvl.m</file>
+      <file>${PROJECT_ROOT}\findpeakswavelet.m</file>
       <file>${PROJECT_ROOT}\getfiletype.m</file>
       <file>${PROJECT_ROOT}\HRV_Calc.m</file>
       <file>${PROJECT_ROOT}\leadidcodexyz.m</file>

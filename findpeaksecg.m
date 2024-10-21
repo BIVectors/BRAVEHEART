@@ -20,10 +20,26 @@
 % This software is for research purposes only and is not intended to diagnose or treat any disease.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function QRS = findpeaksecg(VM, maxbpm, freq, pkthresh)
+function QRS = findpeaksecg(VM, maxbpm, freq, pkthresh, filter)
 
-q = quantile(abs(VM), 100);
-[~, QRS] = findpeaks(abs(VM), ...
-    'MinPeakHeight', q(pkthresh), 'MinPeakDistance', round(freq*60/maxbpm));
+if filter == 1
+    [QRS, ~, ~] = findpeakswavelet(VM, maxbpm, freq, pkthresh, 'sym4');
+else
+    q = quantile(abs(VM), 100);
+    [~, QRS] = findpeaks(abs(VM), ...
+        'MinPeakHeight', q(pkthresh), 'MinPeakDistance', round(freq*60/maxbpm));
+end
+
+% QRS = QRS';
+% 
+% QRS
+%QRS2
+
+% figure
+% hold on
+% plot(VM)
+% scatter(QRS,VM(QRS))
+% scatter(QRS2,VM(QRS2))
+
 
 end

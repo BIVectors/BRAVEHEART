@@ -40,6 +40,7 @@ classdef Annoparams
 		% Load in ECG/peak detection
 		maxBPM = 150;                    % Sets window for detecting R peaks
 		pkthresh = 95;                   % Percentile of ECG signal above which a peak can be found
+        pkfilter = 0;                    % Additional filtering prior to peak detection on/off
 		lowpass = 1;                     % Low pass wavelet filter on/off
 		highpass = 1;                    % High pass wavelet filter on/off
 		wavelet_level_lowpass = 1;       % LPF freq is > samp freq/2^(wavelet_level_lowpass + 1)

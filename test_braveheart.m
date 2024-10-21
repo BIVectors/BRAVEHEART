@@ -50,6 +50,7 @@ function ap = aparam()
     ap = Annoparams();                  % Blank Annoparams class
     ap.maxBPM = 150;                    % Sets window for detecting R peaks
     ap.pkthresh = 95;                   % Percentile of ECG signal above which a peak can be found
+    ap.pkfilter = 0;                    % Additional filtering prior to peak detection on/off
     ap.lowpass = 1;                     % Low pass wavelet filter on/off
     ap.highpass = 1;                    % High pass wavelet filter on/off
     ap.wavelet_level_lowpass = 2;       % Lvl 2 at 500 Hz and Lvl 3 at 997 Hz is 62.5 Hz low-pass filter

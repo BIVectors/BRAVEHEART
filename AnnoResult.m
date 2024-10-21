@@ -106,7 +106,7 @@ classdef AnnoResult
                     obj.missing_lead = num2cell(missing_lead);
 
                     % VERSION MANUALLY UPDATED HERE
-                    obj.version = {'1.2.2'};
+                    obj.version = {'1.3.0'};
                    
 			end
 		end

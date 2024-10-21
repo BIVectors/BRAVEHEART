@@ -38,6 +38,9 @@ function push_guiparams(aps, hObject, eventdata, handles)
     
 % Peak Threshold for QRS detection
     set(handles.pkthresh, 'String', aps.pkthresh);
+
+% Peak Threshold filtering
+    set(handles.pkfilter_checkbox, 'Value', aps.pkfilter);
     
 % Lowpass Wavelet filtering        
    set(handles.wavelet_filter_box, 'Value', aps.lowpass);

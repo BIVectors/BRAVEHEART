@@ -110,7 +110,7 @@ classdef VCG
         
         function l = length(obj); l = length(obj.VM); end
         
-        function QRS = peaks(obj,a); QRS = findpeaksecg(obj.VM, a.maxBPM, obj.hz, a.pkthresh); end
+        function QRS = peaks(obj,a); QRS = findpeaksecg(obj.VM, a.maxBPM, obj.hz, a.pkthresh, a.pkfilter); end
                 
         function e = ecg(obj, transform_matrix)
             switch transform_matrix

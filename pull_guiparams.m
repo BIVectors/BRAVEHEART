@@ -43,6 +43,13 @@ aps = Annoparams;       % Declare as Annoparams class (will pull in default valu
     
 % Peak Threshold for QRS detection
     aps.pkthresh = str2double(get(handles.pkthresh, 'String'));
+
+% Peak Threshold filtering
+    if get(handles.pkfilter_checkbox, 'Value') == 1
+        aps.pkfilter = 1;
+    else
+        aps.pkfilter = 0;
+	end
     
 % Lowpass Wavelet filtering        
     if get(handles.wavelet_filter_box, 'Value') == 1

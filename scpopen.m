@@ -142,6 +142,10 @@ if ~isempty(findstr(HDR.FILE.PERMISSION,'r')),		%%%%% READ
                                 Sect1Len = Sect1Len - 3 - len; 
 %% [tag,len,Sect1Len],          %% DEBUGGING information
                                 field = fread(fid,[1,len],'uchar');
+
+                            % Disable if field is not read correctly
+                            if ~isempty(field)
+
                                 if tag == 0,	
                                         ListOfRecommendedTags(ListOfRecommendedTags==tag)=[];
                                         HDR.Patient.Name = char(field);  %% LastName
@@ -195,8 +199,8 @@ if ~isempty(findstr(HDR.FILE.PERMISSION,'r')),		%%%%% READ
                                 elseif tag == 9,
                                         HDR.Patient.Race = field;
                                 elseif tag == 10,
-field,
-					if (field(1)~=0)
+                                        field,
+					if (field(1)~=0) 
 	                                        HDR.Patient.Medication = field;
 					else	
 	                                        HDR.Patient.Medication.Code = {field(2:3)};
@@ -274,10 +278,12 @@ field,
                                 else
                                         fprintf(HDR.FILE.stderr,'Warning SCOPEN: unknown tag %i (section 1)\n',tag);
                                 end;
+
+                            end
                         end;
                         if ~isempty(ListOfRequiredTags)
-                                fprintf(HDR.FILE.stderr,'Warning SCPOPEN: the following tags are required but missing in file %s\n',HDR.FileName);
-                                disp(ListOfRequiredTags);
+                                %fprintf(HDR.FILE.stderr,'Warning SCPOPEN: the following tags are required but missing in file %s\n',HDR.FileName);
+                                %disp(ListOfRequiredTags);
                         end;
                         if ~isempty(ListOfRecommendedTags)
                                 %fprintf(HDR.FILE.stderr,'Warning SCPOPEN: the following tags are recommended but missing in file %s\n',HDR.FileName);
