@@ -1,3 +1,6 @@
 freq,500
 unitspermv,1
-orientation,rows
+orientation,cols
+row_start,1
+col_start,1
+lead_order,I II III AVR AVL AVF V1 V2 V3 V4 V5 V6

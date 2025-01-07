@@ -1,7 +1,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % BRAVEHEART - Open source software for electrocardiographic and vectorcardiographic analysis
 % ECG12.m -- ECG Object Class
-% Copyright 2016-2024 Hans F. Stabenau and Jonathan W. Waks
+% Copyright 2016-2025 Hans F. Stabenau and Jonathan W. Waks
 % 
 % Source code/executables: https://github.com/BIVectors/BRAVEHEART
 % Contact: braveheart.ecg@gmail.com
@@ -66,8 +66,8 @@ classdef ECG12
                 switch format
                     
                     case 'bidmc_format'
-                        obj.hz=500;
-                        unitspermv=200;
+                        obj.hz = 500;
+                        unitspermv = 200;
                         [obj.I, obj.II, obj.III, obj.avR, obj.avF, obj.avL, ...
                             obj.V1, obj.V2, obj.V3, obj.V4, obj.V5, obj.V6] = load_ecg(filename, unitspermv, format);
                         
@@ -80,13 +80,13 @@ classdef ECG12
                         obj.avL = obj.I - 0.5*obj.II;
                     
                     case 'prucka_format'
-                        obj.hz=997;
-                        unitspermv=1;
+                        obj.hz = 997;
+                        unitspermv = 1;
                         [obj.I, obj.II, obj.III, obj.avR, obj.avF, obj.avL, ...
                             obj.V1, obj.V2, obj.V3, obj.V4, obj.V5, obj.V6] = load_ecg(filename, unitspermv, format);
                         
                     case 'unformatted'
-                        unitspermv=1;
+                        unitspermv = 1;
                         [obj.I, obj.II, obj.III, obj.avR, obj.avF, obj.avL, ...
                             obj.V1, obj.V2, obj.V3, obj.V4, obj.V5, obj.V6, obj.hz] = load_unformatted(filename);    
                     
@@ -118,10 +118,10 @@ classdef ECG12
                         % Pull formatting details out of generic_csv_params.csv
                         % This way can edit frequency, unitspermv, and 
                         % orientation if running via MATLAB or compiled version
-                        [obj.hz, unitspermv, orientation] = read_generic_csv_params();
+                        [obj.hz, unitspermv, orientation, row_start, col_start, lead_order] = read_generic_csv_params();
 
                         [obj.I, obj.II, obj.III, obj.avR, obj.avF, obj.avL, ...
-                            obj.V1, obj.V2, obj.V3, obj.V4, obj.V5, obj.V6] = load_generic_csv(filename, unitspermv, orientation);
+                            obj.V1, obj.V2, obj.V3, obj.V4, obj.V5, obj.V6] = load_generic_csv(filename, unitspermv, orientation, row_start, col_start, lead_order);
 
                     case 'cardiosoft_xml'
 						[obj.hz, obj.I, obj.II, obj.III, obj.avR, obj.avF, obj.avL, ...
@@ -150,6 +150,16 @@ classdef ECG12
                    case 'physionet_dat'
                        [obj.hz, obj.I, obj.II, obj.III, obj.avR, obj.avF, obj.avL, ...
                             obj.V1, obj.V2, obj.V3, obj.V4, obj.V5, obj.V6] = load_physionet_dat(filename);
+
+                    case 'megacare_xml'
+                       [obj.hz, obj.I, obj.II, obj.III, obj.avR, obj.avF, obj.avL, ...
+                            obj.V1, obj.V2, obj.V3, obj.V4, obj.V5, obj.V6] = load_megacarexml(filename);
+
+                   case 'norav'
+                       obj.hz = 500;
+                       unitspermv = 409.84;
+                       [obj.I, obj.II, obj.III, obj.avR, obj.avF, obj.avL, ...
+                            obj.V1, obj.V2, obj.V3, obj.V4, obj.V5, obj.V6] = load_norav(filename, unitspermv); 
 					
                     otherwise
                         error('unknown format %s', format);

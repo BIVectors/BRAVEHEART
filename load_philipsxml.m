@@ -1,7 +1,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % BRAVEHEART - Open source software for electrocardiographic and vectorcardiographic analysis
 % load_philipsxml.m -- Load Philips XML format ECGs
-% Copyright 2016-2024 Hans F. Stabenau and Jonathan W. Waks
+% Copyright 2016-2025 Hans F. Stabenau and Jonathan W. Waks
 %
 % Code adapted from: github.com/sixlettervariables/sierra-ecg-tools
 % 

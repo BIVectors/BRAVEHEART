@@ -1,7 +1,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % BRAVEHEART - Open source software for electrocardiographic and vectorcardiographic analysis
 % read_generic_csv_params.m -- Reads in parameters to load generic CSV files
-% Copyright 2016-2024 Hans F. Stabenau and Jonathan W. Waks
+% Copyright 2016-2025 Hans F. Stabenau and Jonathan W. Waks
 % 
 % Source code/executables: https://github.com/BIVectors/BRAVEHEART
 % Contact: braveheart.ecg@gmail.com
@@ -20,13 +20,13 @@
 % This software is for research purposes only and is not intended to diagnose or treat any disease.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function [freq, unitspermv, orientation] = read_generic_csv_params()
+function [freq, unitspermv, orientation, row_start, col_start, lead_order] = read_generic_csv_params()
 
 % Find and read the csv file
 currentdir = getcurrentdir();
 A = string(readcell(fullfile(currentdir,'generic_csv_params.csv'))); % read in data from .csv file
 
-% Parse out the 3 parts of the file
+% Parse out the parts of the file
 [r,~] = find(ismember(A,'freq'));
 freq = str2double(A(r,2));
 
@@ -36,6 +36,14 @@ unitspermv = str2double(A(r,2));
 [r,~] = find(ismember(A,'orientation'));
 orientation = A(r,2);
 
+[r,~] = find(ismember(A,'row_start'));
+row_start = str2double(A(r,2));
+
+[r,~] = find(ismember(A,'col_start'));
+col_start = str2double(A(r,2));
+
+[r,~] = find(ismember(A,'lead_order'));
+lead_order = A(r,2);
 
 
 

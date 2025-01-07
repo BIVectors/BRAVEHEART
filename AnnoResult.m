@@ -1,7 +1,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % BRAVEHEART - Open source software for electrocardiographic and vectorcardiographic analysis
 % AnnoResult.m -- Utility class which stores the results of an annotation calculation and export it as a table
-% Copyright 2016-2024 Hans F. Stabenau and Jonathan W. Waks
+% Copyright 2016-2025 Hans F. Stabenau and Jonathan W. Waks
 % 
 % Source code/executables: https://github.com/BIVectors/BRAVEHEART
 % Contact: braveheart.ecg@gmail.com
@@ -106,7 +106,7 @@ classdef AnnoResult
                     obj.missing_lead = num2cell(missing_lead);
 
                     % VERSION MANUALLY UPDATED HERE
-                    obj.version = {'1.3.0'};
+                    obj.version = {'1.3.1'};
                    
 			end
 		end

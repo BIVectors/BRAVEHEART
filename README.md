@@ -27,7 +27,7 @@ The most up to date version of the software can be found on GitHub at http://www
 
 ## License
 ![badge](https://badgen.net/badge/License/GPL-3.0/?color=red)  
-**Copyright 2016-2024 Jonathan W. Waks and Hans F. Stabenau**  
+**Copyright 2016-2025 Jonathan W. Waks and Hans F. Stabenau**  
 All rights reserved.  
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.  This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.  You should have received a copy of the GNU General Public License along with this program. If not, see https://www.gnu.org/licenses/ or the [LICENSE](https://github.com/BIVectors/BRAVEHEART/blob/main/LICENSE) file included in this repository.
 
@@ -68,6 +68,8 @@ BRAVEHEART can read a wide variety of 12-lead ECG formats including:
 13. GE Prucka
 14. Abbott Workmate Claris ASCII
 15. Unformatted .txt and .csv
+16. Norav 1200M .rdt
+17. Megacare XML
 
 If you need BRAVEHEART to read another ECG format let us know and we will help add it.
 
@@ -109,13 +111,15 @@ The software has been used for ECG/VCG analysis in the following publications:
 
 6. [HF Stabenau, A Sau, DB Kramer, NS Peters, FS Ng, and JW Waks. Limits of the Spatial Ventricular Gradient and QRST Angles in Patients with Normal Electrocardiograms and No Known Cardiovascular Disease Stratified by Age, Sex, and Race. _J Cardiovasc Electrophysiol_, 2023 Nov;34(11):2305-2315.](https://doi.org/10.1111/jce.16062)
 
-7. [N Isaza, HF Stabenau, DB Kramer, A Sau, P Tung, TR Maher, AH Locke, P Zimetbaum, A d’Avila, NS Peters, LG Tereshchenko, FS Ng, AE Buxton, and JW Waks. The Spatial Ventricular Gradient is Associated with Inducibility of Ventricular Arrhythmias During Electrophysiology Study. _Heart Rhythm_, 2024 In Press.](https://doi.org/10.1016/j.hrthm.2024.05.005)
+7. [N Isaza, HF Stabenau, DB Kramer, A Sau, P Tung, TR Maher, AH Locke, P Zimetbaum, A d’Avila, NS Peters, LG Tereshchenko, FS Ng, AE Buxton, and JW Waks. The Spatial Ventricular Gradient is Associated with Inducibility of Ventricular Arrhythmias During Electrophysiology Study. _Heart Rhythm_, 2024 Nov;21(11):2160-2167](https://doi.org/10.1016/j.hrthm.2024.05.005)
 
 8. [L Pastika, A Sau, K Patlatzoglou, E Sieliwonczyk, AH Ribeiro, KA McGurk, S Khan, D Mandic, WR Scott, JS Ware, NS Peters, ALP Ribeiro, DB Kramer, JW Waks, and FS Ng. Deep Neural Network-derived Electrocardiographic Body Mass Index as a Predictor of Cardiometabolic Disease. _NPJ Digit. Med._ 2024 Jun 25;7(1):167.](https://doi.org/10.1038/s41746-024-01170-0)
 
-9. [A Sau, L Pastika, E Sieliwonczyk, K Patlatzoglou, AH Ribeiro, KA McGurk, B Zeidaabadi, H Zhang, K Macierzanka, D Mandic, E Sabino, L Giatti, SM Barreto, L do Valle Camelo, I Tzoulaki, DP O’Regan, NS Peters, JS Ware, ALP Ribeiro, DB Kramer, JW Waks, and FS Ng.  Artificial Intelligence–Enabled Electrocardiogram for Mortality and Cardiovascular Risk Estimation: An Actionable, Explainable and Biologically Plausible Platform. _Lancet Digit Health_. 2024. In Press]()
+9. [A Sau, L Pastika, E Sieliwonczyk, K Patlatzoglou, AH Ribeiro, KA McGurk, B Zeidaabadi, H Zhang, K Macierzanka, D Mandic, E Sabino, L Giatti, SM Barreto, L do Valle Camelo, I Tzoulaki, DP O’Regan, NS Peters, JS Ware, ALP Ribeiro, DB Kramer, JW Waks, and FS Ng.  Artificial intelligence-enabled electrocardiogram for mortality and cardiovascular risk estimation: a model development and validation study _Lancet Digit Health_. 2024 Nov;6(11):e791-e802](https://www.thelancet.com/journals/landig/article/PIIS2589-7500(24)00172-9/fulltext)
 
-10. [A Sau, AH Ribeiro, KA McGurk, L Pastika, N Bajaj, M Gurnani, E Sieliwonczyk, K Patlatzoglou, M Ardissino, JY Chen, H Wu, X Shi, K Hnatkova, S Zheng, A Britton, M Shipley, I Andršová, T Novotný, E Sabino, L Giatti, SM Barreto, JW Waks, DB Kramer, D Mandic, NS Peters, DP O’Regan, M Malik, JS Ware, ALP Ribeiro, and FS Ng.  Neural Network-Derived Electrocardiographic Features have Prognostic Significance and Important Phenotypic and Genotypic Associations. _Circ Cardiovasc Qual Outcomes_. 2024. In Press]()
+10. [M Raad, DB Kramer, HF Stabenau, E Anyanwu, DS Frankel, and JW Waks. The Spatial Ventricular Gradient Is Associated with Pacing-Induced Cardiomyopathy. _Heart Rhythm_. 2024. In Press](https://www.heartrhythmjournal.com/article/S1547-5271(24)03710-X/)
+
+11. [A Sau, J Barker, L Pastika, E Sieliwonczyk, K Patlatzoglou, KA McGurk, NS Peters, DP O'Regan, JS Ware, DB Kramer, JW Waks, and FS Ng. Artificial Intelligence-Enhanced Electrocardiography for Prediction of Incident Hypertension. _JAMA Cardiol_.  2025, Jan 2.](https://jamanetwork.com/journals/jamacardiology/article-abstract/2828420)
 
 If you have used BRAVEHEART for your research project we would be happy to include a reference to your manuscript!
 
