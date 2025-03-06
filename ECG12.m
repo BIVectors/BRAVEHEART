@@ -101,6 +101,10 @@ classdef ECG12
                     case 'ISHNE'
                         [obj.hz, obj.I, obj.II, obj.III, obj.avR, obj.avF, obj.avL, ...
                             obj.V1, obj.V2, obj.V3, obj.V4, obj.V5, obj.V6] = load_ISHNE(filename);
+
+                    case 'edan_dat'
+                        [obj.hz, obj.I, obj.II, obj.III, obj.avR, obj.avF, obj.avL, ...
+                            obj.V1, obj.V2, obj.V3, obj.V4, obj.V5, obj.V6] = load_edandat(filename);
                     
                     case 'mrq_ascii'
                         [obj.hz, obj.I, obj.II, obj.III, obj.avR, obj.avF, obj.avL, ...
@@ -160,6 +164,10 @@ classdef ECG12
                        unitspermv = 409.84;
                        [obj.I, obj.II, obj.III, obj.avR, obj.avF, obj.avL, ...
                             obj.V1, obj.V2, obj.V3, obj.V4, obj.V5, obj.V6] = load_norav(filename, unitspermv); 
+
+                    case 'braveheart_mat'
+                        [obj.hz, obj.I, obj.II, obj.III, obj.avR, obj.avF, obj.avL, ...
+                            obj.V1, obj.V2, obj.V3, obj.V4, obj.V5, obj.V6] = load_braveheart_mat(filename); 
 					
                     otherwise
                         error('unknown format %s', format);

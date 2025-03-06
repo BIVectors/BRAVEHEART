@@ -20,7 +20,7 @@
 % This software is for research purposes only and is not intended to diagnose or treat any disease.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function speed_graph_gui(hObject, eventdata, handles, filename, save_flag, auto_flag, blank_samples, blank_samples_t, accel_flag, legend_flag, popout)
+function speed_graph_gui(hObject, eventdata, handles, filename, save_flag, auto_flag, blank_samples, blank_samples_t, accel_flag, legend_flag, colors, popout)
 
 % speed defined as the speed going to point n (eg distance of pt n minues pt n-1
 % Therefore point 1 will have no speed (because no point 0).  This
@@ -67,7 +67,7 @@ max_speed = max(speed_3d);
 
 
 % ACCELERATION 
-accel_3d=zeros(1,length(medianvm));
+accel_3d=nan(1,length(medianvm));
 
 for i=1:length(accel_3d)-1
     accel_3d(i+1) = (speed_3d(i+1) - speed_3d(i)) / sample_time;
@@ -76,6 +76,9 @@ end
 % Make calculations
 [speed_qrs_max, ~, ~] = min_max_locs(speed_3d, Q, S, blank_samples, 1000/sample_time);  
 [speed_t_max, ~, ~] = min_max_locs(speed_3d, S, Tend, blank_samples_t, 1000/sample_time); 
+
+[accel_pos_max, ~, ~] = min_max_locs(accel_3d, Q, length(accel_3d), blank_samples, 1000/sample_time);  
+[accel_neg_max, ~, ~] = min_max_locs(-accel_3d, Q, length(accel_3d), blank_samples, 1000/sample_time);  
 
 % Will graph speed vs time instead of sample number
 % Starting at time = 0 ms
@@ -98,16 +101,17 @@ if popout == 0
     axes(handles.speed_axis)
 elseif popout == 1
     fig_vcgspeed = figure('name','VCG Speed','numbertitle','off');
-    set(fig_vcgspeed,'defaultAxesColorOrder',[[0 0.4470 0.7410]; [1 0 0]]);
+    set(fig_vcgspeed,'defaultAxesColorOrder',[colors.xyzecg; [1 0 0]]);
     set(gcf, 'Position', [0, 0, 1200, 600])  % set figure size
 end
 
 yyaxis left
 s1 = plot(tx,medianvm,'LineWidth',2,'displayname','VCG VM');
 hold on
-xlabel('Time (ms)','FontWeight','bold','FontSize',12);
+xlabel('Time (ms)','FontWeight','bold','FontSize',12, 'color', colors.txtcolor);
 xlim([min(tx) max(tx)]);
 ylabel('VM Voltage (mV)','FontWeight','bold','FontSize',12);
+set(gca,'XColor',colors.txtcolor);
 
 % Draw dashed lines at Qon, Qoff, Toff
 sqoff = line([S S],[0 max([max_vm max_speed])],'color', 'b','linewidth',1,'linestyle','--','displayname','QRS End');
@@ -160,9 +164,6 @@ if accel_flag == 1
 
         % switch back to left axis to plot poitns of max acceleration on median beat
         yyaxis left
-
-        [accel_pos_max, ~, ~] = min_max_locs(accel_3d, Q, length(accel_3d), blank_samples, 1000/sample_time);  
-        [accel_neg_max, ~, ~] = min_max_locs(-accel_3d, Q, length(accel_3d), blank_samples, 1000/sample_time);  
 
         s6 = scatter(tx(accel_pos_max.loc_samp), medianvm(accel_pos_max.loc_samp),70,'d','linewidth',1.3,'MarkerEdgeColor','[0.9290, 0.6940, 0.1250]','displayname','Max Pos Acceleration Segment');
         scatter(tx(accel_pos_max.loc_samp_st), medianvm(accel_pos_max.loc_samp_st),70,'d','linewidth',1.3,'MarkerEdgeColor','[0.9290, 0.6940, 0.1250]','displayname','Max Pos Acceleration2');

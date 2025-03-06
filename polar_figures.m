@@ -21,7 +21,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-function polar_figures(geh, nval, filename)
+function polar_figures(geh, nval, save_folder, filename, colors)
 
 % nval = structure of normal values
 
@@ -40,8 +40,14 @@ lim_qrst_peak = nval.qrst_angle_peak(2); % peak
 
 %%%%%%%%%%
 
+polarsvgplot = figure('name','GEH Polar Plots','numbertitle','off', 'color', colors.bgcolor);
 
-figure('name','GEH Polar Plots','numbertitle','off');
+% Save button
+save_filename = fullfile(save_folder,strcat(filename(1:end-4),'_polar_svg.png'));
+savebutton = uicontrol('Parent',polarsvgplot,'Style','pushbutton','String','Save .png','Units','pixels', ...
+    'BackgroundColor',colors.buttoncolor, 'FontWeight','bold', 'fontsize',8, 'ForegroundColor',colors.txtcolor, ...
+    'Position',[1415 80 80 30],'Visible','on','Callback',{@save_fig_from_button, save_filename});
+
 
 % Frontal plane
 subplot(1,4,1)
@@ -50,10 +56,13 @@ svg = polarplot([0 deg2rad(geh.svg_area_el)],[0 geh.svg_area_mag],'linewidth',5,
 hold on
 qrs = polarplot([0 deg2rad(geh.q_area_el)],[0 geh.q_area_mag],'linewidth',1.5,'color','b','displayname','QRS Peak');
 t = polarplot([0 deg2rad(geh.t_area_el)],[0 geh.t_area_mag],'linewidth',1.5,'color','r','displayname','T Peak');
-title('Frontal Plane (XY)');
+title('Frontal Plane (XY)','color', colors.txtcolor);
 pax = gca;
 pax.ThetaZeroLocation = 'bottom';
 pax.Layer = 'top';
+set(gca,'ThetaColor', colors.txtcolor)
+set(gca,'GridColor',[0.1 0.1 0.1]);
+
 
 %rticklabels({});
 thetalim([0 180]);
@@ -88,8 +97,8 @@ end
 
 comp = [qrs t svg];
 uistack(comp,'up',500);
-annotation('textbox', [0.13, 0.008, 0.1, 0.1], 'String', "Feet", 'linestyle','none','fontweight','bold');
-annotation('textbox', [0.13, 0.858, 0.1, 0.1], 'String', "Head", 'linestyle','none','fontweight','bold');
+annotation('textbox', [0.13, 0.008, 0.1, 0.1], 'String', "Feet", 'linestyle','none','fontweight','bold','color', colors.txtcolor);
+annotation('textbox', [0.13, 0.858, 0.1, 0.1], 'String', "Head", 'linestyle','none','fontweight','bold','color', colors.txtcolor);
 
 
 % Transverse plane
@@ -99,7 +108,7 @@ svg = polarplot([0 deg2rad(geh.svg_area_az)],[0 geh.svg_area_mag],'linewidth',5,
 hold on
 qrs = polarplot([0 deg2rad(geh.q_area_az)],[0 geh.q_area_mag],'linewidth',1.5,'color','b','displayname','QRS Peak');
 t = polarplot([0 deg2rad(geh.t_area_az)],[0 geh.t_area_mag],'linewidth',1.5,'color','r','displayname','T Peak');
-title('Transverse Plane (XZ)');
+title('Transverse Plane (XZ)','color', colors.txtcolor);
 pax = gca;
 pax.ThetaZeroLocation = 'right';
 pax.ThetaLim = [-180 180];
@@ -107,6 +116,9 @@ pax.ThetaLim = [-180 180];
 thetaticks(-180:15:180);
 pax.ThetaDir = 'clockwise';
 pax.Layer = 'top';
+set(gca,'ThetaColor', colors.txtcolor)
+set(gca,'GridColor',[0.1 0.1 0.1]);
+
 
 rr = rlim;
 rr(2);
@@ -130,14 +142,14 @@ end
 comp = [qrs t svg];
 uistack(comp,'up',500);
 
-annotation('textbox', [0.13, 0.008, 0.1, 0.1], 'String', "Feet", 'linestyle','none','fontweight','bold');
-annotation('textbox', [0.13, 0.858, 0.1, 0.1], 'String', "Head", 'linestyle','none','fontweight','bold');
+annotation('textbox', [0.13, 0.008, 0.1, 0.1], 'String', "Feet", 'linestyle','none','fontweight','bold', 'color', colors.txtcolor);
+annotation('textbox', [0.13, 0.858, 0.1, 0.1], 'String', "Head", 'linestyle','none','fontweight','bold', 'color', colors.txtcolor);
 
 
 hold off
 
-annotation('textbox', [0.47, 0.008, 0.1, 0.1], 'String', "Posterior", 'linestyle','none','fontweight','bold');
-annotation('textbox', [0.47, 0.858, 0.1, 0.1], 'String', "Anterior", 'linestyle','none','fontweight','bold');
+annotation('textbox', [0.47, 0.008, 0.1, 0.1], 'String', "Posterior", 'linestyle','none','fontweight','bold', 'color', colors.txtcolor);
+annotation('textbox', [0.47, 0.858, 0.1, 0.1], 'String', "Anterior", 'linestyle','none','fontweight','bold', 'color', colors.txtcolor);
 
 
 
@@ -152,12 +164,14 @@ polarplot([0 deg2rad(lim_qrst_peak)],[0 1],'linewidth',1.5,'color','[0.91 0.41 0
 qrst_area = polarplot([0 deg2rad(geh.qrst_angle_area)],[0 1],'linewidth',3,'color','k','displayname','Area QRST Angle');
 hold on
 qrst_peak = polarplot([0 deg2rad(geh.qrst_angle_peak)],[0 1],'linewidth',3,'linestyle',':','color','k','displayname','Peak QRST Angle');
-title('3D QRST Angles');
+title('3D QRST Angles', 'color', colors.txtcolor);
 pax = gca;
 pax.ThetaZeroLocation = 'right';
 pax.ThetaLim = [0 180];
 rticklabels({});
 thetaticks(0:15:180);
+set(gca,'ThetaColor', colors.txtcolor)
+set(gca,'GridColor',[0.1 0.1 0.1]);
 hold off
 
 subplot(1,4,4)
@@ -174,12 +188,12 @@ axis off
 legend([a b c d e f g h],{'Area SVG', 'Area QRS', 'Area T', 'Area QRST Angle', 'Peak QRST Angle', 'Normal Range - SVG', 'Normal Limit - Area QRST Angle', 'Normal Limit - Peak QRST Angle'},'fontsize',11,'location','westoutside');
 
 
-annotation('textbox', [0.745, 0.858, 0.1, 0.1], 'String', filename, 'linestyle','none','fontweight','bold', 'fontsize', 12, 'Interpreter', 'none');
+annotation('textbox', [0.745, 0.858, 0.1, 0.1], 'String', filename, 'linestyle','none','fontweight','bold', 'fontsize', 12, 'Interpreter', 'none', 'color', colors.txtcolor);
 
 if geh.svg_area_mag < lim_mag1 |  geh.svg_area_mag > lim_mag2
     annotation('textbox', [0.745, 0.79, 0.1, 0.1], 'String', sprintf("SVG Magnitude = %1.1f mv*ms", geh.svg_area_mag), 'linestyle','none','fontweight','bold', 'color', 'r');
 else
-    annotation('textbox', [0.745, 0.79, 0.1, 0.1], 'String', sprintf("SVG Magnitude = %1.1f mv*ms", geh.svg_area_mag), 'linestyle','none','fontweight','bold', 'color', 'k');
+    annotation('textbox', [0.745, 0.79, 0.1, 0.1], 'String', sprintf("SVG Magnitude = %1.1f mv*ms", geh.svg_area_mag), 'linestyle','none','fontweight','bold', 'color', colors.txtcolor);
 
 end
     
@@ -187,22 +201,23 @@ end
 if geh.svg_area_az < lim_az_a |  geh.svg_area_az > lim_az_b
     annotation('textbox', [0.745, 0.74, 0.1, 0.1], 'String', sprintf("SVG Azimuth = %1.1f deg", geh.svg_area_az), 'linestyle','none','fontweight','bold', 'color', 'r');
 else
-    annotation('textbox', [0.745, 0.74, 0.1, 0.1], 'String', sprintf("SVG Azimuth = %1.1f deg", geh.svg_area_az), 'linestyle','none','fontweight','bold', 'color', 'k');
+    annotation('textbox', [0.745, 0.74, 0.1, 0.1], 'String', sprintf("SVG Azimuth = %1.1f deg", geh.svg_area_az), 'linestyle','none','fontweight','bold', 'color', colors.txtcolor);
 end
 
 
 if geh.svg_area_el < lim_el_a |  geh.svg_area_el > lim_el_b
     annotation('textbox', [0.745, 0.69, 0.1, 0.1], 'String', sprintf("SVG Elevation = %1.1f deg", geh.svg_area_el), 'linestyle','none','fontweight','bold', 'color', 'r');
 else
-    annotation('textbox', [0.745, 0.69, 0.1, 0.1], 'String', sprintf("SVG Elevation = %1.1f deg", geh.svg_area_el), 'linestyle','none','fontweight','bold', 'color', 'k');
+    annotation('textbox', [0.745, 0.69, 0.1, 0.1], 'String', sprintf("SVG Elevation = %1.1f deg", geh.svg_area_el), 'linestyle','none','fontweight','bold', 'color', colors.txtcolor);
 end
 
 
 set(gcf, 'Position', [100, 100, 2100, 400])  % set figure size
-
+set(gcf, 'InvertHardCopy', 'off');
 
 % Increase font size on mac due to pc/mac font differences
 if ismac
     fontsize(gcf,scale=1.25)
+    savebutton.FontSize = 10;
 end
 

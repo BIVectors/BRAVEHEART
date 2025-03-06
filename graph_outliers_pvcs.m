@@ -22,6 +22,15 @@
 
 function graph_outliers_pvcs(beats, vcg, aps, hObject,eventdata,handles)
 
+% Get colors based on if in light/dark mode
+[dm, dark_colors, light_colors] = check_darkmode(handles);
+
+if dm == 1
+    colors = dark_colors;
+else
+    colors = light_colors;
+end
+
 outliers = beats.outlier;
 pvcs = beats.pvc;
 r_peaks = beats.QRS;
@@ -91,43 +100,43 @@ str_matrix = get(handles.activebeats_list,'String');
 % Graph Outliers      
       axes(handles.x_axis);
       hold on
-      scatter(outlier_r_locs, X(outlier_r_locs),80,'o','MarkerEdgeColor','[0.25, 0.25, 0.25]','LineWidth',0.8)
+      scatter(outlier_r_locs, X(outlier_r_locs),80,'o','MarkerEdgeColor',colors.outliermarker,'LineWidth',0.8)
       hold off
       
       axes(handles.y_axis);
       hold on
-      scatter(outlier_r_locs, Y(outlier_r_locs),80,'o','MarkerEdgeColor','[0.25, 0.25, 0.25]','LineWidth',0.8)
+      scatter(outlier_r_locs, Y(outlier_r_locs),80,'o','MarkerEdgeColor',colors.outliermarker,'LineWidth',0.8)
       hold off
       
       axes(handles.z_axis);
       hold on
-      scatter(outlier_r_locs, Z(outlier_r_locs),80,'o','MarkerEdgeColor','[0.25, 0.25, 0.25]','LineWidth',0.8)
+      scatter(outlier_r_locs, Z(outlier_r_locs),80,'o','MarkerEdgeColor',colors.outliermarker,'LineWidth',0.8)
       hold off
         
       axes(handles.vm_axis);
       hold on
-      scatter(outlier_r_locs, VM(outlier_r_locs),80,'o','MarkerEdgeColor','[0.25, 0.25, 0.25]','LineWidth',0.8)
+      scatter(outlier_r_locs, VM(outlier_r_locs),80,'o','MarkerEdgeColor',colors.outliermarker,'LineWidth',0.8)
       hold off
       
       
 % Graph PVCs      
       axes(handles.x_axis);
       hold on
-      scatter(pvc_r_locs, X(pvc_r_locs),80,'^','MarkerEdgeColor','[0, 0.5, 0]','LineWidth',0.9)
+      scatter(pvc_r_locs, X(pvc_r_locs),80,'^','MarkerEdgeColor',colors.pvcmarker,'LineWidth',0.9)
       hold off
       
       axes(handles.y_axis);
       hold on
-      scatter(pvc_r_locs, Y(pvc_r_locs),80,'^','MarkerEdgeColor','[0, 0.5, 0]','LineWidth',0.9)
+      scatter(pvc_r_locs, Y(pvc_r_locs),80,'^','MarkerEdgeColor',colors.pvcmarker,'LineWidth',0.9)
       hold off
       
       axes(handles.z_axis);
       hold on
-      scatter(pvc_r_locs, Z(pvc_r_locs),80,'^','MarkerEdgeColor','[0, 0.5, 0]','LineWidth',0.9)
+      scatter(pvc_r_locs, Z(pvc_r_locs),80,'^','MarkerEdgeColor',colors.pvcmarker,'LineWidth',0.9)
         
       axes(handles.vm_axis);
       hold on
-      scatter(pvc_r_locs, VM(pvc_r_locs),80,'^','MarkerEdgeColor','[0, 0.5, 0]','LineWidth',0.9)
+      scatter(pvc_r_locs, VM(pvc_r_locs),80,'^','MarkerEdgeColor',colors.pvcmarker,'LineWidth',0.9)
       hold off
       
       

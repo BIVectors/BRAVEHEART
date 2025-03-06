@@ -59,7 +59,7 @@ classdef Qualparams
         corr = [0.8 1];                  % Min/max range for average normalized cross correlation (nomimal min only)
         baseline = [-Inf 0.1];           % Min/max range for baseline at the end of the T wave (nominal max only)
         hf_noise = [10 Inf];             % SNR for HF noise cutoff
-        lf_noise = [-Inf 0.02];          % mV for cutoff in variance in LF noise
+        lf_noise = [-Inf 0.03];          % mV for cutoff in variance in LF noise
         prob = [0.8 1];                  % Logistic regression probability (range 0-1)
 
 	end

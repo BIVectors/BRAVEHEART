@@ -25,6 +25,18 @@ function plot_vcg_gui(geh, median_vcg, medianbeat, aps, hObject, eventdata, hand
 
 cla(handles.vcg_axis) % clear axes
 
+% Get colors based on if in light/dark mode
+[dm, dark_colors, light_colors] = check_darkmode(handles);
+
+if dm == 1
+    colors = dark_colors;
+else
+    colors = light_colors;
+end
+
+
+
+
 try   % If throw an error just dont plot!
 
 if isempty(median_vcg.X) || isempty(median_vcg.Y) || isempty(median_vcg.Z) || isempty(median_vcg.VM)
@@ -85,10 +97,10 @@ z = median_vcg.Z';
 
 % Plotting
 if speed_flag == 0    % plot loops and fit curves
-    XYZ_median_qrs= [x(Q:S);y(Q:S);z(Q:S)];   % define qrs curve for fitting
-    XYZ_median_t= [x(S:end);y(S:end);z(S:end)];       % define t curve for fitting
+    XYZ_median_qrs= [x(Q:S);y(Q:S);z(Q:S)];             % define qrs curve for fitting
+    XYZ_median_t= [x(S:end);y(S:end);z(S:end)];         % define t curve for fitting
 
-    p1 = scatter3(x(Q:S),y(Q:S),z(Q:S),20,'MarkerEdgeColor','[0 0.4470 0.7410]','DisplayName','QRS Loop');
+    p1 = scatter3(x(Q:S),y(Q:S),z(Q:S),20,'MarkerEdgeColor','b','DisplayName','QRS Loop');
     hold on
     p2 = scatter3(x(S+1:end),y(S+1:end),z(S+1:end),20,'r','o','DisplayName','T Loop');
     p3 = scatter3(x(S),y(S),z(S),60,'MarkerFaceColor','y','MarkerEdgeColor','k','DisplayName','QRS End');
@@ -100,8 +112,12 @@ if speed_flag == 0    % plot loops and fit curves
     %fnplt(cscvn(XYZ_median_qrs),'b',2);   % fit QRS curve
     %fnplt(cscvn(XYZ_median_t),'r',2);     % fit T curve
     
-    plot3(x(Q:S),y(Q:S),z(Q:S),'b','linewidth',2)
-    plot3(x(S+1:end),y(S+1:end),z(S+1:end),'r','linewidth',2)
+    plot3(x(Q:S),y(Q:S),z(Q:S),'color','b','linewidth',2)
+    plot3(x(S+1:end),y(S+1:end),z(S+1:end),'color','r','linewidth',2)
+    set(gca, 'Color', colors.bgfigcolor);
+    set(gca, 'XColor', colors.txtcolor);
+    set(gca, 'YColor', colors.txtcolor);
+    set(gca, 'ZColor', colors.txtcolor);
 
     xlabel('X','FontWeight','bold','FontSize',14);
     ylabel('Y','FontWeight','bold','FontSize',14);
@@ -273,35 +289,35 @@ end  % End vector flag
 if legend_flag == 1
     
   if prop_flag == 0 && speed_flag == 0 && vector_flag == 0
-        legend([p1 p2 p3 p99]);    
+        legend([p1 p2 p3 p99], 'color', colors.bgfigcolor, 'textcolor', colors.txtcolor);    
   end
     
   if prop_flag == 1 && speed_flag == 0 && vector_flag == 0
-        legend([p1 p2 p4 p3 p5 p99]);       
+        legend([p1 p2 p4 p3 p5 p99], 'color', colors.bgfigcolor);       
   end
     
   if prop_flag == 0 && speed_flag == 1 && vector_flag == 0 
-        legend([p3 p99]);       
+        legend([p3 p99], 'color', colors.bgfigcolor, 'textcolor', colors.txtcolor);       
   end
    
   if prop_flag == 0 && speed_flag == 0 && vector_flag == 1 
-        legend([p1 p2 p99 p6 p7 p8 p9 p10 p11]);      
+        legend([p1 p2 p3 p99 p6 p7 p8 p9 p10 p11], 'color', colors.bgfigcolor, 'textcolor', colors.txtcolor);      
   end
   
   if prop_flag == 0 && speed_flag == 1 && vector_flag == 1   
-        legend([p3 p99 p6 p7 p8 p9 p10 p11]);   
+        legend([p3 p99 p6 p7 p8 p9 p10 p11], 'color', colors.bgfigcolor, 'textcolor', colors.txtcolor);   
   end
   
   if prop_flag == 1 && speed_flag == 1 && vector_flag == 1
-        legend([p3 p4 p3 p99 p5 p6 p7 p8 p9 p10 p11]);   
+        legend([p3 p4 p3 p99 p5 p6 p7 p8 p9 p10 p11], 'color', 'color', colors.bgfigcolor, 'textcolor', colors.txtcolor);   
   end  
   
   if prop_flag == 1 && speed_flag == 0 && vector_flag == 1
-        legend([p1 p2 p4 p3 p99 p5 p6 p7 p8 p9 p10 p11]);   
+        legend([p1 p2 p4 p3 p99 p5 p6 p7 p8 p9 p10 p11], 'color', colors.bgfigcolor, 'textcolor', colors.txtcolor);   
   end
   
   if prop_flag == 1 && speed_flag == 1 && vector_flag == 0
-        legend([p4 p3 p5 p99]);   
+        legend([p4 p3 p5 p99], 'color', colors.bgfigcolor, 'textcolor', colors.txtcolor);   
   end
   
   
@@ -313,6 +329,6 @@ end
 view(v1,v2);
 hold off
 
-catch % If graphing throws an error
+catch ME % If graphing throws an error
 
 end

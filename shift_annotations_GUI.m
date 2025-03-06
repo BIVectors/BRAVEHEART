@@ -20,7 +20,7 @@
 % This software is for research purposes only and is not intended to diagnose or treat any disease.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function shift_annotations_GUI(pt, hObject, eventdata, handles)
+function shift_annotations_GUI(pt, shift, signal, hObject, eventdata, handles)
 
 set(handles.success_txt,'Visible','Off')
 
@@ -29,8 +29,7 @@ medianbeat = handles.medianbeat;
 vcg = handles.vcg;
 ecg = handles.ecg;
 aps = pull_guiparams(hObject, eventdata, handles);
-
-shift = str2num(get(handles.shift_box,'String'));
+freq = vcg.hz;
 
 % If median shift box checked
 if get(handles.shift_median_checkbox, 'Value')
@@ -46,7 +45,19 @@ if get(handles.shift_median_checkbox, 'Value')
         case 'S'
             medianbeat = medianbeat.shift_s(shift);
         case 'Tend'
-            medianbeat = medianbeat.shift_tend(shift);
+            medianbeat = medianbeat.shift_tend(shift);    
+    end
+
+    % Update T max if needed
+    % Passing in R peak as 0 since doesnt need to be used
+    [~, newT] = twave_values(signal,freq,[medianbeat.Q 0 medianbeat.S medianbeat.Tend],0);
+
+    % Find delta between new and old T max
+    delta_newT = newT - medianbeat.T;
+
+    % Shift medianbeat.T if it changes
+    if delta_newT ~= 0
+        medianbeat = medianbeat.shift_t(delta_newT);
     end
 
     handles.medianbeat = medianbeat;  % update beats in handles

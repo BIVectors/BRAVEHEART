@@ -15,5 +15,7 @@ EDF .edf,edf,.edf,500
 Claris .txt,claris,.txt,2000
 Physionet .csv,physionet_csv,.csv,500
 Physionet .dat,physionet_dat,.dat,500
+BRAVEHEART .mat,braveheart_mat,.mat,500
 Norav .rdt,norav,.rdt,500
 MegaCare .xml,megacare_xml,.xml,500
+Edan .dat,edan_dat,.dat,1000

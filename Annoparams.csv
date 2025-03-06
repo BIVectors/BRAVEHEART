@@ -1,5 +1,6 @@
 maxBPM,150
 pkthresh,95
+pkfilter,0
 lowpass,1
 highpass,1
 wavelet_level_lowpass,1

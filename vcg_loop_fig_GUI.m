@@ -20,7 +20,7 @@
 % This software is for research purposes only and is not intended to diagnose or treat any disease.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function vcg_loop_fig_GUI(x, y, z, x2, y2, z2, label, hObject, eventdata, handles)
+function vcg_loop_fig_GUI(x, y, z, x2, y2, z2, label, colors, hObject, eventdata, handles)
 
 if strcmp(label,'qrs')
     main_loop = 'QRS Loop';
@@ -98,9 +98,9 @@ end
 
 if get(handles.vcg_morph_fig_legend_checkbox,'Value') == 1
     if get(handles.vcg_morph_fig_hidebasis_checkbox,'Value') == 1
-        legend([s1 s_alt s2 ax1 ax2 ax3 m],'location', 'southoutside','NumColumns',3);
+        legend([s1 s_alt s2 ax1 ax2 ax3 m],'location', 'southoutside','NumColumns',3, 'TextColor', colors.txtcolor, 'color', colors.bgfigcolor);
     else
-        legend([s1 s_alt s2 m],'location', 'southoutside','NumColumns',2);
+        legend([s1 s_alt s2 m],'location', 'southoutside','NumColumns',2, 'TextColor', colors.txtcolor, 'color', colors.bgfigcolor);
     end
 else
     legend('off');

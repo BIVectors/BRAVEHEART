@@ -1,5 +1,5 @@
 <deployment-project plugin="plugin.ezdeploy" plugin-version="1.0">
-  <configuration build-checksum="2196503333" file="C:\Users\jwaks\Documents\GitHub\BRAVEHEART_DEV\braveheart_gui_windows.prj" location="C:\Users\jwaks\Documents\GitHub\BRAVEHEART_DEV" name="braveheart_gui_windows" preferred-package-location="C:\Users\jwaks\Documents\GitHub\BRAVEHEART_DEV\braveheart_gui_windows\for_redistribution" preferred-package-type="package.type.exe" target="target.ezdeploy.standalone" target-name="Application Compiler">
+  <configuration build-checksum="65971654" file="C:\Users\jwaks\Documents\GitHub\BRAVEHEART_1.4.0\BRAVEHEART_1.4.0\braveheart_gui_windows.prj" location="C:\Users\jwaks\Documents\GitHub\BRAVEHEART_1.4.0\BRAVEHEART_1.4.0" name="braveheart_gui_windows" preferred-package-location="C:\Users\jwaks\Documents\GitHub\BRAVEHEART_1.4.0\BRAVEHEART_1.4.0\braveheart_gui_windows\for_redistribution" preferred-package-type="package.type.exe" target="target.ezdeploy.standalone" target-name="Application Compiler">
     <param.appname>braveheart_gui</param.appname>
     <param.icon>${PROJECT_ROOT}\braveheart_gui_windows_resources\icon.ico</param.icon>
     <param.icons>
@@ -8,13 +8,13 @@
       <file>${PROJECT_ROOT}\braveheart_gui_windows_resources\icon_24.png</file>
       <file>${PROJECT_ROOT}\braveheart_gui_windows_resources\icon_16.png</file>
     </param.icons>
-    <param.version>1.3.1</param.version>
+    <param.version>1.4.0</param.version>
     <param.authnamewatermark>Hans F. Stabenau and Jonathan W. Waks</param.authnamewatermark>
     <param.email>bravheart.ecg@gmail.com</param.email>
     <param.company />
     <param.summary />
     <param.description>BRAVEHEART ECG/VCG Analysis Software -- GUI Version
-Version 1.3.1</param.description>
+Version 1.4.0</param.description>
     <param.screenshot>${PROJECT_ROOT}\braveheart_splash.png</param.screenshot>
     <param.guid />
     <param.installpath.string>\braveheart_gui\</param.installpath.string>
@@ -50,7 +50,7 @@ Version 1.3.1</param.description>
 	 varargin  input arguments 
  Description 
  	 BRAVEHEART ECG/VCG Analysis Software -- GUI Version
-Version 1.3.1</param.help.text>
+Version 1.4.0</param.help.text>
     <unset>
       <param.company />
       <param.summary />
@@ -100,9 +100,11 @@ Version 1.3.1</param.help.text>
       <file>${PROJECT_ROOT}\HRV_Calc.m</file>
       <file>${PROJECT_ROOT}\leadidcodexyz.m</file>
       <file>${PROJECT_ROOT}\leadidtable_scpecg.mat</file>
+      <file>${PROJECT_ROOT}\load_braveheart_mat.m</file>
       <file>${PROJECT_ROOT}\load_cardiosoftxml.m</file>
       <file>${PROJECT_ROOT}\load_claris.m</file>
       <file>${PROJECT_ROOT}\load_dicom.m</file>
+      <file>${PROJECT_ROOT}\load_edandat.m</file>
       <file>${PROJECT_ROOT}\load_edf.m</file>
       <file>${PROJECT_ROOT}\load_megacarexml.m</file>
       <file>${PROJECT_ROOT}\load_norav.m</file>
@@ -110,6 +112,7 @@ Version 1.3.1</param.help.text>
       <file>${PROJECT_ROOT}\load_physionet_dat.m</file>
       <file>${PROJECT_ROOT}\load_schillerxml.m</file>
       <file>${PROJECT_ROOT}\load_scpecg.m</file>
+      <file>${PROJECT_ROOT}\move_button.m</file>
       <file>${PROJECT_ROOT}\open_ext_pdf.m</file>
       <file>${PROJECT_ROOT}\parse_claris_txt.m</file>
       <file>${PROJECT_ROOT}\physicalunits.m</file>
@@ -151,11 +154,13 @@ Version 1.3.1</param.help.text>
       <file>${PROJECT_ROOT}\calc_plot.m</file>
       <file>${PROJECT_ROOT}\center_of_mass.m</file>
       <file>${PROJECT_ROOT}\changeGUIfont.m</file>
+      <file>${PROJECT_ROOT}\check_darkmode.m</file>
       <file>${PROJECT_ROOT}\clear_axes.m</file>
       <file>${PROJECT_ROOT}\clear_beat_listbox_GUI.m</file>
       <file>${PROJECT_ROOT}\clear_GEH_calculations_GUI.m</file>
       <file>${PROJECT_ROOT}\com_or_rpeak.m</file>
       <file>${PROJECT_ROOT}\curve_length.m</file>
+      <file>${PROJECT_ROOT}\darkmode.m</file>
       <file>${PROJECT_ROOT}\delete_beat_GUI.m</file>
       <file>${PROJECT_ROOT}\deriv2nd5.m</file>
       <file>${PROJECT_ROOT}\deriv5.m</file>
@@ -193,6 +198,7 @@ Version 1.3.1</param.help.text>
       <file>${PROJECT_ROOT}\load_philipsxml.m</file>
       <file>${PROJECT_ROOT}\load_unformatted.m</file>
       <file>${PROJECT_ROOT}\logo_t.bmp</file>
+      <file>${PROJECT_ROOT}\logo_t_dark.bmp</file>
       <file>${PROJECT_ROOT}\lzw2norm.m</file>
       <file>${PROJECT_ROOT}\max_vector.m</file>
       <file>${PROJECT_ROOT}\mean_abs_dev.m</file>
@@ -239,6 +245,7 @@ Version 1.3.1</param.help.text>
       <file>${PROJECT_ROOT}\reset_handles.m</file>
       <file>${PROJECT_ROOT}\rs_values.m</file>
       <file>${PROJECT_ROOT}\saiqrst.m</file>
+      <file>${PROJECT_ROOT}\save_fig_from_button.m</file>
       <file>${PROJECT_ROOT}\save_struct_parfor.m</file>
       <file>${PROJECT_ROOT}\shift_annotations_GUI.m</file>
       <file>${PROJECT_ROOT}\shift_xyz.m</file>
@@ -276,9 +283,9 @@ Version 1.3.1</param.help.text>
       <file>${PROJECT_ROOT}\xyz_stats.m</file>
     </fileset.depfun>
     <build-deliverables>
-      <file location="${PROJECT_ROOT}\braveheart_gui_windows\for_testing" name="splash.png" optional="false">C:\Users\jwaks\Documents\GitHub\BRAVEHEART_DEV\braveheart_gui_windows\for_testing\splash.png</file>
-      <file location="${PROJECT_ROOT}\braveheart_gui_windows\for_testing" name="braveheart_gui.exe" optional="false">C:\Users\jwaks\Documents\GitHub\BRAVEHEART_DEV\braveheart_gui_windows\for_testing\braveheart_gui.exe</file>
-      <file location="${PROJECT_ROOT}\braveheart_gui_windows\for_testing" name="readme.txt" optional="true">C:\Users\jwaks\Documents\GitHub\BRAVEHEART_DEV\braveheart_gui_windows\for_testing\readme.txt</file>
+      <file location="${PROJECT_ROOT}\braveheart_gui_windows\for_testing" name="readme.txt" optional="true">C:\Users\jwaks\Documents\GitHub\BRAVEHEART_1.4.0\BRAVEHEART_1.4.0\braveheart_gui_windows\for_testing\readme.txt</file>
+      <file location="${PROJECT_ROOT}\braveheart_gui_windows\for_testing" name="braveheart_gui.exe" optional="false">C:\Users\jwaks\Documents\GitHub\BRAVEHEART_1.4.0\BRAVEHEART_1.4.0\braveheart_gui_windows\for_testing\braveheart_gui.exe</file>
+      <file location="${PROJECT_ROOT}\braveheart_gui_windows\for_testing" name="splash.png" optional="false">C:\Users\jwaks\Documents\GitHub\BRAVEHEART_1.4.0\BRAVEHEART_1.4.0\braveheart_gui_windows\for_testing\splash.png</file>
     </build-deliverables>
     <workflow />
     <matlab>

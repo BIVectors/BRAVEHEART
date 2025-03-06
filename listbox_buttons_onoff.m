@@ -24,13 +24,16 @@
 function listbox_buttons_onoff(onoff, hObject, eventdata, handles)
 
 set(handles.update_selectbeat_button, 'Enable', onoff);
-set(handles.qon_minus_button, 'Enable', onoff);
-set(handles.qon_plus_button, 'Enable', onoff);
-set(handles.rpeak_minus_button, 'Enable', onoff);
-set(handles.rpeak_plus_button, 'Enable', onoff);
-set(handles.qoff_minus_button, 'Enable', onoff);
-set(handles.qoff_plus_button, 'Enable', onoff);
-set(handles.toff_minus_button, 'Enable', onoff);
-set(handles.toff_plus_button, 'Enable', onoff);
+
+% Now can use +/-1 buttons for median so will not disable
+% set(handles.qon_minus_button, 'Enable', onoff);
+%set(handles.qon_plus_button, 'Enable', onoff);        
+% set(handles.rpeak_minus_button, 'Enable', onoff);
+% set(handles.rpeak_plus_button, 'Enable', onoff);
+% set(handles.rpk_shift_button, 'Enable', onoff);
+% set(handles.qoff_minus_button, 'Enable', onoff);
+% set(handles.qoff_plus_button, 'Enable', onoff);
+% set(handles.toff_minus_button, 'Enable', onoff);
+% set(handles.toff_plus_button, 'Enable', onoff);
 
 set(handles.remove_selectbeat_button, 'Enable', onoff);

@@ -26,6 +26,16 @@ function display_leads(X, Y, Z, VM, QRS, hObject, eventdata, handles)
 
 % handles = guidata(hObject); %Load handles
 
+% Get colors based on if in light/dark mode
+[dm, dark_colors, light_colors] = check_darkmode(handles);
+
+if dm == 1
+    colors = dark_colors;
+else
+    colors = light_colors;
+end
+
+
 % clear axes
 	clear_axes(hObject,eventdata,handles);
 
@@ -38,9 +48,9 @@ function display_leads(X, Y, Z, VM, QRS, hObject, eventdata, handles)
 
 % X
 axes(handles.x_axis);
-line([0 length(X)],[0 0], 'color', 'k','linewidth',0.5)
+line([0 length(X)],[0 0], 'color', colors.vertlines,'linewidth',0.5)
 hold on
-plot(X,'color', '[0 0.4470 0.7410]')
+plot(X,'color', colors.xyzecg)
 ylim([min(X)-0.1*(abs(max(X)-min(X))) max(X)+0.1*(abs(max(X)-min(X)))])
 
 for i = 1:length(QRS)
@@ -52,9 +62,9 @@ hold off
 
 % Y
 axes(handles.y_axis);
-line([0 length(Y)],[0 0], 'color', 'k','linewidth',0.5)
+line([0 length(Y)],[0 0], 'color', colors.vertlines,'linewidth',0.5)
 hold on
-plot(Y,'color', '[0 0.4470 0.7410]')
+plot(Y,'color', colors.xyzecg)
 ylim([min(Y)-0.1*(abs(max(Y)-min(Y))) max(Y)+0.1*(abs(max(Y)-min(Y)))])
 
 for i = 1:length(QRS)
@@ -66,9 +76,9 @@ hold off
 
 % Z
 axes(handles.z_axis);
-line([0 length(Z)],[0 0], 'color', 'k','linewidth',0.5)
+line([0 length(Z)],[0 0], 'color', colors.vertlines,'linewidth',0.5)
 hold on
-plot(Z,'color', '[0 0.4470 0.7410]')
+plot(Z,'color', colors.xyzecg)
 ylim([min(Z)-0.1*(abs(max(Z)-min(Z))) max(Z)+0.1*(abs(max(Z)-min(Z)))])
 
 for i = 1:length(QRS)
@@ -80,9 +90,9 @@ hold off
 
 % VM
 axes(handles.vm_axis);
-line([0 length(VM)],[0 0], 'color', 'k','linewidth',0.5)
+line([0 length(VM)],[0 0], 'color', colors.vertlines,'linewidth',0.5)
 hold on
-plot(VM,'color', 'r')
+plot(VM,'color', colors.vmecg)
 ylim([min(VM)-0.1*(abs(max(VM)-min(VM))) max(VM)+0.1*(abs(max(VM)-min(VM)))])
 
 for i = 1:length(QRS)

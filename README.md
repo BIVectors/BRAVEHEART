@@ -70,6 +70,7 @@ BRAVEHEART can read a wide variety of 12-lead ECG formats including:
 15. Unformatted .txt and .csv
 16. Norav 1200M .rdt
 17. Megacare XML
+18. Edan .dat
 
 If you need BRAVEHEART to read another ECG format let us know and we will help add it.
 
@@ -120,6 +121,11 @@ The software has been used for ECG/VCG analysis in the following publications:
 10. [M Raad, DB Kramer, HF Stabenau, E Anyanwu, DS Frankel, and JW Waks. The Spatial Ventricular Gradient Is Associated with Pacing-Induced Cardiomyopathy. _Heart Rhythm_. 2024. In Press](https://www.heartrhythmjournal.com/article/S1547-5271(24)03710-X/)
 
 11. [A Sau, J Barker, L Pastika, E Sieliwonczyk, K Patlatzoglou, KA McGurk, NS Peters, DP O'Regan, JS Ware, DB Kramer, JW Waks, and FS Ng. Artificial Intelligence-Enhanced Electrocardiography for Prediction of Incident Hypertension. _JAMA Cardiol_.  2025, Jan 2.](https://jamanetwork.com/journals/jamacardiology/article-abstract/2828420)
+
+12. [K Macierzanka, A Sau, K Patlatzoglou, L Pastika, E Sieliwonczyk, M Gurnani, NS Peters, JW Waks, DB Kramer, and FS Ng Siamese neural network-enhanced electrocardiography can re-identify anonymised healthcare data. _Eur Heart J Digit Health_. 2025, Feb 25.](https://academic.oup.com/ehjdh/advance-article/doi/10.1093/ehjdh/ztaf011/8042356)
+
+13. [A Sau, E Sieliwonczyk, K Patlatzoglou, L Pastika, K McGurk, AH Ribeiro, ALP Ribeiro, JE Ho, NS Peters, JS Ware, U Tayal, DB Kramer, JW Waks, and FS Ng. Artificial intelligence- enhanced electrocardiography for the identification of a sex-related cardiovascular risk continuum: a retrospective cohort study. _Lancet Digit Health_, 2025 Mar;7(3):e184-e194.](https://www.sciencedirect.com/science/article/pii/S258975002400270X)
+
 
 If you have used BRAVEHEART for your research project we would be happy to include a reference to your manuscript!
 

@@ -124,7 +124,7 @@ function changeGUIfont(handles)
 
                 case 'text576'
                    v = get(handles.(field),'Position');
-                   x = [v(1) 53 v(3) v(4)+3];
+                   x = [v(1) v(2)+1 v(3) v(4)+1];
                    set(handles.(field),'Position',x);
 
             end

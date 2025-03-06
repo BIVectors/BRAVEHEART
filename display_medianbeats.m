@@ -22,6 +22,16 @@
 
 function display_medianbeats(median_vcg, beatsig_vcg, medianbeat, max_tvm_value, hObject, eventdata, handles)
 
+% Get colors based on if in light/dark mode
+[dm, dark_colors, light_colors] = check_darkmode(handles);
+
+if dm == 1
+    colors = dark_colors;
+else
+    colors = light_colors;
+end
+
+
 % Load in axes for plotting (VM, X, Y, Z in order)
 A = [handles.VMmedianbeat_axis handles.Xmedianbeat_axis handles.Ymedianbeat_axis handles.Zmedianbeat_axis];
 
@@ -35,7 +45,8 @@ lead_names_vcg = [{'VM'} {'X'} {'Y'} {'Z'}];
 vcg_fields = properties(median_vcg);
 
 % Colors for plotting VM, X, Y, Z
-colors = [{'[1 0 0]'}, {'[0 0.4470 0.7410]'}, {'[0 0.4470 0.7410]'}, {'[0 0.4470 0.7410]'}];
+%colors = [{'[1 0 0]'}, {'[0 0.4470 0.7410]'}, {'[0 0.4470 0.7410]'}, {'[0 0.4470 0.7410]'}];
+C = [{colors.vmecg}, {colors.xyzecg}, {colors.xyzecg}, {colors.xyzecg}];
 
  % Find indices of lead_names in VCG class
 for k = 1:length(lead_names_vcg)              
@@ -56,17 +67,17 @@ for j = 1:length(A)
     % Plot individual beats (beatsig) for X, Y, Z only (not VM)
     if ~strcmp(string(lead_names_vcg{j}),'VM')
         for i=1:size(beatsig_signal,1)
-            plot(beatsig_signal(i,:),':k');
+            plot(beatsig_signal(i,:),'color', colors.vertlines, 'linestyle',':');
         end
     end
 
     % Plot median beat and lines
-    line([med_qoff med_qoff], [min(min(beatsig_signal))-(0.1*scale) max(max(beatsig_signal))+(0.1*scale)],'color', 'k', 'linewidth',1.2,'LineStyle','--');
-    line([med_qon med_qon], [min(min(beatsig_signal))-(0.1*scale) max(max(beatsig_signal))+(0.1*scale)],'color', 'k', 'linewidth',1.2,'LineStyle','--');
-    line([med_toff med_toff], [min(min(beatsig_signal))-(0.1*scale) max(max(beatsig_signal))+(0.1*scale)],'color', 'k', 'linewidth',1.2,'LineStyle','--');
+    line([med_qoff med_qoff], [min(min(beatsig_signal))-(0.1*scale) max(max(beatsig_signal))+(0.1*scale)],'color', colors.vertlines, 'linewidth',1.2,'LineStyle','--');
+    line([med_qon med_qon], [min(min(beatsig_signal))-(0.1*scale) max(max(beatsig_signal))+(0.1*scale)],'color', colors.vertlines, 'linewidth',1.2,'LineStyle','--');
+    line([med_toff med_toff], [min(min(beatsig_signal))-(0.1*scale) max(max(beatsig_signal))+(0.1*scale)],'color',colors.vertlines, 'linewidth',1.2,'LineStyle','--');
     
-    line([0 length(med_signal)],[0 0], 'color', 'k','linewidth',0.5);
-    plot(med_signal,'color', colors{j}, 'linewidth',1.5);
+    line([0 length(med_signal)],[0 0], 'color', colors.vertlines,'linewidth',0.5);
+    plot(med_signal,'color', C{j}, 'linewidth',1.5);
 	if ~isnan(max_tvm_value)
 		plot(max_tvm_value, med_signal(max_tvm_value),'*','color','b','MarkerSize', 8);
 	end

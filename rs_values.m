@@ -20,13 +20,24 @@
 % This software is for research purposes only and is not intended to diagnose or treat any disease.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function [r_wave s_wave rs_wave rs_ratio sr_ratio] = rs_values(signal,fidpts)
+function [r_wave, s_wave, rs_wave, rs_ratio, sr_ratio] = rs_values(signal,fidpts,endspike)
 
 % If have a NaN value report values as NaN to prevent throwing error
 
-if ~isnan(fidpts(1)) & ~isnan(fidpts(3))
+if ~isnan(fidpts(1)) && ~isnan(fidpts(3))
+
+    % Need to deal with possibility that the signal between qpt and spt
+    % will contain a large pacing spike.
+
+    % Check if endspike exists
+    % if so, Nan out the signal from 1:endspikes
+    if ~isempty(endspike)
+        signal(1:endspike) = NaN;
+    end
+
     
     qpt = fidpts(1);
+    rpt = fidpts(2);
     spt = fidpts(3);
 
     pos_signal = signal;
@@ -34,6 +45,7 @@ if ~isnan(fidpts(1)) & ~isnan(fidpts(3))
 
     pos_signal(pos_signal<0) = NaN;
     neg_signal(neg_signal>=0) = NaN;
+
 
     r_wave = max(pos_signal(qpt:spt));
 

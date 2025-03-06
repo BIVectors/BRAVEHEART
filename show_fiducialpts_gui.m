@@ -22,6 +22,16 @@
 
 function show_fiducialpts_gui(vcg, beats, hObject,eventdata,handles)  % adds lines for fiducial points on all 6 graphs
 
+% Get colors based on if in light/dark mode
+[dm, dark_colors, light_colors] = check_darkmode(handles);
+
+if dm == 1
+    colors = dark_colors;
+else
+    colors = light_colors;
+end
+
+
 X = vcg.X;
 Y = vcg.Y;
 Z = vcg.Z;
@@ -35,18 +45,18 @@ Tend = beatmatrix(:,4);
 
 cla(handles.x_axis);
 axes(handles.x_axis);
-line([0 length(X)],[0 0], 'color', 'k','linewidth',0.5)
+line([0 length(X)],[0 0], 'color', colors.vertlines,'linewidth',0.5)
 hold on
-plot(X,'color', '[0 0.4470 0.7410]')
+plot(X,'color', colors.xyzecg)
 ylim([min(X)-0.1*(abs(max(X)-min(X))) max(X)+0.1*(abs(max(X)-min(X)))])
 for i = 1:length(Q)
-line([Q(i) Q(i)],[[min(X)-0.1*(abs(max(X)-min(X))) max(X)+0.1*(abs(max(X)-min(X)))]],'color', 'k', 'linewidth',1.2,'LineStyle',':')
+line([Q(i) Q(i)],[[min(X)-0.1*(abs(max(X)-min(X))) max(X)+0.1*(abs(max(X)-min(X)))]],'color', colors.vertlines, 'linewidth',1.2,'LineStyle',':')
 end
 for i = 1:length(S)
-line([S(i) S(i)],[[min(X)-0.1*(abs(max(X)-min(X))) max(X)+0.1*(abs(max(X)-min(X)))]],'color', 'k', 'linewidth',1.2,'LineStyle',':')
+line([S(i) S(i)],[[min(X)-0.1*(abs(max(X)-min(X))) max(X)+0.1*(abs(max(X)-min(X)))]],'color', colors.vertlines, 'linewidth',1.2,'LineStyle',':')
 end
 for i = 1:length(Tend)
-line([Tend(i) Tend(i)],[[min(X)-0.1*(abs(max(X)-min(X))) max(X)+0.1*(abs(max(X)-min(X)))]],'color', 'k', 'linewidth',1.2,'LineStyle',':')
+line([Tend(i) Tend(i)],[[min(X)-0.1*(abs(max(X)-min(X))) max(X)+0.1*(abs(max(X)-min(X)))]],'color', colors.vertlines, 'linewidth',1.2,'LineStyle',':')
 end
 plot(R, X(R),'*','color','m','MarkerSize', 8)
 hold off
@@ -54,18 +64,18 @@ hold off
 
 cla(handles.y_axis);
 axes(handles.y_axis);
-line([0 length(Y)],[0 0], 'color', 'k','linewidth',0.5)
+line([0 length(Y)],[0 0], 'color', colors.vertlines,'linewidth',0.5)
 hold on
-plot(Y,'color', '[0 0.4470 0.7410]')
+plot(Y,'color', colors.xyzecg)
 ylim([min(Y)-0.1*(abs(max(Y)-min(Y))) max(Y)+0.1*(abs(max(Y)-min(Y)))])
 for i = 1:length(Q)
-line([Q(i) Q(i)],[[min(Y)-0.1*(abs(max(Y)-min(Y))) max(Y)+0.1*(abs(max(Y)-min(Y)))]],'color', 'k', 'linewidth',1.2,'LineStyle',':')
+line([Q(i) Q(i)],[[min(Y)-0.1*(abs(max(Y)-min(Y))) max(Y)+0.1*(abs(max(Y)-min(Y)))]],'color', colors.vertlines, 'linewidth',1.2,'LineStyle',':')
 end
 for i = 1:length(S)
-line([S(i) S(i)],[[min(Y)-0.1*(abs(max(Y)-min(Y))) max(Y)+0.1*(abs(max(Y)-min(Y)))]],'color', 'k', 'linewidth',1.2,'LineStyle',':')
+line([S(i) S(i)],[[min(Y)-0.1*(abs(max(Y)-min(Y))) max(Y)+0.1*(abs(max(Y)-min(Y)))]],'color', colors.vertlines, 'linewidth',1.2,'LineStyle',':')
 end
 for i = 1:length(Tend)
-line([Tend(i) Tend(i)],[[min(Y)-0.1*(abs(max(Y)-min(Y))) max(Y)+0.1*(abs(max(Y)-min(Y)))]],'color', 'k', 'linewidth',1.2,'LineStyle',':')
+line([Tend(i) Tend(i)],[[min(Y)-0.1*(abs(max(Y)-min(Y))) max(Y)+0.1*(abs(max(Y)-min(Y)))]],'color', colors.vertlines, 'linewidth',1.2,'LineStyle',':')
 end
 plot(R, Y(R),'*','color','m','MarkerSize', 8)
 hold off
@@ -73,18 +83,18 @@ hold off
 
 cla(handles.z_axis);
 axes(handles.z_axis);
-line([0 length(Z)],[0 0], 'color', 'k','linewidth',0.5)
+line([0 length(Z)],[0 0], 'color', colors.vertlines,'linewidth',0.5)
 hold on
-plot(Z,'color', '[0 0.4470 0.7410]')
+plot(Z,'color', colors.xyzecg)
 ylim([min(Z)-0.1*(abs(max(Z)-min(Z))) max(Z)+0.1*(abs(max(Z)-min(Z)))])
 for i = 1:length(Q)
-line([Q(i) Q(i)],[[min(Z)-0.1*(abs(max(Z)-min(Z))) max(Z)+0.1*(abs(max(Z)-min(Z)))]],'color', 'k', 'linewidth',1.2,'LineStyle',':')
+line([Q(i) Q(i)],[[min(Z)-0.1*(abs(max(Z)-min(Z))) max(Z)+0.1*(abs(max(Z)-min(Z)))]],'color', colors.vertlines, 'linewidth',1.2,'LineStyle',':')
 end
 for i = 1:length(S)
-line([S(i) S(i)],[[min(Z)-0.1*(abs(max(Z)-min(Z))) max(Z)+0.1*(abs(max(Z)-min(Z)))]],'color', 'k', 'linewidth',1.2,'LineStyle',':')
+line([S(i) S(i)],[[min(Z)-0.1*(abs(max(Z)-min(Z))) max(Z)+0.1*(abs(max(Z)-min(Z)))]],'color', colors.vertlines, 'linewidth',1.2,'LineStyle',':')
 end
 for i = 1:length(Tend)
-line([Tend(i) Tend(i)],[[min(Z)-0.1*(abs(max(Z)-min(Z))) max(Z)+0.1*(abs(max(Z)-min(Z)))]],'color', 'k', 'linewidth',1.2,'LineStyle',':')
+line([Tend(i) Tend(i)],[[min(Z)-0.1*(abs(max(Z)-min(Z))) max(Z)+0.1*(abs(max(Z)-min(Z)))]],'color', colors.vertlines, 'linewidth',1.2,'LineStyle',':')
 end
 plot(R, Z(R),'*','color','m','MarkerSize', 8)
 hold off
@@ -92,18 +102,18 @@ hold off
 
 cla(handles.vm_axis);
 axes(handles.vm_axis);
-line([0 length(VM)],[0 0], 'color', 'k','linewidth',0.5)
+line([0 length(VM)],[0 0], 'color', colors.vertlines,'linewidth',0.5)
 hold on
-plot(VM,'color', 'r')
+plot(VM,'color', colors.vmecg)
 ylim([min(VM)-0.1*(abs(max(VM)-min(VM))) max(VM)+0.1*(abs(max(VM)-min(VM)))])
 for i = 1:length(Q)
-line([Q(i) Q(i)],[[min(VM)-0.1*(abs(max(VM)-min(VM))) max(VM)+0.1*(abs(max(VM)-min(VM)))]],'color', 'k', 'linewidth',1.2,'LineStyle',':')
+line([Q(i) Q(i)],[[min(VM)-0.1*(abs(max(VM)-min(VM))) max(VM)+0.1*(abs(max(VM)-min(VM)))]],'color', colors.vertlines, 'linewidth',1.2,'LineStyle',':')
 end
 for i = 1:length(S)
-line([S(i) S(i)],[[min(VM)-0.1*(abs(max(VM)-min(VM))) max(VM)+0.1*(abs(max(VM)-min(VM)))]],'color', 'k', 'linewidth',1.2,'LineStyle',':')
+line([S(i) S(i)],[[min(VM)-0.1*(abs(max(VM)-min(VM))) max(VM)+0.1*(abs(max(VM)-min(VM)))]],'color', colors.vertlines, 'linewidth',1.2,'LineStyle',':')
 end
 for i = 1:length(Tend)
-line([Tend(i) Tend(i)],[[min(VM)-0.1*(abs(max(VM)-min(VM))) max(VM)+0.1*(abs(max(VM)-min(VM)))]],'color', 'k', 'linewidth',1.2,'LineStyle',':')
+line([Tend(i) Tend(i)],[[min(VM)-0.1*(abs(max(VM)-min(VM))) max(VM)+0.1*(abs(max(VM)-min(VM)))]],'color', colors.vertlines, 'linewidth',1.2,'LineStyle',':')
 end
 plot(R, VM(R),'*','color','m','MarkerSize', 8)
 hold off

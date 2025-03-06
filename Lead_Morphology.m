@@ -257,7 +257,7 @@ classdef Lead_Morphology
             
             ecg_fields = fieldnames(ecg);            % List of all properties in the ECG12 class
             vcg_fields = fieldnames(vcg);            % List of all properties in the VCG class
-            
+            endspike = vcg.endspikes;                 % If there was a spike detected this is end of spike
             
             % Find the indices of all 16 leads by searching within the properties of the ECG12/VCG classes
             % (to avoid issues later on if change the order of the properties of the ECG12/VCG classes
@@ -278,8 +278,7 @@ classdef Lead_Morphology
             
             
             % run VM lead through first so can open window for other leads
-            
-                [~, twave_max_loc_vm] = twave_values(vcg.(vcg_fields{lead_idx_vcg(4)}),ecg.hz,fidpts, 0);
+            [~, twave_max_loc_vm] = twave_values(vcg.(vcg_fields{lead_idx_vcg(4)}),ecg.hz,fidpts, 0);
 
 
             % Parameters to allow easier addition of more parameters in future
@@ -299,8 +298,22 @@ classdef Lead_Morphology
                 % If there is no negative values in the QRS then S = NaN
                 % Zero reference for this calculation is the start of the QRS complex at fiducial point q(i)
                 
-                [r_wave, s_wave, rs_wave, rs_ratio, sr_ratio] = rs_values(signal,fidpts);
-                [twave_max, twave_max_loc] = twave_values(signal,freq,fidpts,twave_max_loc_vm);
+                try
+                    [r_wave, s_wave, rs_wave, rs_ratio, sr_ratio] = rs_values(signal,fidpts,endspike);
+                catch
+                    r_wave = nan;
+                    s_wave = nan;
+                    rs_wave = nan;
+                    rs_ratio = nan;
+                    sr_ratio = nan;
+                end
+
+                try
+                    [twave_max, twave_max_loc] = twave_values(signal,freq,fidpts,twave_max_loc_vm);
+                catch
+                    twave_max = nan;
+                    twave_max_loc = nan;
+                end
                
                 % Correct for extra signal at start of each median beat
                 % before Qon and convert to ms from samples
@@ -310,7 +323,12 @@ classdef Lead_Morphology
                 obj.VM_max_rpk_loc = round((1000/freq)*(fidpts(2) - fidpts(1)));
 
                 % Calculate areas for 12L medians
-                [qrs_area, t_area] = mean_vector_leadmorph(signal, (1000/freq), fidpts, aps.baseline_flag);
+                try
+                    [qrs_area, t_area] = mean_vector_leadmorph(signal, (1000/freq), fidpts, aps.baseline_flag);
+                catch
+                    qrs_area = nan;
+                    t_area =  nan;
+                end
 
                 
                 % Take median values for all beats to report (ignoring NaN)
@@ -334,9 +352,23 @@ classdef Lead_Morphology
                 signal = vcg.(vcg_fields{lead_idx_vcg(j)});      % Assign each VCG lead to 'signal' variable for processing
                 freq = vcg.hz;
                 
-                [r_wave, s_wave, rs_wave, rs_ratio, sr_ratio] = rs_values(signal,fidpts);
+                try
+                    [r_wave, s_wave, rs_wave, rs_ratio, sr_ratio] = rs_values(signal,fidpts,endspike);
+                catch
+                    r_wave = nan;
+                    s_wave = nan;
+                    rs_wave = nan;
+                    rs_ratio = nan;
+                    sr_ratio = nan;
+                end
+
+                try
                 [twave_max, twave_max_loc] = twave_values(signal,freq,fidpts,twave_max_loc_vm);
                 twave_max_loc = round(1000/freq)*(twave_max_loc - fidpts(1));
+                catch
+                    twave_max = nan;
+                    twave_max_loc = nan;
+                end
                 
                 % Take median values for all beats to report (ignoring NaN)
                 obj.(lead_morph_fields{step+1+(num_vcg_params*(j-1))}) = r_wave;      % R wave
@@ -387,40 +419,9 @@ classdef Lead_Morphology
                 end
                 
             end
-            
-            % Find
-            
-%             % Save indiidual beat SVG and SAI to class
-%             obj.svg_x_individual = svg_x;
-%             obj.svg_y_individual = svg_y;
-%             obj.svg_z_individual = svg_z;
-%             
-%             obj.sai_x_individual = sai_x;
-%             obj.sai_y_individual = sai_y;
-%             obj.sai_z_individual = sai_z;
-%             obj.sai_vm_individual = sai_vm;
-%             
-%             obj.svg_x_individual_median = median(svg_x,'omitnan');
-%             obj.svg_y_individual_median = median(svg_y,'omitnan');
-%             obj.svg_z_individual_median = median(svg_z,'omitnan');
-%             obj.sai_x_individual_median = median(sai_x,'omitnan');
-%             obj.sai_y_individual_median = median(sai_y,'omitnan');
-%             obj.sai_z_individual_median = median(sai_z,'omitnan');
-%             obj.sai_vm_individual_median = median(sai_vm,'omitnan');
-%             
-%             obj.svg_x_individual_iqr = iqr(svg_x);
-%             obj.svg_y_individual_iqr = iqr(svg_y);
-%             obj.svg_z_individual_iqr = iqr(svg_z);
-%             obj.sai_x_individual_iqr = iqr(sai_x);
-%             obj.sai_y_individual_iqr = iqr(sai_y);
-%             obj.sai_z_individual_iqr = iqr(sai_z);
-%             obj.sai_vm_individual_iqr = iqr(sai_vm);
-            
-            
-            
-            
-            
+         
         end     % End main Lead_Morphology method        
+        
         
         % Export RS Values in column format
         function v = cells(obj)
@@ -450,11 +451,10 @@ classdef Lead_Morphology
             %                 end
             %             end
         end
-        
-        
-        
-        
+         
     end     % End methods
+
+
     methods(Static)
         % Display lead header for export purposes
         function labels = labels()
@@ -472,16 +472,16 @@ classdef Lead_Morphology
         end
         
         function l = length(); g = Lead_Morphology(); l = length(properties(g)); end
+
         function a = allnan()
             a = Lead_Morphology();
             p = properties(a);
             for i = 1:length(p)
                 a.(p{i}) = nan;
             end
-	end
-
-
+        end
     end
+    
 end     % End class
 
 

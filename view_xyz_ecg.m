@@ -22,7 +22,7 @@
 
 %%% displays 12-lead ECG for printing/saving
 
-function view_xyz_ecg(ecg, filename, save_folder, save_flag, auto_flag, majorgrid, minorgrid)
+function view_xyz_ecg(ecg, filename, save_folder, save_flag, auto_flag, majorgrid, minorgrid, colors)
 
 fn_ecg = fieldnames(ecg);
 
@@ -54,7 +54,14 @@ end
 
     diff_vals = (ceil(max_vals - min_vals));
    
-xyz_fig = figure('name','X Y Z ECG','numbertitle','off');
+xyz_fig = figure('name','X Y Z ECG','numbertitle','off','SizeChangedFcn',{@move_button}, 'color',colors.bgcolor);
+
+% Save button
+save_filename = fullfile(save_folder,strcat(filename(1:end-4),'_xyz_ecg.png'));
+savebutton = uicontrol('Parent',xyz_fig,'Style','pushbutton','String','Save .png','Units','pixels', ...
+    'BackgroundColor',colors.buttoncolor, 'FontWeight','bold', 'fontsize',8, 'ForegroundColor',colors.txtcolor, ...
+    'Position',[1100 400 80 30],'Visible','on','Callback',{@save_fig_from_button, save_filename});
+
 set(gcf, 'Position', [30, 60, 1200, 500])  % set figure size
 set(xyz_fig,'PaperSize',[8.5 11]); %set the paper size to what you want  
 hold on
@@ -125,13 +132,23 @@ axis off
 for i = 1:4
     sig = ecg_sqwave(5-i,:);
     plot(sig+(2*(i-1))- min(ecg_sqwave(4,:)-0.2),'linewidth',1.0,'color','k')
-    text(-250,sig(101)+0.5+(2*(i-1))- min(ecg_sqwave(4,:)-0.2),fn_ecg{7-i});
+    text(-250,sig(101)+0.5+(2*(i-1))- min(ecg_sqwave(4,:)-0.2),fn_ecg{7-i}, 'Color', colors.txtcolor);
 end
+
+% Add white background overplot area
+rectangle('Position',[0 0 (total_x_large_grid*x_large_grid) yceil], 'facecolor',[1 1 1], 'edgecolor','none');
+
+% Put rectangle behind all the plots
+% Rectangle will be child 1 because its the last thing added
+C = gca().Children;
+% Shift rectangle to end
+C = circshift(C,-1,1);
+set(gca, 'Children',C);
 
     
 xlim([-400 length(ecg_sqwave(1,:)) ])
 ylim([0 yceil])
-title(filename(1:end-4),'FontWeight','bold','FontSize',14, 'Interpreter', 'none')
+title(filename(1:end-4),'FontWeight','bold','FontSize',14, 'Interpreter', 'none','color',colors.txtcolor)
 
 hold off
 
@@ -143,11 +160,12 @@ InSet = get(gca, 'TightInset');
 InSet(4) = InSet(4)+0.015;
 InSet(3) = InSet(3)+0.015;
 set(gca, 'Position', [InSet(1:2), 1-InSet(1)-InSet(3), 1-InSet(2)-InSet(4)]);
-
+set(gcf, 'InvertHardCopy', 'off');
 
 % Increase font size on mac due to pc/mac font differences
     if ismac
         fontsize(gca,scale=1.25)
+        savebutton.FontSize = 10;
     end    
 
 % Save 12-lead as .png if save checkbox selected

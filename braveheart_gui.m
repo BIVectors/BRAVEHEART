@@ -44,7 +44,7 @@ function varargout = braveheart_gui(varargin)
 
 % Edit the above text to modify the response to help braveheart_gui
 
-% Last Modified by GUIDE v2.5 11-Sep-2024 13:17:11
+% Last Modified by GUIDE v2.5 04-Mar-2025 18:20:27
 
 % Update the current L&F for mac button issues...
 % Windows will use the normal Windows theme
@@ -411,9 +411,9 @@ uiwait(msgbox(...
 {'\fontsize{14}\it\bf \color[rgb]{0.09,0.078,0.377}';...
 'BRAVE\color[rgb]{0.89,0.016,0.016}H\fontsize{11}EART';...
 '\fontsize{8}\rm\color{black}(Beth Israel Analysis of Vectors of the Heart)';...
-'Version 1.3.1' ; 
+'Version 1.4.0' ; 
 ' ' ;...
-'Copyright 2016-2024  Hans F. Stabeneau and Jonathan W. Waks' ;...
+'Copyright 2016-2025  Hans F. Stabeneau and Jonathan W. Waks' ;...
 ' ' ;...
 'Software updates available at http://github.com/BIVectors/BRAVEHEART' ;...
 ' ' ;...
@@ -439,9 +439,9 @@ uiwait(msgbox(...
 {'\fontsize{18}\it\bf \color[rgb]{0.09,0.078,0.377}';...
 'BRAVE\color[rgb]{0.89,0.016,0.016}H\fontsize{14}EART\fontsize{11}';...
 '\rm\color{black}(Beth Israel Analysis of Vectors of the Heart)';...
-'Version 1.3.1' ; 
+'Version 1.4.0' ; 
 ' ' ;...
-'Copyright 2016-2024  Hans F. Stabeneau and Jonathan W. Waks' ;...
+'Copyright 2016-2025  Hans F. Stabeneau and Jonathan W. Waks' ;...
 ' ' ;...
 'Software updates available at http://github.com/BIVectors/BRAVEHEART' ;...
 ' ' ;...
@@ -463,6 +463,7 @@ uiwait(msgbox(...
 ''; ' '}, 'About/License','help',Struct));
 
 end
+
 
 % --- Executes on button press in y_markers.
 function y_markers_Callback(hObject, eventdata, handles)
@@ -539,12 +540,6 @@ function view_12lead_button_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-if get(handles.save_12lead_checkbox, 'Value') == 1
-    save_flag = 1;
-else
-    save_flag = 0;  
-end
-
 ecg = handles.ecg;
 
 filename = handles.filename_short;
@@ -567,7 +562,16 @@ switch grid_options
         majorgrid = 0;
 end
 
-view_12lead_ecg(ecg, filename, save_folder, save_flag, 0, majorgrid, minorgrid);
+% Get colors based on if in light/dark mode
+[dm, dark_colors, light_colors] = check_darkmode(handles);
+
+if dm == 1
+    colors = dark_colors;
+else
+    colors = light_colors;
+end
+
+view_12lead_ecg(ecg, filename, save_folder, 0, 0, majorgrid, minorgrid, colors);
 
 
 
@@ -927,6 +931,7 @@ set(handles.align_dropdown, 'Enable', 'on');
 set(handles.tend_method_dropdown, 'Enable', 'on');
 set(handles.autocl_checkbox, 'Enable', 'on');
 set(handles.pacing_remove_box, 'Enable', 'on');
+set(handles.all_auto_checkbox, 'Value', 1);
 
 if aps.keep_pvc == 0
 set(handles.pvc_button, 'String', 'Remove PVCs')
@@ -951,6 +956,16 @@ function activebeats_list_Callback(hObject, eventdata, handles)
 
 % Pulls the selected beat into the edit beat text box and then displays the 
 % selected beat with current fiducial points
+
+% Get colors based on if in light/dark mode
+[dm, dark_colors, light_colors] = check_darkmode(handles);
+
+if dm == 1
+    colors = dark_colors;
+else
+    colors = light_colors;
+end
+
 
 handles = guidata(hObject);  % load handles variables
 
@@ -1048,13 +1063,15 @@ cla(handles.selectedbeat_axis)
 % Graph selected beat and fiducial points
 axes(handles.selectedbeat_axis) 
 
-plot(VM)        % Plots entire VM signal - will re-window the beat later in function
+plot(VM, 'color', colors.xyzecg)        % Plots entire VM signal - will re-window the beat later in function
 set(gca,'YTick',[])
+set(gca, 'color', colors.bgfigcolor);
+set(gca, 'Xcolor', colors.txtcolor);
 hold on
 
 % Draw the fiducial point lines in the selected beat viewer
-qon_line = line([x1 x1],[y2 y1], 'color', 'k','linewidth',0.5, 'linestyle', '--'); %qon line
-qoff_line = line([x3 x3],[y2 y1], 'color', 'b','linewidth',0.5, 'linestyle', '--'); %qoff line
+qon_line = line([x1 x1],[y2 y1], 'color', colors.vertlines,'linewidth',0.5, 'linestyle', '--'); %qon line
+qoff_line = line([x3 x3],[y2 y1], 'color', colors.bluetxtcolor,'linewidth',0.5, 'linestyle', '--'); %qoff line
 toff_line = line([x4 x4],[y2 y1], 'color', 'r','linewidth',0.5, 'linestyle', '--'); %toff line
 rpeak_line = line([rpeak rpeak],[y2 y1], 'color', '[0 0.7 0]','linewidth',0.5, 'linestyle', '--'); %Rpeak line
 
@@ -1446,12 +1463,6 @@ function view_xyz_ecg_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-if get(handles.save_12lead_checkbox, 'Value') == 1
-    save_flag = 1;
-else
-    save_flag = 0;
-end
-
 vcg = handles.vcg;
 
 filename = handles.filename_short;
@@ -1474,7 +1485,16 @@ switch grid_options
         majorgrid = 0;
 end
 
-view_xyz_ecg(vcg, filename, save_folder, save_flag, 0, majorgrid, minorgrid);
+% Get colors based on if in light/dark mode
+[dm, dark_colors, light_colors] = check_darkmode(handles);
+
+if dm == 1
+    colors = dark_colors;
+else
+    colors = light_colors;
+end
+
+view_xyz_ecg(vcg, filename, save_folder, 0, 0, majorgrid, minorgrid, colors);
 
 
 % --- Executes on button press in x_stats_button.
@@ -1745,8 +1765,14 @@ function qon_shift_button_Callback(hObject, eventdata, handles)
 % hObject    handle to qon_shift_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+ 
+% Now get shift before pass into shift_annotation and then shift_annotations_GUI    
+shift = str2num(get(handles.shift_box,'String'));
 
-shift_annotations('Q', hObject, eventdata, handles)
+% Need to pass in median VM signal to recalculate Tmax location if it changes
+signal = handles.median_vcg.VM;
+
+shift_annotations('Q', shift, signal, hObject, eventdata, handles)
 %handles = guidata(hObject);  % load handles variables
 
    
@@ -1756,7 +1782,13 @@ function qoff_shift_button_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-shift_annotations('S', hObject, eventdata, handles)
+% Now get shift before pass into shift_annotation and then shift_annotations_GUI    
+shift = str2num(get(handles.shift_box,'String'));
+
+% Need to pass in median VM signal to recalculate Tmax location if it changes
+signal = handles.median_vcg.VM;
+
+shift_annotations('S', shift, signal, hObject, eventdata, handles)
 %handles = guidata(hObject);  % load handles variables
 
 
@@ -1773,7 +1805,13 @@ function toff_shift_button_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-shift_annotations('Tend', hObject, eventdata, handles)
+% Now get shift before pass into shift_annotation and then shift_annotations_GUI    
+shift = str2num(get(handles.shift_box,'String'));
+
+% Need to pass in median VM signal to recalculate Tmax location if it changes
+signal = handles.median_vcg.VM;
+
+shift_annotations('Tend', shift, signal, hObject, eventdata, handles)
 %handles = guidata(hObject);  % load handles variables
 
 % --- Executes on button press in TendTangent.
@@ -1823,14 +1861,29 @@ function qon_minus_button_Callback(hObject, eventdata, handles)
 
 handles = guidata(hObject);  % load handles variables
 
-edit_box = str2num(get(handles.edit_selectedbeat_textbox,'String'));
+% If Median    
+if get(handles.shift_median_checkbox, 'Value')
 
-if edit_box(1) > 1
-    edit_box(1) = edit_box(1)-1;
+    % Now get shift before pass into shift_annotation and then shift_annotations_GUI    
+    shift = -1;
+
+    % Need to pass in median VM signal to recalculate Tmax location if it changes
+    signal = handles.median_vcg.VM;
+
+    shift_annotations('Q', shift, signal, hObject, eventdata, handles)
+
+% Not Median
+else
+
+    edit_box = str2num(get(handles.edit_selectedbeat_textbox,'String'));
+    
+    if edit_box(1) > 1
+        edit_box(1) = edit_box(1)-1;
+    end
+    
+    set(handles.edit_selectedbeat_textbox,'String',num2str(edit_box));
+
 end
-
-set(handles.edit_selectedbeat_textbox,'String',num2str(edit_box));
-
 
 
 % --- Executes on button press in qon_plus_button.
@@ -1841,15 +1894,31 @@ function qon_plus_button_Callback(hObject, eventdata, handles)
 
 handles = guidata(hObject);  % load handles variables
 
-edit_box = str2num(get(handles.edit_selectedbeat_textbox,'String'));
+% If Median  
+if get(handles.shift_median_checkbox, 'Value')
 
-if edit_box(1) < length(handles.vcg.VM)
-    edit_box(1) = edit_box(1)+1;
+    % Now get shift before pass into shift_annotation and then shift_annotations_GUI    
+    shift = 1;
+
+    % Need to pass in median VM signal to recalculate Tmax location if it changes
+    signal = handles.median_vcg.VM;
+
+    shift_annotations('Q', shift, signal, hObject, eventdata, handles)
+
+% Not Median    
+else
+
+    handles = guidata(hObject);  % load handles variables
+    
+    edit_box = str2num(get(handles.edit_selectedbeat_textbox,'String'));
+    
+    if edit_box(1) < length(handles.vcg.VM)
+        edit_box(1) = edit_box(1)+1;
+    end
+    
+    set(handles.edit_selectedbeat_textbox,'String',num2str(edit_box));
+
 end
-
-set(handles.edit_selectedbeat_textbox,'String',num2str(edit_box));
-
-
 
 % --- Executes on button press in rpeak_plus_button.
 function rpeak_plus_button_Callback(hObject, eventdata, handles)
@@ -1874,7 +1943,6 @@ function rpeak_minus_button_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-
 handles = guidata(hObject);  % load handles variables
 
 edit_box = str2num(get(handles.edit_selectedbeat_textbox,'String'));
@@ -1893,18 +1961,30 @@ function qoff_minus_button_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-
 handles = guidata(hObject);  % load handles variables
 
-edit_box = str2num(get(handles.edit_selectedbeat_textbox,'String'));
+% If Median  
+if get(handles.shift_median_checkbox, 'Value')
 
-if edit_box(3) > 1
-    edit_box(3) = edit_box(3)-1;
+    % Now get shift before pass into shift_annotation and then shift_annotations_GUI    
+    shift = -1;
+    % Need to pass in median VM signal to recalculate Tmax location if it changes
+    signal = handles.median_vcg.VM;
+
+    shift_annotations('S', shift, signal, hObject, eventdata, handles)
+
+% Not Median    
+else
+
+    edit_box = str2num(get(handles.edit_selectedbeat_textbox,'String'));
+    
+    if edit_box(3) > 1
+        edit_box(3) = edit_box(3)-1;
+    end
+    
+    set(handles.edit_selectedbeat_textbox,'String',num2str(edit_box));
+
 end
-
-set(handles.edit_selectedbeat_textbox,'String',num2str(edit_box));
-
-
 
 % --- Executes on button press in qoff_plus_button.
 function qoff_plus_button_Callback(hObject, eventdata, handles)
@@ -1912,17 +1992,31 @@ function qoff_plus_button_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-
 handles = guidata(hObject);  % load handles variables
 
-edit_box = str2num(get(handles.edit_selectedbeat_textbox,'String'));
+% If Median  
+if get(handles.shift_median_checkbox, 'Value')
 
-if edit_box(3) < length(handles.vcg.VM)
-    edit_box(3) = edit_box(3)+1;
+    % Now get shift before pass into shift_annotation and then shift_annotations_GUI    
+    shift = 1;
+
+    % Need to pass in median VM signal to recalculate Tmax location if it changes
+    signal = handles.median_vcg.VM;
+
+    shift_annotations('S', shift, signal, hObject, eventdata, handles)
+
+% Not Median    
+else
+
+    edit_box = str2num(get(handles.edit_selectedbeat_textbox,'String'));
+    
+    if edit_box(3) < length(handles.vcg.VM)
+        edit_box(3) = edit_box(3)+1;
+    end
+    
+    set(handles.edit_selectedbeat_textbox,'String',num2str(edit_box));
+
 end
-
-set(handles.edit_selectedbeat_textbox,'String',num2str(edit_box));
-
 
 % --- Executes on button press in toff_minus_button.
 function toff_minus_button_Callback(hObject, eventdata, handles)
@@ -1930,17 +2024,30 @@ function toff_minus_button_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-
 handles = guidata(hObject);  % load handles variables
 
-edit_box = str2num(get(handles.edit_selectedbeat_textbox,'String'));
+% If Median  
+if get(handles.shift_median_checkbox, 'Value')
 
-if edit_box(4) > 1
-    edit_box(4) = edit_box(4)-1;
+    % Now get shift before pass into shift_annotation and then shift_annotations_GUI    
+    shift = -1;
+    % Need to pass in median VM signal to recalculate Tmax location if it changes
+    signal = handles.median_vcg.VM;
+
+    shift_annotations('Tend', shift, signal, hObject, eventdata, handles)
+
+% Not Median    
+else
+
+    edit_box = str2num(get(handles.edit_selectedbeat_textbox,'String'));
+    
+    if edit_box(4) > 1
+        edit_box(4) = edit_box(4)-1;
+    end
+    
+    set(handles.edit_selectedbeat_textbox,'String',num2str(edit_box));
+
 end
-
-set(handles.edit_selectedbeat_textbox,'String',num2str(edit_box));
-
 
 
 % --- Executes on button press in toff_plus_button.
@@ -1949,17 +2056,31 @@ function toff_plus_button_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-
 handles = guidata(hObject);  % load handles variables
 
-edit_box = str2num(get(handles.edit_selectedbeat_textbox,'String'));
+% If Median  
+if get(handles.shift_median_checkbox, 'Value')
 
-if edit_box(4) < length(handles.vcg.VM)
-    edit_box(4) = edit_box(4)+1;
+    % Now get shift before pass into shift_annotation and then shift_annotations_GUI    
+    shift = 1;
+
+    % Need to pass in median VM signal to recalculate Tmax location if it changes
+    signal = handles.median_vcg.VM;
+
+    shift_annotations('Tend', shift, signal, hObject, eventdata, handles)
+
+% Not Median    
+else
+
+    edit_box = str2num(get(handles.edit_selectedbeat_textbox,'String'));
+    
+    if edit_box(4) < length(handles.vcg.VM)
+        edit_box(4) = edit_box(4)+1;
+    end
+    
+    set(handles.edit_selectedbeat_textbox,'String',num2str(edit_box));
+
 end
-
-set(handles.edit_selectedbeat_textbox,'String',num2str(edit_box));
-
 
 % --- Executes on button press in refresh_vcg_button.
 function refresh_vcg_button_Callback(hObject, eventdata, handles)
@@ -2580,6 +2701,15 @@ function speed_graph_button_Callback(hObject, eventdata, handles)
 % clear speed_axis
 cla(handles.speed_axis);
 
+% Get colors based on if in light/dark mode
+[dm, dark_colors, light_colors] = check_darkmode(handles);
+
+if dm == 1
+    colors = dark_colors;
+else
+    colors = light_colors;
+end
+
 save_flag = get(handles.save_speedfig_checkbox,'Value');
 accel_flag = get(handles.accel_box,'Value');
 legend_flag = get(handles.speed_legend_checkbox,'Value');
@@ -2591,7 +2721,8 @@ speed_filename = fullfile(save_folder,filename_short);
 
 popout = 0;
 
-speed_graph_gui(hObject, eventdata, handles, speed_filename, save_flag, 0, str2num(get(handles.speed_blank_txt, 'String')), str2num(get(handles.speed_t_blank_txt, 'String')), accel_flag, legend_flag, popout);
+speed_graph_gui(hObject, eventdata, handles, speed_filename, save_flag, 0, str2num(get(handles.speed_blank_txt, 'String')), ...
+    str2num(get(handles.speed_t_blank_txt, 'String')), accel_flag, legend_flag, colors, popout);
 
 
 % --- Executes on button press in tab3_button.
@@ -3698,7 +3829,13 @@ function rpk_shift_button_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-shift_annotations('R', hObject, eventdata, handles)
+% Now get shift before pass into shift_annotation and then shift_annotations_GUI    
+shift = str2num(get(handles.shift_box,'String'));
+
+% Need to pass in median VM signal to recalculate Tmax location if it changes
+signal = handles.median_vcg.VM;
+
+shift_annotations('R', shift, signal, hObject, eventdata, handles)
 %handles = guidata(hObject);  % load handles variables    
 
 % --- Executes on button press in remove_outliers_button.
@@ -4078,7 +4215,6 @@ if isfield(handles,'median_vcg')
 
     filename = handles.filename_short;
     save_folder = get(handles.save_dir_txt,'String');
-    save_flag = get(handles.save_12lead_checkbox,'Value');
 
     vcg = handles.vcg;
     median_vcg = handles.median_vcg;
@@ -4102,28 +4238,18 @@ if isfield(handles,'median_vcg')
 
     % Quality probability for printing on figure
     prob = handles.quality.prob_value;
-%     
-%     X = vcg.X;
-%     Y = vcg.Y;
-%     Z = vcg.Z;
-%     VM = vcg.VM;
-% 
-%     medianX = median_vcg.X;
-%     medianY = median_vcg.Y;
-%     medianZ = median_vcg.Z;
-%     medianVM = median_vcg.VM;
 
-    summary_figure(vcg, beats, median_vcg, medianbeat, correlation_test, prob, filename)
+    % Get colors based on if in light/dark mode
+    [dm, dark_colors, light_colors] = check_darkmode(handles);
     
-    % Save as png if save checkbox selected
-    if save_flag == 1
-    filename_short = strcat(filename(1:end-4),'_summary.png');
-    full_filename = fullfile(save_folder,filename_short);
-       
-    print(gcf,'-dpng',[full_filename],'-r600');
-
+    if dm == 1
+        colors = dark_colors;
     else
+        colors = light_colors;
     end
+
+    summary_figure(vcg, beats, median_vcg, medianbeat, correlation_test, prob, save_folder, filename, colors)
+    
 
 end
 
@@ -4244,6 +4370,24 @@ function shift_median_checkbox_Callback(hObject, eventdata, handles)
 
 % Hint: get(hObject,'Value') returns toggle state of shift_median_checkbox
 
+% If checkbox checked
+if get(hObject,'Value')
+
+    % Disable R peak point changes
+    set(handles.rpeak_plus_button, 'Enable', 'off');
+    set(handles.rpeak_minus_button, 'Enable', 'off');
+    set(handles.rpk_shift_button, 'Enable', 'off');
+
+% If not checked
+else
+
+    % Enable R peak point changes for non median beats
+    set(handles.rpeak_plus_button, 'Enable', 'on');
+    set(handles.rpeak_minus_button, 'Enable', 'on');
+    set(handles.rpk_shift_button, 'Enable', 'on');
+
+end
+
 
 % --- Executes on button press in polar_fig_button.
 function polar_fig_button_Callback(hObject, eventdata, handles)
@@ -4253,34 +4397,29 @@ function polar_fig_button_Callback(hObject, eventdata, handles)
 
 filename = handles.filename_short;
 save_folder = get(handles.save_dir_txt,'String');
-save_flag = get(handles.save_12lead_checkbox,'Value');
 
 [age, male, white, bmi] = pull_gui_demographics(hObject, eventdata, handles);
 
 % Get nurmal ranges based on the demographics
 nval = NormalVals(age, male, white, bmi, handles.hr);
 
+% Get colors based on if in light/dark mode
+[dm, dark_colors, light_colors] = check_darkmode(handles);
+
+if dm == 1
+    colors = dark_colors;
+else
+    colors = light_colors;
+end
+
 % Generate polar figure with normal values included
-polar_figures(handles.geh, nval, handles.filename_short)
+polar_figures(handles.geh, nval, save_folder, filename, colors)
 
-% Save figure as .png if save checkbox selected
-    if save_flag == 1
-    filename_short = strcat(filename(1:end-4),'_polar.png');
-    full_filename = fullfile(save_folder,filename_short);
-       
-    print(gcf,'-dpng',[full_filename],'-r600');
 
-    else
-    end
-    
-    
 
-function shift_annotations(pt, hObject, eventdata, handles)
-    
-% Check that only have numbers in the shift value textbox to avoid errors
-if ~isempty(str2num(get(handles.shift_box,'String')))
-   
-shift_annotations_GUI(pt, hObject, eventdata, handles)
+function shift_annotations(pt, shift, signal, hObject, eventdata, handles)
+  
+shift_annotations_GUI(pt, shift, signal, hObject, eventdata, handles)
 handles = guidata(hObject);     % Take handles from the function and transfer to main program
 
 % Don't remove PVCs and outliers when shift - makes it too complicated -
@@ -4359,7 +4498,6 @@ end
     
 % Disable rotation so can move lines to reannotate in selected beat viewer
     rotate3d off 
-end
     
 
 % --- Executes on selection change in medianreanno_popup.
@@ -4619,8 +4757,17 @@ if isfield(handles,'lead_morph')
     medianbeat = handles.medianbeat;
     lead_morph = handles.lead_morph;
     save = 0;
+    
+    % Get colors based on if in light/dark mode
+    [dm, dark_colors, light_colors] = check_darkmode(handles);
+    
+    if dm == 1
+        colors = dark_colors;
+    else
+        colors = light_colors;
+    end
 
-    view_lead_morph_fig(median_12L, median_vcg, medianbeat, lead_morph, save, filename, save_folder)
+    view_lead_morph_fig(median_12L, median_vcg, medianbeat, lead_morph, save, filename, save_folder, colors)
 
 end
 
@@ -4630,8 +4777,6 @@ function view_median_ecg_button_Callback(hObject, eventdata, handles)
 % hObject    handle to view_median_ecg_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
-save_flag = get(handles.save_12lead_checkbox, 'Value');
 
 ecg = handles.median_12L;
 vcg = handles.median_vcg;
@@ -4656,7 +4801,17 @@ switch grid_options
         majorgrid = 0;
 end
 
-view_median12lead_ecg(ecg, vcg, filename, save_folder, save_flag, 0, majorgrid, minorgrid);
+    % Get colors based on if in light/dark mode
+    [dm, dark_colors, light_colors] = check_darkmode(handles);
+    
+    if dm == 1
+        colors = dark_colors;
+    else
+        colors = light_colors;
+    end
+
+
+view_median12lead_ecg(ecg, vcg, filename, save_folder, 0, 0, majorgrid, minorgrid, colors);
 
 
 % --- Executes on button press in parallel_batch_button.
@@ -4668,11 +4823,24 @@ function parallel_batch_button_Callback(hObject, eventdata, handles)
 % Hint: get(hObject,'Value') returns toggle state of parallel_batch_button
 
 
-% --- Executes on button press in pushbutton146.
-function pushbutton146_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton146 (see GCBO)
+% --- Executes on button press in darkmode_button.
+function darkmode_button_Callback(hObject, eventdata, handles)
+% hObject    handle to darkmode_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+
+% Switch dark mode and light mode and change text of button
+[is_dark, ~, ~] = check_darkmode(handles);
+
+if is_dark == 0
+    set(handles.darkmode_button, 'String', 'Light Mode');
+else
+    set(handles.darkmode_button, 'String', 'Dark Mode');
+end
+
+darkmode(handles);
+
+
 
 
 % --- Executes on button press in batch_save_data_button.
@@ -4762,19 +4930,22 @@ function view_vcgloops_button_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-if get(handles.save_12lead_checkbox, 'Value') == 1
-    save_flag = 1;
-else
-    save_flag = 0;  
-end
-
 vcg = handles.median_vcg;
 medianbeat = handles.medianbeat;
 
 filename = handles.filename_short;
 save_folder = get(handles.save_dir_txt,'String');
 
-view_vcgloops(vcg, medianbeat, filename, save_folder, save_flag)
+% Get colors based on if in light/dark mode
+[dm, dark_colors, light_colors] = check_darkmode(handles);
+
+if dm == 1
+    colors = dark_colors;
+else
+    colors = light_colors;
+end
+
+view_vcgloops(vcg, medianbeat, filename, save_folder, 0, colors)
 
 
 
@@ -4861,7 +5032,16 @@ x2 = vcg.X(fidpts(3):fidpts(4));
 y2 = vcg.Y(fidpts(3):fidpts(4));
 z2 = vcg.Z(fidpts(3):fidpts(4));
 
-vcg_loop_fig_GUI(x, y, z, x2, y2, z2, 'qrs', hObject, eventdata, handles)
+% Get colors based on if in light/dark mode
+[dm, dark_colors, light_colors] = check_darkmode(handles);
+
+if dm == 1
+    colors = dark_colors;
+else
+    colors = light_colors;
+end
+
+vcg_loop_fig_GUI(x, y, z, x2, y2, z2, 'qrs', colors, hObject, eventdata, handles)
 
 rotate3d on
 
@@ -4883,7 +5063,16 @@ x2 = vcg.X(fidpts(1):fidpts(3));
 y2 = vcg.Y(fidpts(1):fidpts(3));
 z2 = vcg.Z(fidpts(1):fidpts(3));
 
-vcg_loop_fig_GUI(x, y, z, x2, y2, z2, 't', hObject, eventdata, handles)
+% Get colors based on if in light/dark mode
+[dm, dark_colors, light_colors] = check_darkmode(handles);
+
+if dm == 1
+    colors = dark_colors;
+else
+    colors = light_colors;
+end
+
+vcg_loop_fig_GUI(x, y, z, x2, y2, z2, 't', colors, hObject, eventdata, handles)
 
 rotate3d on
 
@@ -5169,22 +5358,25 @@ function normal_range_button_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-save_flag = get(handles.save_12lead_checkbox,'Value');
 filename = handles.filename_short;
 save_folder = get(handles.save_dir_txt,'String');
+
+[age, male, white, bmi] = pull_gui_demographics(hObject, eventdata, handles);
+
+nml = NormalVals(age, male, white, bmi, handles.hr);
+
+geh = handles.geh;
  
-normal_range_figure(hObject, eventdata, handles)
+% Get colors based on if in light/dark mode
+[dm, dark_colors, light_colors] = check_darkmode(handles);
 
-% Save as png if save checkbox selected
-if save_flag == 1
-    filename_short = strcat(filename(1:end-4),'_normalranges.png');
-    full_filename = fullfile(save_folder,filename_short);
-
-    print(gcf,'-dpng',[full_filename],'-r600');
-
+if dm == 1
+    colors = dark_colors;
 else
+    colors = light_colors;
 end
 
+normal_range_figure(geh, age, male, white, bmi, handles.hr, nml, save_folder, filename, colors);
 
 
 % --- Executes on selection change in popupmenu16.
@@ -5458,3 +5650,10 @@ function pkfilter_checkbox_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 % Hint: get(hObject,'Value') returns toggle state of pkfilter_checkbox
+
+
+% --- Executes on button press in pushbutton167.
+function pushbutton167_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton167 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
