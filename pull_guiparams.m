@@ -27,9 +27,8 @@ function aps = pull_guiparams(hObject, eventdata, handles)
 aps = Annoparams;       % Declare as Annoparams class (will pull in default values)
 
 
-
 % Set pacing spike removal flag and parameters to Annoparams class
-    aps.spike_removal = logical(get(handles.pacing_remove_box, 'Value'));
+    aps.spike_removal = logical(get(handles.spike_removal_old_checkbox, 'Value'));
     aps.pacer_spike_width = str2double(get(handles.pacing_pkwidth_txt, 'String'));
     aps.pacer_thresh = str2double(get(handles.pacing_thresh_txt, 'String'));
    
@@ -163,6 +162,22 @@ aps = Annoparams;       % Declare as Annoparams class (will pull in default valu
          aps.median_reanno_method = 'Std';
 	end    
    
+% Pacing spike interopolation
+    aps.cwt_spike_removal = logical(get(handles.cwt_pacing_remove_box, 'Value'));
+    aps.interpolate = logical(get(handles.interpolate_spikes_ckbox, 'Value'));
+    aps.pacer_zcut = str2double(get(handles.pacer_zcut_txtbox, 'String'));
+
+    if ~isnan(str2double(get(handles.pacer_zpk_txtbox, 'String')))
+        aps.pacer_zpk = str2double(get(handles.pacer_zpk_txtbox, 'String'));
+    else
+        aps.pacer_zpk = get(handles.pacer_zpk_txtbox, 'String');
+    end
+
+    aps.pacer_maxscale = str2double(get(handles.pacer_maxscale_txtbox, 'String'));
+    aps.pacer_spike_num = str2double(get(handles.pacer_num_leads_txtbox, 'String'));
+    
+
+
 	% Septum search window
 	%aps.septumwindow = str2double(get(handles.septal_txt, 'String'));
 end

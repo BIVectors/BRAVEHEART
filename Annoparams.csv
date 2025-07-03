@@ -22,6 +22,12 @@ spike_removal,1
 pacer_spike_width,20
 pacer_mf,4
 pacer_thresh,20
+cwt_spike_removal,0
+interpolate,0
+pacer_zcut,65
+pacer_zpk,20
+pacer_maxscale,1
+pacer_spike_num,2
 align_flag,CoV
 cov_mf,40
 cov_thresh,30

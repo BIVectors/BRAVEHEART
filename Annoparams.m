@@ -68,11 +68,18 @@ classdef Annoparams
 		STend = 45;                      % Length of Tend search window as a percent of RR interval
 
 		% Pacer spike removal
-		spike_removal = 1;               % Remove pacemaker spikes
-		pacer_spike_width = 20;          % Max width of pacing spike (in ms)
-		pacer_mf = 4;                    % Pacer spike detection median filter (in ms)
-		pacer_thresh = 20;               % Percent peak of pacer spike used for spike removal
+		spike_removal = 1;               % Remove pacemaker spikes from R peak detection
+		pacer_spike_width = 20;          % Max width of pacing spike (in ms) (legacy code)
+		pacer_mf = 4;                    % Pacer spike detection median filter (in ms) (legacy code)
+		pacer_thresh = 20;               % Percent peak of pacer spike used for spike removal (legacy code)
 		
+        cwt_spike_removal = 0            % Remove pacemaker spikes using CWT
+        interpolate = 0;                 % Remove pacing spikes with interpolation
+	    pacer_zcut = 65;                 % Mod Z score cutoff for detecting pacing spikes
+        pacer_zpk = 20;                  % Percent peak of mod Z score peaks defining onset/offset of spike
+        pacer_maxscale = 1;              % Lower limit of frequency used for pacing spike detection
+        pacer_spike_num = 2;             % Minimum number of leads that have to have pacing spikes detected 
+
 		% Beat alignment
 		align_flag = 'CoV';              % Beat alignment method ('CoV' or 'Rpeak')
 		cov_mf = 40;                     % width of CoV median filter (in ms)
@@ -102,7 +109,9 @@ classdef Annoparams
 		% Misc
 		debug = 0;                       % Debug mode (generates debug annotation figures)
 		
-	end
+    
+    
+    end
 	
 	methods
 		

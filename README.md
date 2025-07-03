@@ -4,7 +4,7 @@
 [![badge](https://badgen.net/badge/MATLAB/R2022a/?color=green)](https://www.mathworks.com/products/matlab.html) ![badge](https://badgen.net/badge/License/GPL-3.0/?color=red) 
 ![badge](https://github.com/BIVectors/BRAVEHEART/actions/workflows/testing.yml/badge.svg)  
  [![badge](https://img.shields.io/github/v/release/BIVectors/BRAVEHEART?label=Latest%20Release)](https://github.com/BIVectors/BRAVEHEART/releases) ![badge](https://img.shields.io/github/repo-size/BIVectors/BRAVEHEART?label=Repo%20Size) ![badge](https://img.shields.io/github/directory-file-count/BIVectors/BRAVEHEART?label=File%20Count) ![badge](https://img.shields.io/github/languages/code-size/BIVectors/BRAVEHEART?label=Code%20Size)  [![badge](https://badgen.net/badge/icon/Windows%20.exe?icon=windows&label)](https://github.com/BIVectors/BRAVEHEART/releases) [![badge](https://badgen.net/badge/icon/Mac%20.app?icon=apple&label)](https://github.com/BIVectors/BRAVEHEART/releases)   
- [![badge](https://img.shields.io/badge/User%20Guide-F7DF1E?logo=adobeacrobatreader&style=flat&labelColor=555)](https://github.com/BIVectors/BRAVEHEART/blob/main/braveheart_userguide.pdf) [![badge](https://img.shields.io/badge/Methods%20Manuscript-F7DF1E?logo=elsevier&style=flat&logoColor=white&labelColor=555)](https://doi.org/10.1016/j.cmpb.2023.107798)   
+ [![badge](https://img.shields.io/badge/User%20Guide-F7DF1E?logo=googledocs&logoColor=white&style=flat&labelColor=555)](https://github.com/BIVectors/BRAVEHEART/blob/main/braveheart_userguide.pdf) [![badge](https://img.shields.io/badge/Methods%20Manuscript-F7DF1E?logo=elsevier&style=flat&logoColor=white&labelColor=555)](https://doi.org/10.1016/j.cmpb.2023.107798)   
 
 **Hans Fredrich Stabenau, MD, PhD & Jonathan W. Waks, MD  
 Harvard-Thorndike Electrophysiology Institute, Department of Cardiovascular Medicine,  
@@ -32,7 +32,7 @@ All rights reserved.
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.  This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.  You should have received a copy of the GNU General Public License along with this program. If not, see https://www.gnu.org/licenses/ or the [LICENSE](https://github.com/BIVectors/BRAVEHEART/blob/main/LICENSE) file included in this repository.
 
 ## Installation & User Guide/Software Methods
-[![badge](https://img.shields.io/badge/User%20Guide-F7DF1E?logo=adobeacrobatreader&style=flat&labelColor=555)](https://github.com/BIVectors/BRAVEHEART/blob/main/braveheart_userguide.pdf)   
+[![badge](https://img.shields.io/badge/User%20Guide-F7DF1E?logo=googledocs&logoColor=white&style=flat&style=flat&labelColor=555)](https://github.com/BIVectors/BRAVEHEART/blob/main/braveheart_userguide.pdf)   
 A detailed user guide that covers installation and use of the software, including a quick start guide and examples of ECG/VCG processing, is available in the file [braveheart_userguide.pdf](https://github.com/BIVectors/BRAVEHEART/blob/main/braveheart_userguide.pdf).  
 
 [![badge](https://img.shields.io/badge/Methods%20Manuscript-F7DF1E?logo=elsevier&style=flat&logoColor=white&labelColor=555)](https://doi.org/10.1016/j.cmpb.2023.107798)    
@@ -122,9 +122,12 @@ The software has been used for ECG/VCG analysis in the following publications:
 
 11. [A Sau, J Barker, L Pastika, E Sieliwonczyk, K Patlatzoglou, KA McGurk, NS Peters, DP O'Regan, JS Ware, DB Kramer, JW Waks, and FS Ng. Artificial Intelligence-Enhanced Electrocardiography for Prediction of Incident Hypertension. _JAMA Cardiol_.  2025, Jan 2.](https://jamanetwork.com/journals/jamacardiology/article-abstract/2828420)
 
-12. [K Macierzanka, A Sau, K Patlatzoglou, L Pastika, E Sieliwonczyk, M Gurnani, NS Peters, JW Waks, DB Kramer, and FS Ng Siamese neural network-enhanced electrocardiography can re-identify anonymised healthcare data. _Eur Heart J Digit Health_. 2025, Feb 25.](https://academic.oup.com/ehjdh/advance-article/doi/10.1093/ehjdh/ztaf011/8042356)
+12. [K Macierzanka, A Sau, K Patlatzoglou, L Pastika, E Sieliwonczyk, M Gurnani, NS Peters, JW Waks, DB Kramer, and FS Ng. Siamese neural network-enhanced electrocardiography can re-identify anonymised healthcare data. _Eur Heart J Digit Health_. 2025, Feb 25.](https://academic.oup.com/ehjdh/advance-article/doi/10.1093/ehjdh/ztaf011/8042356)
 
-13. [A Sau, E Sieliwonczyk, K Patlatzoglou, L Pastika, K McGurk, AH Ribeiro, ALP Ribeiro, JE Ho, NS Peters, JS Ware, U Tayal, DB Kramer, JW Waks, and FS Ng. Artificial intelligence- enhanced electrocardiography for the identification of a sex-related cardiovascular risk continuum: a retrospective cohort study. _Lancet Digit Health_, 2025 Mar;7(3):e184-e194.](https://www.sciencedirect.com/science/article/pii/S258975002400270X)
+13. [A Sau, E Sieliwonczyk, K Patlatzoglou, L Pastika, K McGurk, AH Ribeiro, ALP Ribeiro, JE Ho, NS Peters, JS Ware, U Tayal, DB Kramer, JW Waks, and FS Ng. Artificial intelligence- enhanced electrocardiography for the identification of a sex-related cardiovascular risk continuum: a retrospective cohort study. _Lancet Digit Health_. 2025 Mar;7(3):e184-e194.](https://www.sciencedirect.com/science/article/pii/S258975002400270X)
+
+14. [M Gurnani, K Patlatzoglou, J Barker, D Bivona, L Pastika, E Sieliwonczyk, B Zeidaabadi, P Inglese, L Curran, AD Arnold, D O'Regan, Z Whinnett, KC Bilchick, NS Peters, DB Kramer, JW Waks, A Sau, and FS Ng. Revisiting Abnormalities of Ventricular Depolarization: Redefining Phenotypes and Associated Outcomes Using Tree-Based Dimensionality Reduction.  Siamese neural network-enhanced electrocardiography can re-identify anonymised healthcare data. _J Am Heart Assoc_. 2025, Jun 18:e040814.](https://www.ahajournals.org/doi/10.1161/JAHA.124.040814)
+
 
 
 If you have used BRAVEHEART for your research project we would be happy to include a reference to your manuscript!

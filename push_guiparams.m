@@ -25,7 +25,7 @@ function push_guiparams(aps, hObject, eventdata, handles)
 % Pushes parameters from the Annoparams class to GUI dropdowns/checkboxes
 
 % Set pacing spike removal flag and parameters to Annoparams class
-    set(handles.pacing_remove_box, 'Value', aps.spike_removal);
+    set(handles.spike_removal_old_checkbox, 'Value', aps.spike_removal);
     set(handles.pacing_pkwidth_txt, 'String', aps.pacer_spike_width);
     set(handles.pacing_thresh_txt, 'String', aps.pacer_thresh);
    
@@ -224,5 +224,13 @@ else
 end
 
     
+% Pacing spike interopolation
+    set(handles.cwt_pacing_remove_box, 'Value', aps.cwt_spike_removal);
+    set(handles.interpolate_spikes_ckbox, 'Value', aps.interpolate);
+    set(handles.pacer_zpk_txtbox, 'String', aps.pacer_zpk);
+    set(handles.pacer_zcut_txtbox, 'String', aps.pacer_zcut);
+    set(handles.pacer_maxscale_txtbox, 'String', aps.pacer_maxscale);
+    set(handles.pacer_num_leads_txtbox, 'String', aps.pacer_spike_num);
+
     
 end

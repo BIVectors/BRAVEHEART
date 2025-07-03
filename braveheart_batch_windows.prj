@@ -1,5 +1,5 @@
 <deployment-project plugin="plugin.ezdeploy" plugin-version="1.0">
-  <configuration build-checksum="1343749313" file="C:\Users\jwaks\Documents\GitHub\BRAVEHEART_1.4.0\BRAVEHEART_1.4.0\braveheart_batch_windows.prj" location="C:\Users\jwaks\Documents\GitHub\BRAVEHEART_1.4.0\BRAVEHEART_1.4.0" name="braveheart_batch_windows" preferred-package-location="C:\Users\jwaks\Documents\GitHub\BRAVEHEART_1.4.0\BRAVEHEART_1.4.0\braveheart_batch_windows\for_redistribution" preferred-package-type="package.type.exe" target="target.ezdeploy.standalone" target-name="Application Compiler">
+  <configuration build-checksum="1343749313" file="C:\Users\jwaks\Documents\GitHub\BRAVEHEART_DEV\braveheart_batch_windows.prj" location="C:\Users\jwaks\Documents\GitHub\BRAVEHEART_DEV" name="braveheart_batch_windows" preferred-package-location="C:\Users\jwaks\Documents\GitHub\BRAVEHEART_1.4.0\BRAVEHEART_1.4.0\braveheart_batch_windows\for_redistribution" preferred-package-type="package.type.exe" target="target.ezdeploy.standalone" target-name="Application Compiler">
     <param.appname>braveheart_batch</param.appname>
     <param.icon>${PROJECT_ROOT}\braveheart_batch_windows_resources\icon.ico</param.icon>
     <param.icons>
@@ -8,13 +8,13 @@
       <file>${PROJECT_ROOT}\braveheart_batch_windows_resources\icon_24.png</file>
       <file>${PROJECT_ROOT}\braveheart_batch_windows_resources\icon_16.png</file>
     </param.icons>
-    <param.version>1.4.0</param.version>
+    <param.version>1.5.0</param.version>
     <param.authnamewatermark>Hans F. Stabenau and Jonathan W. Waks</param.authnamewatermark>
     <param.email>braveheart.ecg@gmail.com</param.email>
     <param.company />
     <param.summary />
     <param.description>BRAVHEART ECG/VCG Analysis Software -- Command Line Version
-Version 1.4.0</param.description>
+Version 1.5.0</param.description>
     <param.screenshot>${PROJECT_ROOT}\braveheart_splash.png</param.screenshot>
     <param.guid />
     <param.installpath.string>\braveheart_batch\</param.installpath.string>
@@ -50,7 +50,7 @@ Version 1.4.0</param.description>
 	 varargin  input arguments 
  Description 
  	 BRAVHEART ECG/VCG Analysis Software -- Command Line Version
-Version 1.4.0</param.help.text>
+Version 1.5.0</param.help.text>
     <unset>
       <param.company />
       <param.summary />
@@ -85,10 +85,12 @@ Version 1.4.0</param.help.text>
       <file>${PROJECT_ROOT}\biosig_str2double.m</file>
       <file>${PROJECT_ROOT}\ecg_axis.m</file>
       <file>${PROJECT_ROOT}\elecpos.mat</file>
+      <file>${PROJECT_ROOT}\find_and_interpolate_pacing_spikes_12L.m</file>
       <file>${PROJECT_ROOT}\findHighpassLvl.m</file>
       <file>${PROJECT_ROOT}\findpeakswavelet.m</file>
       <file>${PROJECT_ROOT}\getfiletype.m</file>
       <file>${PROJECT_ROOT}\HRV_Calc.m</file>
+      <file>${PROJECT_ROOT}\interpolate_pacer_spikes.m</file>
       <file>${PROJECT_ROOT}\leadidcodexyz.m</file>
       <file>${PROJECT_ROOT}\leadidtable_scpecg.mat</file>
       <file>${PROJECT_ROOT}\load_braveheart_mat.m</file>
@@ -111,6 +113,7 @@ Version 1.4.0</param.help.text>
       <file>${PROJECT_ROOT}\scpopen.m</file>
       <file>${PROJECT_ROOT}\sopen.m</file>
       <file>${PROJECT_ROOT}\svd_twave.m</file>
+      <file>${PROJECT_ROOT}\wavelet_find_spikes.m</file>
     </fileset.resources>
     <fileset.package>
       <file>${PROJECT_ROOT}\Annoparams.csv</file>
@@ -197,6 +200,7 @@ Version 1.4.0</param.help.text>
       <file>${PROJECT_ROOT}\saiqrst.m</file>
       <file>${PROJECT_ROOT}\save_struct_parfor.m</file>
       <file>${PROJECT_ROOT}\shift_xyz.m</file>
+      <file>${PROJECT_ROOT}\sread.m</file>
       <file>${PROJECT_ROOT}\svd_8lead.m</file>
       <file>${PROJECT_ROOT}\tcrt.m</file>
       <file>${PROJECT_ROOT}\tcrt_width_est.m</file>
@@ -215,9 +219,9 @@ Version 1.4.0</param.help.text>
       <file>${PROJECT_ROOT}\waveStartPk.m</file>
     </fileset.depfun>
     <build-deliverables>
-      <file location="${PROJECT_ROOT}\braveheart_batch_windows\for_testing" name="braveheart_batch.exe" optional="false">C:\Users\jwaks\Documents\GitHub\BRAVEHEART_1.4.0\BRAVEHEART_1.4.0\braveheart_batch_windows\for_testing\braveheart_batch.exe</file>
-      <file location="${PROJECT_ROOT}\braveheart_batch_windows\for_testing" name="readme.txt" optional="true">C:\Users\jwaks\Documents\GitHub\BRAVEHEART_1.4.0\BRAVEHEART_1.4.0\braveheart_batch_windows\for_testing\readme.txt</file>
-      <file location="${PROJECT_ROOT}\braveheart_batch_windows\for_testing" name="splash.png" optional="false">C:\Users\jwaks\Documents\GitHub\BRAVEHEART_1.4.0\BRAVEHEART_1.4.0\braveheart_batch_windows\for_testing\splash.png</file>
+      <file location="${PROJECT_ROOT}\braveheart_batch_windows\for_testing" name="readme.txt" optional="true">C:\Users\jwaks\Documents\GitHub\BRAVEHEART_DEV\braveheart_batch_windows\for_testing\readme.txt</file>
+      <file location="${PROJECT_ROOT}\braveheart_batch_windows\for_testing" name="braveheart_batch.exe" optional="false">C:\Users\jwaks\Documents\GitHub\BRAVEHEART_DEV\braveheart_batch_windows\for_testing\braveheart_batch.exe</file>
+      <file location="${PROJECT_ROOT}\braveheart_batch_windows\for_testing" name="splash.png" optional="false">C:\Users\jwaks\Documents\GitHub\BRAVEHEART_DEV\braveheart_batch_windows\for_testing\splash.png</file>
     </build-deliverables>
     <workflow />
     <matlab>

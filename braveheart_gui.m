@@ -44,7 +44,7 @@ function varargout = braveheart_gui(varargin)
 
 % Edit the above text to modify the response to help braveheart_gui
 
-% Last Modified by GUIDE v2.5 04-Mar-2025 18:20:27
+% Last Modified by GUIDE v2.5 21-Apr-2025 22:25:21
 
 % Update the current L&F for mac button issues...
 % Windows will use the normal Windows theme
@@ -411,7 +411,7 @@ uiwait(msgbox(...
 {'\fontsize{14}\it\bf \color[rgb]{0.09,0.078,0.377}';...
 'BRAVE\color[rgb]{0.89,0.016,0.016}H\fontsize{11}EART';...
 '\fontsize{8}\rm\color{black}(Beth Israel Analysis of Vectors of the Heart)';...
-'Version 1.4.0' ; 
+'Version 1.5.0' ; 
 ' ' ;...
 'Copyright 2016-2025  Hans F. Stabeneau and Jonathan W. Waks' ;...
 ' ' ;...
@@ -439,7 +439,7 @@ uiwait(msgbox(...
 {'\fontsize{18}\it\bf \color[rgb]{0.09,0.078,0.377}';...
 'BRAVE\color[rgb]{0.89,0.016,0.016}H\fontsize{14}EART\fontsize{11}';...
 '\rm\color{black}(Beth Israel Analysis of Vectors of the Heart)';...
-'Version 1.4.0' ; 
+'Version 1.5.0' ; 
 ' ' ;...
 'Copyright 2016-2025  Hans F. Stabeneau and Jonathan W. Waks' ;...
 ' ' ;...
@@ -851,9 +851,26 @@ end
  
 % Run batch_calc
 % This time dont recalc HR as this wont change
-[~, ~, handles.beats, handles.quality, handles.correlation_test, handles.median_vcg, ...
-    handles.beatsig_vcg, handles.median_12L, handles.beatsig_12L, handles.medianbeat, handles.beat_stats, ...
-    handles.ecg_raw, handles.vcg_raw, handles.ecg, handles.vcg, handles.noise, ~] = batch_calc(handles.ecg_raw, [], [], [], [], [], aps, qps, 0, "", []);
+batchout = batch_calc(handles.ecg_raw, [], [], [], [], [], aps, qps, 0, "", []);
+
+handles.beats = batchout.beats_final;
+handles.quality = batchout.quality;
+handles.correlation_test = batchout.correlation_test;
+handles.median_vcg = batchout.medianvcg1;
+handles.beatsig_vcg = batchout.beatsig_vcg;
+handles.median_12L = batchout.median_12L;
+handles.beatsig_12L = batchout.beatsig_12L;
+handles.medianbeat = batchout.medianbeat;
+handles.beat_stats = batchout.beat_stats;
+handles.ecg_raw = batchout.ecg_raw;
+handles.vcg_raw = batchout.vcg_raw;
+handles.ecg = batchout.filtered_ecg;
+handles.vcg = batchout.filtered_vcg;
+handles.pacer_spikes = batchout.pacer_spikes;
+handles.lead_ispaced = batchout.lead_ispaced;
+handles.noise = batchout.noise;
+handles.ecg_raw_postinterp = batchout.ecg_raw_postinterp;
+
 
 % Get flags for processing different modules
 vcg_calc_flag = get(handles.geh_option_checkbox,'Value');
@@ -904,7 +921,7 @@ if get(handles.auto_remove_outliers_checkbox, 'Value') == 1
      remove_outliers_button_Callback(hObject, eventdata, handles);
      handles = guidata(hObject);
 end
- 
+
     
 % --- Executes on button press in reset.
 function reset_Callback(hObject, eventdata, handles)
@@ -930,8 +947,16 @@ set(handles.pacing_thresh_txt, 'Enable', 'on');
 set(handles.align_dropdown, 'Enable', 'on');
 set(handles.tend_method_dropdown, 'Enable', 'on');
 set(handles.autocl_checkbox, 'Enable', 'on');
-set(handles.pacing_remove_box, 'Enable', 'on');
-set(handles.all_auto_checkbox, 'Value', 1);
+% set(handles.cwt_pacing_remove_box, 'Enable', 'on');
+% set(handles.spike_removal_old_checkbox, 'Enable', 'on');
+% set(handles.all_auto_checkbox, 'Value', 1);
+% set(handles.pacer_interpolation_button,'enable','on');
+% set(handles.pacing_pkwidth_txt,'enable', 'on');
+% set(handles.pacing_thresh_txt,'enable', 'on');
+% set(handles.pacer_zpk_txtbox, 'enable', 'on');
+% set(handles.pacer_zcut_txtbox, 'enable', 'on');
+% set(handles.pacer_maxscale_txtbox, 'enable', 'on');
+% set(handles.pacer_num_leads_txtbox, 'enable','on');
 
 if aps.keep_pvc == 0
 set(handles.pvc_button, 'String', 'Remove PVCs')
@@ -941,6 +966,26 @@ end
 
 % Update handles structure
 guidata(hObject, handles);
+
+% Adjust spike removal fields being enabled or not
+if get(handles.cwt_pacing_remove_box, 'Value') == 1
+    set(handles.spike_removal_old_checkbox,'value',0);
+    set(handles.pacer_interpolation_button,'enable','on');
+    set(handles.pacing_pkwidth_txt,'enable', 'off');
+    set(handles.pacing_thresh_txt,'enable', 'off');
+    set(handles.pacer_zpk_txtbox, 'enable', 'on');
+    set(handles.pacer_zcut_txtbox, 'enable', 'on');
+    set(handles.pacer_maxscale_txtbox, 'enable', 'on');
+    set(handles.pacer_num_leads_txtbox, 'enable','on');
+else
+    set(handles.pacer_interpolation_button,'enable','off');
+    set(handles.pacing_pkwidth_txt,'enable', 'on');
+    set(handles.pacing_thresh_txt,'enable', 'on');
+    set(handles.pacer_zpk_txtbox, 'enable', 'off');
+    set(handles.pacer_zcut_txtbox, 'enable', 'off');
+    set(handles.pacer_maxscale_txtbox, 'enable', 'off');
+    set(handles.pacer_num_leads_txtbox, 'enable','off');
+end
 
 
 
@@ -1268,23 +1313,32 @@ if length(handles.beats.Q) > 1
     aps.pvc_removal = 0;
     aps.outlier_removal = 0;
 
-    [~, ~, handles.beats, handles.quality, handles.correlation_test, handles.median_vcg, ...
-            handles.beatsig_vcg, handles.median_12L, handles.beatsig_12L, handles.medianbeat, handles.beat_stats, ...
-            ~, ~, ~, ~, handles.noise, ~] = batch_calc(handles.ecg_raw, handles.beats, [], [], [], [], aps, qps, 0, "", []);
+    batchout = batch_calc(handles.ecg_raw, handles.beats, [], [], [], [], aps, qps, 0, "", []);
    
-        % Get flags for processing different modules
-vcg_calc_flag = get(handles.geh_option_checkbox,'Value');
-lead_morph_flag = get(handles.lead_morphology_option_checkbox,'Value');
-vcg_morph_flag = get(handles.vcg_morphology_option_checkbox,'Value');
-
-% Create flags structure
-flags = struct;
-flags.vcg_calc_flag = vcg_calc_flag;
-flags.lead_morph_flag = lead_morph_flag;
-flags.vcg_morph_flag = vcg_morph_flag;
-
-
-[handles.geh, handles.lead_morph, handles.vcg_morph] = module_output(handles.median_12L, handles.median_vcg, handles.medianbeat, aps, flags);
+    handles.beats = batchout.beats_final;
+    handles.quality = batchout.quality;
+    handles.correlation_test = batchout.correlation_test;
+    handles.median_vcg = batchout.medianvcg1;
+    handles.beatsig_vcg = batchout.beatsig_vcg;
+    handles.median_12L = batchout.median_12L;
+    handles.beatsig_12L = batchout.beatsig_12L;
+    handles.medianbeat = batchout.medianbeat;
+    handles.beat_stats = batchout.beat_stats;
+    handles.noise = batchout.noise;
+    
+    % Get flags for processing different modules
+    vcg_calc_flag = get(handles.geh_option_checkbox,'Value');
+    lead_morph_flag = get(handles.lead_morphology_option_checkbox,'Value');
+    vcg_morph_flag = get(handles.vcg_morphology_option_checkbox,'Value');
+    
+    % Create flags structure
+    flags = struct;
+    flags.vcg_calc_flag = vcg_calc_flag;
+    flags.lead_morph_flag = lead_morph_flag;
+    flags.vcg_morph_flag = vcg_morph_flag;
+    
+    
+    [handles.geh, handles.lead_morph, handles.vcg_morph] = module_output(handles.median_12L, handles.median_vcg, handles.medianbeat, aps, flags);
         
 
     % Set PVC and outlier removal values back to what they were
@@ -1357,10 +1411,18 @@ temp_outlier_removal = aps.outlier_removal;
 aps.pvc_removal = 0;
 aps.outlier_removal = 0;
 
+batchout = batch_calc(handles.ecg_raw, handles.beats, [], [], [], [], aps, qps, 0, "", []);
 
-[~, ~, handles.beats, handles.quality, handles.correlation_test, handles.median_vcg, ...
-    handles.beatsig_vcg, handles.median_12L, handles.beatsig_12L, handles.medianbeat, handles.beat_stats, ...
-    ~, ~, ~, ~, handles.noise, ~] = batch_calc(handles.ecg_raw, handles.beats, [], [], [], [], aps, qps, 0, "", []);
+handles.beats = batchout.beats_final;
+handles.quality = batchout.quality;
+handles.correlation_test = batchout.correlation_test;
+handles.median_vcg = batchout.medianvcg1;
+handles.beatsig_vcg = batchout.beatsig_vcg;
+handles.median_12L = batchout.median_12L;
+handles.beatsig_12L = batchout.beatsig_12L;
+handles.medianbeat = batchout.medianbeat;
+handles.beat_stats = batchout.beat_stats;
+handles.noise = batchout.noise;
 
 % Get flags for processing different modules
 vcg_calc_flag = get(handles.geh_option_checkbox,'Value');
@@ -1420,10 +1482,18 @@ temp_outlier_removal = aps.outlier_removal;
 aps.pvc_removal = 0;
 aps.outlier_removal = 0;
 
+batchout = batch_calc(handles.ecg_raw, handles.beats, [], [], [], [], aps, qps, 0, "", []);
 
-[~, ~, handles.beats, handles.quality, handles.correlation_test, handles.median_vcg, ...
-    handles.beatsig_vcg, handles.median_12L, handles.beatsig_12L, handles.medianbeat, handles.beat_stats, ...
-    ~, ~, ~, ~, handles.noise, ~] = batch_calc(handles.ecg_raw, handles.beats, [], [], [], [], aps, qps, 0, "", []);
+handles.beats = batchout.beats_final;
+handles.quality = batchout.quality;
+handles.correlation_test = batchout.correlation_test;
+handles.median_vcg = batchout.medianvcg1;
+handles.beatsig_vcg = batchout.beatsig_vcg;
+handles.median_12L = batchout.median_12L;
+handles.beatsig_12L = batchout.beatsig_12L;
+handles.medianbeat = batchout.medianbeat;
+handles.beat_stats = batchout.beat_stats;
+handles.noise = batchout.noise;
 
 
 % Get flags for processing different modules
@@ -1695,6 +1765,7 @@ noise = handles.noise;
 hr = handles.hr;
 num_initial_beats = handles.num_initial_beats;
 quality = handles.quality;
+lead_ispaced = handles.lead_ispaced;
 
 % Get file format (.csv vs .xlsx) from dropdown
 fmt_val = get(handles.export_file_fmt_dropdown,'Value');
@@ -1708,7 +1779,7 @@ if strcmp(note,"")
 end
 
 i = 1;  % Deal with issue in how AnnoResult handles single ecgs outide of batch. HFS: don't change!
-results{i} = AnnoResult(basename, note, source_str, aps, ecg, hr, num_initial_beats, beats, beat_stats, corr, noise, quality.prob_value, quality.missing_lead, geh, morph, vcg_morph);
+results{i} = AnnoResult(basename, note, source_str, aps, ecg, hr, num_initial_beats, beats, beat_stats, corr, noise, quality.prob_value, quality.missing_lead, lead_ispaced, geh, morph, vcg_morph);
 	
 save_folder = get(handles.save_dir_txt,'String');
 filename = handles.filename;  % filename loaded
@@ -2278,10 +2349,20 @@ aps.pvc_removal = 0;
 aps.outlier_removal = 0;
 
 if pvc_rem == 1         % Only update things if actually did outlier removal
-    [~, ~, handles.beats, handles.quality, handles.correlation_test, handles.median_vcg, ...
-        handles.beatsig_vcg, handles.median_12L, handles.beatsig_12L, handles.medianbeat, handles.beat_stats, ...
-        ~, ~, ~, ~, handles.noise, ~] = batch_calc(handles.ecg_raw, handles.beats, [], [], [], [], aps, qps, 0, "", []);
+
+batchout = batch_calc(handles.ecg_raw, handles.beats, [], [], [], [], aps, qps, 0, "", []);
     
+handles.beats = batchout.beats_final;
+handles.quality = batchout.quality;
+handles.correlation_test = batchout.correlation_test;
+handles.median_vcg = batchout.medianvcg1;
+handles.beatsig_vcg = batchout.beatsig_vcg;
+handles.median_12L = batchout.median_12L;
+handles.beatsig_12L = batchout.beatsig_12L;
+handles.medianbeat = batchout.medianbeat;
+handles.beat_stats = batchout.beat_stats;
+handles.noise = batchout.noise;
+
  % Get flags for processing different modules
 vcg_calc_flag = get(handles.geh_option_checkbox,'Value');
 lead_morph_flag = get(handles.lead_morphology_option_checkbox,'Value');
@@ -2624,9 +2705,25 @@ handles.beatmatrix = beatmatrix;
 guidata(hObject,handles);  % update handles
 
 % Calculate using batch_calc and overbeats
-[~, ~, handles.beats, handles.quality, handles.correlation_test, handles.median_vcg, ...
-    handles.beatsig_vcg, handles.median_12L, handles.beatsig_12L, handles.medianbeat, handles.beat_stats, ...
-    handles.ecg_raw, handles.vcg_raw, handles.ecg, handles.vcg, handles.noise, ~] = batch_calc(handles.ecg_raw, beats, [], [], [], [], aps, qps, 0, "", []);
+batchout = batch_calc(handles.ecg_raw, beats, [], [], [], [], aps, qps, 0, "", []);
+
+handles.beats = batchout.beats_final;
+handles.quality = batchout.quality;
+handles.correlation_test = batchout.correlation_test;
+handles.median_vcg = batchout.medianvcg1;
+handles.beatsig_vcg = batchout.beatsig_vcg;
+handles.median_12L = batchout.median_12L;
+handles.beatsig_12L = batchout.beatsig_12L;
+handles.medianbeat = batchout.medianbeat;
+handles.beat_stats = batchout.beat_stats;
+handles.ecg_raw = batchout.ecg_raw;
+handles.vcg_raw = batchout.vcg_raw;
+handles.ecg = batchout.filtered_ecg;
+handles.vcg = batchout.filtered_vcg;
+handles.pacer_spikes = batchout.pacer_spikes;
+handles.lead_ispaced = batchout.lead_ispaced;
+handles.noise = batchout.noise;
+handles.ecg_raw_postinterp = batchout.ecg_raw_postinterp;
 
 
 % Get flags for processing different modules
@@ -3350,9 +3447,12 @@ aps = pull_guiparams(hObject, eventdata, handles);
 qps = Qualparams();
 
 % If loading with safemode = 1, drop pkthresh down to 10% to avoid missing
-% peaks if get a big noise spike
+% peaks if get a big noise spike and disable interpolation
 if safemode  
     aps.pkthresh = 10;  
+    aps.interpolate = 0;
+    aps.spike_removal = 0;
+    aps.cwt_spike_removal = 0;
 end
 
     
@@ -3377,15 +3477,22 @@ handles.freq = freq;
 sample_time = ecg_raw.sample_time();
 handles.sample_time = sample_time;
 
-set(handles.sample_time_txt, 'String', round(sample_time,3));  % Add to GUI
-set(handles.freq_txt, 'String', freq);  % Add to GUI and updates the frequency if there is a non-standard frequency in the file format
+% Deal with integers vs values with decimals to avoid excess extra 0s
+
+if mod(sample_time,1) == 0
+    set(handles.sample_time_txt, 'String', sprintf('%i ms',sample_time));  % Add to GUI
+else
+    set(handles.sample_time_txt, 'String', sprintf('%1.3f ms',sample_time));  % Add to GUI
+end
+
+set(handles.freq_txt, 'String', sprintf('%i Hz',freq));  % Add to GUI and updates the frequency if there is a non-standard frequency in the file format
 
 % Number of samples in the file     
 num_samples = length(ecg_raw.I); 
 handles.num_samples = num_samples;
 
 set(handles.num_samples_txt, 'String', num_samples);
-set(handles.duration_txt, 'String', round(num_samples*sample_time/1000,2));    
+set(handles.duration_txt, 'String', sprintf('%0.1f s',num_samples*sample_time/1000));    
     
 % Generate raw VM lead for R peak detection
 vcg_raw = VCG(ecg_raw, aps);
@@ -3451,9 +3558,69 @@ else
 % For GUI only need to calculate the HR on this first pass, as after this
 % the beats may be altered and wont get an accurate HR calculation
 
-[handles.hr, handles.num_initial_beats, ~, ~, ~, ~, ~, ~, ~,~, ...
-   ~, ~, ~, ~, handles.vcg, ~, ~] = batch_calc(handles.ecg_raw, [], [], [], [], [], aps, qps, 0, "", []);
- 
+batchout = batch_calc(handles.ecg_raw, [], [], [], [], [], aps, qps, 0, "", []);
+
+handles.hr = batchout.hr_orig;
+handles.num_initial_beats = batchout.NQRS_orig;
+handles.vcg = batchout.filtered_vcg;
+
+% For pacer spike visualiation
+handles.ecg_raw_postinterp = batchout.ecg_raw_postinterp;
+
+% Saving these signals for use in interopolation figure without needing to
+% press calculate first
+
+handles.ecg = batchout.filtered_ecg;
+handles.pacer_spikes = batchout.pacer_spikes;
+handles.lead_ispaced = batchout.lead_ispaced;
+
+% Update GUI to show if pacing detected
+
+% Get colors based on if in light/dark mode
+[dm, dark_colors, light_colors] = check_darkmode(handles);
+
+if dm == 1
+    colors = dark_colors;
+else
+    colors = light_colors;
+end
+
+% If sum of lead_ispaced is > value set in Annoparams pacer_spike_num, pacing was found
+if ~isempty(handles.lead_ispaced) && sum(cell2mat(struct2cell(handles.lead_ispaced(:)))) >= 0
+
+    set(handles.num_paced_leads_detected_txtbox,'String', num2str(sum(cell2mat(struct2cell(handles.lead_ispaced(:))))));
+
+    if sum(cell2mat(struct2cell(handles.lead_ispaced(:)))) == 0
+        set(handles.num_paced_leads_detected_txtbox,'String', '');
+    end
+
+    if sum(cell2mat(struct2cell(handles.lead_ispaced(:)))) >= aps.pacer_spike_num
+        set(handles.gui_pacing_indicator,'BackgroundColor','yellow');
+        set(handles.gui_pacing_indicator,'String',char(hex2dec('2301')));
+        set(handles.gui_pacing_indicator,'FontWeight','bold');
+        set(handles.gui_pacing_indicator,'ForegroundColor','black');
+        set(handles.gui_pacing_indicator,'FontSize',13);
+    
+    elseif sum(cell2mat(struct2cell(handles.lead_ispaced(:)))) < aps.pacer_spike_num ...
+            && sum(cell2mat(struct2cell(handles.lead_ispaced(:)))) > 0
+        set(handles.gui_pacing_indicator,'BackgroundColor','white');
+        set(handles.gui_pacing_indicator,'String',char(hex2dec('2301')));
+        set(handles.gui_pacing_indicator,'FontWeight','bold');
+        set(handles.gui_pacing_indicator,'ForegroundColor','#aaaaaa');
+        set(handles.gui_pacing_indicator,'FontSize',13);
+
+    else
+        set(handles.gui_pacing_indicator,'BackgroundColor',colors.bgcolor);
+        set(handles.gui_pacing_indicator,'String',' ');
+    end
+
+else
+        set(handles.gui_pacing_indicator,'BackgroundColor',colors.bgcolor);
+        set(handles.gui_pacing_indicator,'String',' ');
+        set(handles.num_paced_leads_detected_txtbox,'String', '');
+
+end
+
 % Update handles structure
 guidata(hObject, handles);
     
@@ -3485,12 +3652,12 @@ if aps.baseline_correct_flag
         'V4',baseline_V4, 'V5',baseline_V5, 'V6',baseline_V6, ...
         'X',baseline_X, 'Y',baseline_Y, 'Z',baseline_Z);
     
-    % Baseline correct the 12L ECG (needed for GUI prior to pressing calculate)
-    [sL1, sL2, sL3, savR, savF, savL, sV1, sV2, sV3, sV4, sV5, sV6, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~] = ...
-    baseline_shift_hfs(ecg.I, ecg.II, ecg.III, ecg.avR, ecg.avF, ecg.avL, ...
-    ecg.V1, ecg.V2, ecg.V3, ecg.V4, ecg.V5, ecg.V6, ecg.hz, QRS);
-    
-    handles.ecg = ECG12(ecg.hz,'',sL1, sL2, sL3, savR, savF, savL, sV1, sV2, sV3, sV4, sV5, sV6);
+%     % Baseline correct the 12L ECG (needed for GUI prior to pressing calculate)
+%     [sL1, sL2, sL3, savR, savF, savL, sV1, sV2, sV3, sV4, sV5, sV6, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~] = ...
+%     baseline_shift_hfs(ecg.I, ecg.II, ecg.III, ecg.avR, ecg.avF, ecg.avL, ...
+%     ecg.V1, ecg.V2, ecg.V3, ecg.V4, ecg.V5, ecg.V6, ecg.hz, QRS);
+%     
+%     handles.ecg = ECG12(ecg.hz,'',sL1, sL2, sL3, savR, savF, savL, sV1, sV2, sV3, sV4, sV5, sV6);
 
 else
 
@@ -3508,12 +3675,14 @@ end
 % Do pacer spike removal for the GUI - gets done later as part of
 % calculations, so wont save things here, but will just do for display
 % purposes
-if aps.spike_removal
-    [vcg_noppm, ~] = handles.vcg.remove_pacer_spikes(QRS, aps);
-    QRS = vcg_noppm.peaks(aps);
-else
-    QRS = handles.vcg.peaks(aps);
-end   
+% if aps.spike_removal
+%     [vcg_noppm, ~] = handles.vcg.remove_pacer_spikes(QRS, aps);
+%     QRS = vcg_noppm.peaks(aps);
+% else
+%     QRS = handles.vcg.peaks(aps);
+% end   
+
+QRS = batchout.beats_final.QRS;
 
 % display the filtered, shifted etc X, Y, Z 10 second leads in GUI
     display_leads(handles.vcg.X, handles.vcg.Y, handles.vcg.Z, handles.vcg.VM, QRS, hObject,eventdata,handles);
@@ -3544,7 +3713,7 @@ if get(hObject, 'Value') == 1.0
     set(handles.align_dropdown, 'Enable', 'off');
     set(handles.tend_method_dropdown, 'Enable', 'off');
     set(handles.autocl_checkbox, 'Enable', 'off');
-    set(handles.pacing_remove_box, 'Enable', 'off');
+    set(handles.cwt_pacing_remove_box, 'Enable', 'off');
 
 else
 
@@ -3566,7 +3735,7 @@ else
     set(handles.align_dropdown, 'Enable', 'on');
     set(handles.tend_method_dropdown, 'Enable', 'on');
     set(handles.autocl_checkbox, 'Enable', 'on');
-    set(handles.pacing_remove_box, 'Enable', 'on');
+    set(handles.cwt_pacing_remove_box, 'Enable', 'on');
    
 end
 
@@ -3829,14 +3998,12 @@ function rpk_shift_button_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Now get shift before pass into shift_annotation and then shift_annotations_GUI    
 shift = str2num(get(handles.shift_box,'String'));
 
 % Need to pass in median VM signal to recalculate Tmax location if it changes
 signal = handles.median_vcg.VM;
 
 shift_annotations('R', shift, signal, hObject, eventdata, handles)
-%handles = guidata(hObject);  % load handles variables    
 
 % --- Executes on button press in remove_outliers_button.
 function remove_outliers_button_Callback(hObject, eventdata, handles)
@@ -3866,10 +4033,18 @@ aps.outlier_removal = 0;
 aps.pvc_removal = 0;
 
 if outlier_rem == 1         % Only update things if actually did outlier removal
-    [~, ~, handles.beats, handles.quality, handles.correlation_test, handles.median_vcg, ...
-        handles.beatsig_vcg, handles.median_12L, handles.beatsig_12L, handles.medianbeat, handles.beat_stats, ...
-        ~, ~, ~, ~, ~] = batch_calc(handles.ecg_raw, handles.beats, [], [], [], [], handles.aps, qps, 0, "", []);
-    
+batchout = batch_calc(handles.ecg_raw, handles.beats, [], [], [], [], handles.aps, qps, 0, "", []);
+ 
+handles.beats = batchout.beats_final;
+handles.quality = batchout.quality;
+handles.correlation_test = batchout.correlation_test;
+handles.median_vcg = batchout.medianvcg1;
+handles.beatsig_vcg = batchout.beatsig_vcg;
+handles.median_12L = batchout.median_12L;
+handles.beatsig_12L = batchout.beatsig_12L;
+handles.medianbeat = batchout.medianbeat;
+handles.beat_stats = batchout.beat_stats;
+
     
 % Get flags for processing different modules
 vcg_calc_flag = get(handles.geh_option_checkbox,'Value');
@@ -4102,13 +4277,33 @@ if get(hObject, 'Value') == 0.0
 end
 
 
-% --- Executes on button press in pacing_remove_box.
-function pacing_remove_box_Callback(hObject, eventdata, handles)
-% hObject    handle to pacing_remove_box (see GCBO)
+% --- Executes on button press in cwt_pacing_remove_box.
+function cwt_pacing_remove_box_Callback(hObject, eventdata, handles)
+% hObject    handle to cwt_pacing_remove_box (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hint: get(hObject,'Value') returns toggle state of pacing_remove_box
+% Hint: get(hObject,'Value') returns toggle state of cwt_pacing_remove_box
+
+if get(hObject,'Value') == 0
+    set(handles.interpolate_spikes_ckbox,'value',0);
+    set(handles.pacer_interpolation_button,'enable','off');
+    set(handles.pacing_pkwidth_txt,'enable', 'on');
+    set(handles.pacing_thresh_txt,'enable', 'on');
+    set(handles.pacer_zpk_txtbox, 'enable', 'on');
+    set(handles.pacer_zcut_txtbox, 'enable', 'on');
+    set(handles.pacer_maxscale_txtbox, 'enable', 'on');
+    set(handles.pacer_num_leads_txtbox, 'enable','on');
+else
+    set(handles.pacer_interpolation_button,'enable','on');
+    set(handles.spike_removal_old_checkbox,'value',0);
+    set(handles.pacing_pkwidth_txt,'enable', 'off');
+    set(handles.pacing_thresh_txt,'enable', 'off');
+    set(handles.pacer_zpk_txtbox, 'enable', 'on');
+    set(handles.pacer_zcut_txtbox, 'enable', 'on');
+    set(handles.pacer_maxscale_txtbox, 'enable', 'on');
+    set(handles.pacer_num_leads_txtbox, 'enable','on');
+end
 
 
 % --- Executes on selection change in tend_method_dropdown.
@@ -4317,6 +4512,10 @@ vcg_raw = handles.vcg_raw;
 ecg = handles.ecg;
 vcg = handles.vcg;
 
+pacer_spikes = handles.pacer_spikes;
+lead_ispaced = handles.lead_ispaced;
+ecg_raw_postinterp = handles.ecg_raw_postinterp;
+
 beats = handles.beats;
 beat_stats = handles.beat_stats;
 medianbeat = handles.medianbeat;
@@ -4346,6 +4545,9 @@ data = struct( ...
     'ecg_filtered', ecg, ...
     'vcg_raw', vcg_raw, ...
     'vcg_filtered', vcg, ...
+    'ecg_raw_postinterp', ecg_raw_postinterp, ...
+    'pacer_spikes', pacer_spikes, ...
+    'lead_ispaced', lead_ispaced, ...
     'beats', beats, ...
     'beat_stats', beat_stats, ...
     'geh', geh, ...
@@ -4469,12 +4671,19 @@ if get(handles.shift_median_checkbox, 'Value')
     
 else   % IF NOT MEDIAN
 
-    [~, ~, handles.beats, handles.quality, handles.correlation_test, handles.median_vcg, ...
-        handles.beatsig_vcg, handles.median_12L, handles.beatsig_12L, handles.medianbeat, handles.beat_stats, ...
-        ~, ~, ~, ~, ~] = batch_calc(handles.ecg_raw, handles.beats, [], [], [], [], aps, qps, 0, "", []);
+batchout = batch_calc(handles.ecg_raw, handles.beats, [], [], [], [], aps, qps, 0, "", []);
+
+handles.beats = batchout.beats_final;
+handles.quality = batchout.quality;
+handles.correlation_test = batchout.correlation_test;
+handles.median_vcg = batchout.medianvcg1;
+handles.beatsig_vcg = batchout.beatsig_vcg;
+handles.median_12L = batchout.median_12L;
+handles.beatsig_12L = batchout.beatsig_12L;
+handles.medianbeat = batchout.medianbeat;
+handles.beat_stats = batchout.beat_stats;
     
-    
-    % Get flags for processing different modules
+% Get flags for processing different modules
 vcg_calc_flag = get(handles.geh_option_checkbox,'Value');
 lead_morph_flag = get(handles.lead_morphology_option_checkbox,'Value');
 vcg_morph_flag = get(handles.vcg_morphology_option_checkbox,'Value');
@@ -4535,10 +4744,13 @@ if isfield(handles, 'median_vcg')
     other.NQRS_orig = handles.num_initial_beats;
     
     
-    [~, ~, ~, handles.quality, handles.correlation_test, ~, ~, ~, ~, handles.medianbeat, ~, ~, ~, ~, ~, ~] ...
-      = batch_calc(handles.ecg_raw, handles.beats, handles.medianbeat, handles.median_vcg, handles.median_12L, handles.beatsig_vcg, ...
+   batchout = batch_calc(handles.ecg_raw, handles.beats, handles.medianbeat, handles.median_vcg, handles.median_12L, handles.beatsig_vcg, ...
       aps, qps, 0, "", other);
-  
+
+handles.quality = batchout.quality;
+handles.correlation_test = batchout.correlation_test;
+handles.medianbeat = batchout.medianbeat;
+
   
 % Get flags for processing different modules
 vcg_calc_flag = get(handles.geh_option_checkbox,'Value');
@@ -5657,3 +5869,205 @@ function pushbutton167_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton167 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Executes on button press in interpolate_spikes_ckbox.
+function interpolate_spikes_ckbox_Callback(hObject, eventdata, handles)
+% hObject    handle to interpolate_spikes_ckbox (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of interpolate_spikes_ckbox
+
+
+
+
+function pacer_zcut_txtbox_Callback(hObject, eventdata, handles)
+% hObject    handle to pacer_zcut_txtbox (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of pacer_zcut_txtbox as text
+%        str2double(get(hObject,'String')) returns contents of pacer_zcut_txtbox as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function pacer_zcut_txtbox_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to pacer_zcut_txtbox (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function pacer_zpk_txtbox_Callback(hObject, eventdata, handles)
+% hObject    handle to pacer_zpk_txtbox (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of pacer_zpk_txtbox as text
+%        str2double(get(hObject,'String')) returns contents of pacer_zpk_txtbox as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function pacer_zpk_txtbox_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to pacer_zpk_txtbox (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function pacer_maxscale_txtbox_Callback(hObject, eventdata, handles)
+% hObject    handle to pacer_maxscale_txtbox (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of pacer_maxscale_txtbox as text
+%        str2double(get(hObject,'String')) returns contents of pacer_maxscale_txtbox as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function pacer_maxscale_txtbox_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to pacer_maxscale_txtbox (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on button press in pacer_interpolation_button.
+function pacer_interpolation_button_Callback(hObject, eventdata, handles)
+% hObject    handle to pacer_interpolation_button (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+handles = guidata(hObject);
+
+aps = Annoparams();
+aps = pull_guiparams(hObject, eventdata, handles); 
+
+if aps.cwt_spike_removal == 1
+
+prespike = handles.ecg_raw;
+postspike = handles.ecg_raw_postinterp;
+
+pacer_spikes = handles.pacer_spikes;
+lead_ispaced = handles.lead_ispaced;
+
+ecgfn = fieldnames(prespike);
+ecgfn(1:2) = [];
+
+% Only show the interpolation figure if actually interpolated
+if aps.interpolate == 1
+
+figure
+set(gcf, 'Position', [100, 100, 1500, 1000])  % set figure size
+tiledlayout(6,2,'TileSpacing','tight','Padding','tight')
+sgtitle('Pacing Spike Interpolation','fontsize',12,'fontweight','bold')
+
+for i = 1:length(ecgfn)
+nexttile
+hold on
+
+if lead_ispaced.(ecgfn{i}) == 1
+    title(sprintf('%s - Pacing Detected',string(ecgfn{i})),'Color','red')
+else
+    title(sprintf('%s - Pacing Not Detected',string(ecgfn{i})),'Color','black')
+end
+p1 = plot(prespike.(ecgfn{i}),'linewidth',1.5,'Color','red');
+
+p2 = plot(postspike.(ecgfn{i}),'linewidth',1.5,'Color','black');
+
+% plot interpolated signal in green
+    if ~isempty(pacer_spikes)
+        idx = find(~isnan(pacer_spikes.(ecgfn{i})));
+        only_interp = nan(1,length(prespike.(ecgfn{i})));
+        only_interp(idx) = postspike.(ecgfn{i})(idx);
+        p3 = plot(only_interp,'LineWidth',1.5,'color','g');
+    else
+        tmp = nan(1,length(prespike.(ecgfn{i})));
+        p3 = plot(tmp,'LineWidth',1.5,'color','g');
+    end
+
+    if i == 2
+        legend([p1 p2 p3],{'Removed Spikes','Final Signal','Interpolation'},'Location','eastoutside','FontSize',10)
+    end
+
+end
+
+end
+
+
+    % Z score data using debug
+    [~,~,~] = find_and_interpolate_pacing_spikes_12L(prespike, aps, 1);
+
+end
+
+
+
+function pacer_num_leads_txtbox_Callback(hObject, eventdata, handles)
+% hObject    handle to pacer_num_leads_txtbox (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of pacer_num_leads_txtbox as text
+%        str2double(get(hObject,'String')) returns contents of pacer_num_leads_txtbox as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function pacer_num_leads_txtbox_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to pacer_num_leads_txtbox (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on button press in spike_removal_old_checkbox.
+function spike_removal_old_checkbox_Callback(hObject, eventdata, handles)
+% hObject    handle to spike_removal_old_checkbox (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of spike_removal_old_checkbox
+
+
+if get(hObject,'Value') == 1
+    set(handles.cwt_pacing_remove_box,'value',0);
+    set(handles.interpolate_spikes_ckbox,'value',0);
+    set(handles.pacer_interpolation_button,'enable','off');
+    set(handles.pacing_pkwidth_txt,'enable', 'on');
+    set(handles.pacing_thresh_txt,'enable', 'on');
+    set(handles.pacer_zpk_txtbox, 'enable', 'off');
+    set(handles.pacer_zcut_txtbox, 'enable', 'off');
+    set(handles.pacer_maxscale_txtbox, 'enable', 'off');
+    set(handles.pacer_num_leads_txtbox, 'enable','off');
+else
+    set(handles.pacer_interpolation_button,'enable','on');
+    set(handles.spike_removal_old_checkbox,'value',0);
+    set(handles.pacing_pkwidth_txt,'enable', 'on');
+    set(handles.pacing_thresh_txt,'enable', 'on');
+    set(handles.pacer_zpk_txtbox, 'enable', 'on');
+    set(handles.pacer_zcut_txtbox, 'enable', 'on');
+    set(handles.pacer_maxscale_txtbox, 'enable', 'on');
+    set(handles.pacer_num_leads_txtbox, 'enable','on');
+end

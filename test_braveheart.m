@@ -72,6 +72,12 @@ function ap = aparam()
     ap.pacer_spike_width = 20;          % Max width of pacing spike (in ms)
     ap.pacer_mf = 4;                    % Pacer spike detection median filter (in ms)
     ap.pacer_thresh = 20;               % Percent peak of pacer spike used for spike removal
+    ap.cwt_spike_removal = 0;           % Remove pacemaker spikes using CWT
+    ap.interpolate = 0;                 % Remove pacing spikes with interpolation
+    ap.pacer_zcut = 65;                 % Mod Z score cutoff for detecting pacing spikes
+    ap.pacer_zpk = 20;                  % Percent peak of mod Z score peaks defining onset/offset of spike
+    ap.pacer_maxscale = 1;              % Lower limit of frequency used for pacing spike detection
+    ap.pacer_spike_num = 2;             % Minimum number of leads that have to have pacing spikes detected 
     ap.align_flag = 'CoV';              % Beat alignment method ('CoV' or 'Rpeak')
     ap.cov_mf = 40;                     % width of CoV median filter (in ms)
     ap.cov_thresh = 30;                 % CoV median filter threshold %
@@ -104,7 +110,7 @@ function qp = qparam()
         qp.baseline = [-Inf, 0.1];          % Min/max range for baseline at the end of the T wave (nominal max only)
         qp.hf_noise = [10, Inf];            % SNR for HF noise cutoff
         qp.prob = [0.8, 1];                 % Logistic regression probability (range 0-1)
-        qp.lf_noise = [-Inf, 0.02];         % mV for cutoff in variance in LF noise
+        qp.lf_noise = [-Inf, 0.03];         % mV for cutoff in variance in LF noise
 end
 
 
@@ -139,7 +145,8 @@ ap.transform_matrix_str = 'Kors';
 qp = qparam();
 
 % Pass through batch_calc to get vcg_raw
-[~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, vcg_raw, ~, ~, ~, ~] = batch_calc(ecg, [], [], [], [], [], ap, qp, 0, '', []);
+batchout = batch_calc(ecg, [], [], [], [], [], ap, qp, 0, '', []);
+vcg_raw = batchout.vcg_raw;
 
 % Manually obtained 51 sample segments of X, Y, Z
 V = ...
@@ -221,7 +228,8 @@ ap.transform_matrix_str = 'Kors';
 qp = qparam();
 
 % Pass through batch_calc to get vcg_raw
-[~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, vcg_raw, ~, ~, ~, ~] = batch_calc(ecg, [], [], [], [], [], ap, qp, 0, '', []);
+batchout = batch_calc(ecg, [], [], [], [], [], ap, qp, 0, '', []);
+vcg_raw = batchout.vcg_raw;
 
 % Check vcg when just use VCG constructor with ecg
 vcg_raw2 = VCG(ecg,ap);
@@ -249,9 +257,10 @@ ap = aparam();
 qp = qparam();
 
 % Process ECG
-[~, ~, ~, ~, ~, medianvcg1, ~, median_12L, ~, medianbeat, ...
-    ~, ~, ~, ~, ~, ~, ~] = ...
-    batch_calc(ecg, [], [], [], [], [], ap, qp, 0, 'example1.xml', []);
+batchout = batch_calc(ecg, [], [], [], [], [], ap, qp, 0, 'example1.xml', []);
+medianvcg1 = batchout.medianvcg1;
+median_12L = batchout.median_12L;
+medianbeat = batchout.medianbeat;
 
 % Calculate results
 [geh, ~, ~] = module_output(median_12L, medianvcg1, medianbeat, ap, flags);
@@ -347,7 +356,51 @@ fnG = fieldnames(G);
 for i = 1:length(fnG)
     testCase.verifyEqual(geh.(fnG{i}),G.(fnG{i}),"AbsTol",1e-7)
 end
+
+
+% Now check that the results are unchanged with interpolation turned on
+
+ap.interpolate = 1;
+
+batchout = batch_calc(ecg, [], [], [], [], [], ap, qp, 0, 'example1.xml', []);
+medianvcg1 = batchout.medianvcg1;
+median_12L = batchout.median_12L;
+medianbeat = batchout.medianbeat;
+
+% Calculate results
+[geh_interpon, ~, ~] = module_output(median_12L, medianvcg1, medianbeat, ap, flags);
+
+
+% Loop through Structure G and compare to same field name in geh
+% This way if add additional parameters in future it wont break the test
+for i = 1:length(fnG)
+    testCase.verifyEqual(geh_interpon.(fnG{i}),G.(fnG{i}),"AbsTol",1e-7)
 end
+
+
+% Now check that the results are unchanged with all spike detection off
+
+ap.interpolate = 0;
+ap.spike_removal = 0;
+
+batchout = batch_calc(ecg, [], [], [], [], [], ap, qp, 0, 'example1.xml', []);
+medianvcg1 = batchout.medianvcg1;
+median_12L = batchout.median_12L;
+medianbeat = batchout.medianbeat;
+
+% Calculate results
+[geh_interpoff, ~, ~] = module_output(median_12L, medianvcg1, medianbeat, ap, flags);
+
+
+% Loop through Structure G and compare to same field name in geh
+% This way if add additional parameters in future it wont break the test
+for i = 1:length(fnG)
+    testCase.verifyEqual(geh_interpoff.(fnG{i}),G.(fnG{i}),"AbsTol",1e-7)
+end
+
+
+end
+
 
 
 
@@ -368,9 +421,10 @@ ap = aparam();
 qp = qparam();
 
 % Process ECG
-[~, ~, ~, ~, ~, medianvcg1, ~, median_12L, ~, medianbeat, ...
-    ~, ~, ~, ~, ~, ~, ~] = ...
-    batch_calc(ecg, [], [], [], [], [], ap, qp, 0, '', []);
+batchout = batch_calc(ecg, [], [], [], [], [], ap, qp, 0, '', []);
+medianvcg1 = batchout.medianvcg1;
+median_12L = batchout.median_12L;
+medianbeat = batchout.medianbeat;
 
 % Calculate results
 [~, lead_morph, ~] = module_output(median_12L, medianvcg1, medianbeat, ap, flags);
@@ -529,6 +583,42 @@ fnL = fieldnames(L);
 for i = 1:length(fnL)
     testCase.verifyEqual(lead_morph.(fnL{i}),L.(fnL{i}),"AbsTol",1e-7)
 end
+
+
+% Now check that the results are unchanged with interpolation turned on
+
+ap.interpolate = 1;
+
+batchout = batch_calc(ecg, [], [], [], [], [], ap, qp, 0, 'example1.xml', []);
+medianvcg1 = batchout.medianvcg1;
+median_12L = batchout.median_12L;
+medianbeat = batchout.medianbeat;
+
+% Calculate results
+[~, lead_morph_interpon, ~] = module_output(median_12L, medianvcg1, medianbeat, ap, flags);
+
+for i = 1:length(fnL)
+    testCase.verifyEqual(lead_morph_interpon.(fnL{i}),L.(fnL{i}),"AbsTol",1e-7)
+end
+
+
+% Now check that the results are unchanged with all spike detection off
+
+ap.interpolate = 0;
+ap.spike_removal = 0;
+
+batchout = batch_calc(ecg, [], [], [], [], [], ap, qp, 0, 'example1.xml', []);
+medianvcg1 = batchout.medianvcg1;
+median_12L = batchout.median_12L;
+medianbeat = batchout.medianbeat;
+
+% Calculate results
+[~, lead_morph_interpoff, ~] = module_output(median_12L, medianvcg1, medianbeat, ap, flags);
+
+for i = 1:length(fnL)
+    testCase.verifyEqual(lead_morph_interpoff.(fnL{i}),L.(fnL{i}),"AbsTol",1e-7)
+end
+
 end
 
 
@@ -549,9 +639,10 @@ ap = aparam();
 qp = qparam();
 
 % Process ECG
-[~, ~, ~, ~, ~, medianvcg1, ~, median_12L, ~, medianbeat, ...
-    ~, ~, ~, ~, ~, ~, ~] = ...
-    batch_calc(ecg, [], [], [], [], [], ap, qp, 0, '', []);
+batchout = batch_calc(ecg, [], [], [], [], [], ap, qp, 0, '', []);
+medianvcg1 = batchout.medianvcg1;
+median_12L = batchout.median_12L;
+medianbeat = batchout.medianbeat;
 
 % Calculate results
 [~, ~, vcg_morph] = module_output(median_12L, medianvcg1, medianbeat, ap, flags);
@@ -596,6 +687,24 @@ fnV = fieldnames(V);
 for i = 1:length(fnV)
     testCase.verifyEqual(vcg_morph.(fnV{i}),V.(fnV{i}),"AbsTol",1e-7)
 end
+
+
+% Now check that the results are unchanged with interpolation turned on
+
+ap.interpolate = 1;
+
+batchout = batch_calc(ecg, [], [], [], [], [], ap, qp, 0, 'example1.xml', []);
+medianvcg1 = batchout.medianvcg1;
+median_12L = batchout.median_12L;
+medianbeat = batchout.medianbeat;
+
+% Calculate results
+[~, ~, vcg_morph_interpon] = module_output(median_12L, medianvcg1, medianbeat, ap, flags);
+
+for i = 1:length(fnV)
+    testCase.verifyEqual(vcg_morph_interpon.(fnV{i}),V.(fnV{i}),"AbsTol",1e-7)
+end
+
 end
 
 
@@ -611,8 +720,9 @@ ap = aparam();
 qp = qparam();
 
 % Process ECG
-[~, ~, beats, ~, ~, ~, ~, ~, ~, medianbeat, ~, ~, ~, ~, ~, ~, ~] = ...
-    batch_calc(ecg, [], [], [], [], [], ap, qp, 0, '', []);
+batchout = batch_calc(ecg, [], [], [], [], [], ap, qp, 0, '', []);
+beats = batchout.beats_final;
+medianbeat = batchout.medianbeat;
 
 % Verified beat fiducial point results
 % Individual
@@ -656,8 +766,8 @@ ap = aparam();
 qp = qparam();
 
 % Process ECG
-[~, ~, ~, ~, corr, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~] = ...
-    batch_calc(ecg, [], [], [], [], [], ap, qp, 0, '', []);
+batchout = batch_calc(ecg, [], [], [], [], [], ap, qp, 0, '', []);
+corr = batchout.correlation_test;
 
 %Test
 testCase.verifyEqual(corr.X,0.995);
@@ -690,9 +800,10 @@ ap.baseline_correct_flag = 0;
 qp = qparam();
 
 % Process ECG
-[~, ~, ~, ~, ~, medianvcg1, ~, median_12L, ~, medianbeat, ...
-    ~, ~, ~, ~, ~, ~, ~] = ...
-    batch_calc(ecg, [], [], [], [], [], ap, qp, 0, 'example1.xml', []);
+batchout = batch_calc(ecg, [], [], [], [], [], ap, qp, 0, 'example1.xml', []);
+medianvcg1 = batchout.medianvcg1;
+median_12L = batchout.median_12L;
+medianbeat = batchout.medianbeat;
 
 % Calculate results
 [geh, ~, ~] = module_output(median_12L, medianvcg1, medianbeat, ap, flags);
@@ -814,9 +925,10 @@ ap.baseline_correct_flag = 0;
 qp = qparam();
 
 % Process ECG
-[~, ~, ~, ~, ~, medianvcg1, ~, median_12L, ~, medianbeat, ...
-    ~, ~, ~, ~, ~, ~, ~] = ...
-    batch_calc(ecg, [], [], [], [], [], ap, qp, 0, 'example1.xml', []);
+batchout = batch_calc(ecg, [], [], [], [], [], ap, qp, 0, 'example1.xml', []);
+medianvcg1 = batchout.medianvcg1;
+median_12L = batchout.median_12L;
+medianbeat = batchout.medianbeat;
 
 % Calculate results
 [~, lead_morph, ~] = module_output(median_12L, medianvcg1, medianbeat, ap, flags);
@@ -970,9 +1082,10 @@ ap.baseline_correct_flag = 0;
 qp = qparam();
 
 % Process ECG
-[~, ~, ~, ~, ~, medianvcg1, ~, median_12L, ~, medianbeat, ...
-    ~, ~, ~, ~, ~, ~, ~] = ...
-    batch_calc(ecg, [], [], [], [], [], ap, qp, 0, 'example1.xml', []);
+batchout =  batch_calc(ecg, [], [], [], [], [], ap, qp, 0, 'example1.xml', []);
+medianvcg1 = batchout.medianvcg1;
+median_12L = batchout.median_12L;
+medianbeat = batchout.medianbeat;
 
 % Calculate results
 [~, ~, vcg_morph] = module_output(median_12L, medianvcg1, medianbeat, ap, flags);
@@ -1038,8 +1151,13 @@ ap = aparam();
 qp = qparam();
 
 % Process ECG
-[hr, ~, beats, ~, corr, medianvcg1, ~, median_12L, ~, medianbeat, ~, ~, ~, ~, ~, ~, ~] = ...
-    batch_calc(ecg, [], [], [], [], [], ap, qp, 0, '', []);
+batchout = batch_calc(ecg, [], [], [], [], [], ap, qp, 0, '', []);
+medianvcg1 = batchout.medianvcg1;
+median_12L = batchout.median_12L;
+medianbeat = batchout.medianbeat;
+hr = batchout.hr_orig;
+beats = batchout.beats_final;
+corr = batchout.correlation_test;
 
 % Calculate results
 [geh, lead_morph, vcg_morph] = module_output(median_12L, medianvcg1, medianbeat, ap, flags);
@@ -1348,8 +1466,13 @@ ap.outlier_removal = 0;
 qp = qparam();
 
 % Process ECG
-[hr, ~, beats, ~, corr, medianvcg1, ~, median_12L, ~, medianbeat, ~, ~, ~, ~, ~, ~, ~] = ...
-    batch_calc(ecg, [], [], [], [], [], ap, qp, 0, '', []);
+batchout = batch_calc(ecg, [], [], [], [], [], ap, qp, 0, '', []);
+medianvcg1 = batchout.medianvcg1;
+median_12L = batchout.median_12L;
+medianbeat = batchout.medianbeat;
+hr = batchout.hr_orig;
+beats = batchout.beats_final;
+corr = batchout.correlation_test;
 
 % Calculate results
 [geh, lead_morph, vcg_morph] = module_output(median_12L, medianvcg1, medianbeat, ap, flags);
@@ -1657,15 +1780,27 @@ ap.outlier_removal = 0;
 qp = qparam();
 
 % Process ECG
-[hr, ~, beats, ~, corr, medianvcg1, ~, median_12L, ~, medianbeat, ~, ~, ~, ~, ~, ~, ~] = ...
-    batch_calc(ecg, [], [], [], [], [], ap, qp, 0, '', []);
+batchout = batch_calc(ecg, [], [], [], [], [], ap, qp, 0, '', []);
+medianvcg1 = batchout.medianvcg1;
+median_12L = batchout.median_12L;
+medianbeat = batchout.medianbeat;
+hr = batchout.hr_orig;
+beats = batchout.beats_final;
+corr = batchout.correlation_test;
+
 
 % Remove beat # 10 = PVC
 ovrbeats = beats.delete(10);
 
 % Process again with overbeats 
-[hr, ~, beats, ~, corr, medianvcg1, ~, median_12L, ~, medianbeat, ~, ~, ~, ~, ~, ~, ~] = ...
-    batch_calc(ecg, ovrbeats, [], [], [], [], ap, qp, 0, '', []);
+batchout = batch_calc(ecg, ovrbeats, [], [], [], [], ap, qp, 0, '', []);
+medianvcg1 = batchout.medianvcg1;
+median_12L = batchout.median_12L;
+medianbeat = batchout.medianbeat;
+hr = batchout.hr_orig;
+beats = batchout.beats_final;
+corr = batchout.correlation_test;
+
 
 % Should get same results as if processed with PVC removal on:
 
@@ -1974,15 +2109,25 @@ ap = aparam();
 qp = qparam();
 
 % Process ECG
-[hr, ~, beats, ~, corr, medianvcg1, ~, median_12L, ~, medianbeat, ~, ~, ~, ~, ~, ~, ~] = ...
-    batch_calc(ecg, [], [], [], [], [], ap, qp, 0, '', []);
+batchout = batch_calc(ecg, [], [], [], [], [], ap, qp, 0, '', []);
+medianvcg1 = batchout.medianvcg1;
+median_12L = batchout.median_12L;
+medianbeat = batchout.medianbeat;
+hr = batchout.hr_orig;
+beats = batchout.beats_final;
+corr = batchout.correlation_test;
 
 % Remove beat # 
 ovrbeats = beats.delete(4);
 
 % Process again with overbeats 
-[hr, ~, beats, ~, corr, medianvcg1, ~, median_12L, ~, medianbeat, ~, ~, ~, ~, ~, ~, ~] = ...
-    batch_calc(ecg, ovrbeats, [], [], [], [], ap, qp, 0, '', []);
+batchout = batch_calc(ecg, ovrbeats, [], [], [], [], ap, qp, 0, '', []);
+medianvcg1 = batchout.medianvcg1;
+median_12L = batchout.median_12L;
+medianbeat = batchout.medianbeat;
+hr = batchout.hr_orig;
+beats = batchout.beats_final;
+corr = batchout.correlation_test;
 
 % Calculate results
 [geh, lead_morph, vcg_morph] = module_output(median_12L, medianvcg1, medianbeat, ap, flags);
@@ -2288,8 +2433,13 @@ ap = aparam();
 qp = qparam();
 
 % Process ECG
-[hr, ~, beats, ~, corr, medianvcg1, ~, median_12L, ~, medianbeat, ~, ~, ~, ~, ~, ~, ~] = ...
-    batch_calc(ecg, [], [], [], [], [], ap, qp, 0, '', []);
+batchout = batch_calc(ecg, [], [], [], [], [], ap, qp, 0, '', []);
+medianvcg1 = batchout.medianvcg1;
+median_12L = batchout.median_12L;
+medianbeat = batchout.medianbeat;
+hr = batchout.hr_orig;
+beats = batchout.beats_final;
+corr = batchout.correlation_test;
 
 [geh_orig, ~, ~] = module_output(median_12L, medianvcg1, medianbeat, ap, flags);
 
@@ -2360,8 +2510,8 @@ ap = aparam();
 qp = qparam();
 
 % Process ECG
-[~, ~, beats, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~] = ...
-    batch_calc(ecg, [], [], [], [], [], ap, qp, 0, '', []);
+batchout = batch_calc(ecg, [], [], [], [], [], ap, qp, 0, '', []);
+beats = batchout.beats_final;
 
 beats_orig = beats;
 
@@ -2369,8 +2519,8 @@ beats_orig = beats;
 
 %T+10
 ovrbeats = beats.shift_tend(10);
-[~, ~, beats_new, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~] = ...
-    batch_calc(ecg, ovrbeats, [], [], [], [], ap, qp, 0, '', []);
+batchout = batch_calc(ecg, ovrbeats, [], [], [], [], ap, qp, 0, '', []);
+beats_new = batchout.beats_final;
 
 % Should only shift Tend +10 in all beats
 testCase.verifyEqual(ovrbeats.Q, beats_orig.Q);
@@ -2382,8 +2532,8 @@ testCase.verifyEqual(ovrbeats, beats_new);
 % Keep shifting ovrbeats so continue to change from beats_orig
 %Q-6
 ovrbeats = ovrbeats.shift_q(-6);
-[~, ~, beats_new, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~] = ...
-    batch_calc(ecg, ovrbeats, [], [], [], [], ap, qp, 0, '', []);
+batchout = batch_calc(ecg, ovrbeats, [], [], [], [], ap, qp, 0, '', []);
+beats_new = batchout.beats_final;
 
 % Should only shift Q -10 in all beats
 testCase.verifyEqual(ovrbeats.Q, beats_orig.Q-6);
@@ -2395,8 +2545,8 @@ testCase.verifyEqual(ovrbeats, beats_new);
 
 %S+2
 ovrbeats = ovrbeats.shift_s(2);
-[~, ~, beats_new, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~] = ...
-    batch_calc(ecg, ovrbeats, [], [], [], [], ap, qp, 0, '', []);
+batchout = batch_calc(ecg, ovrbeats, [], [], [], [], ap, qp, 0, '', []);
+beats_new = batchout.beats_final;
 
 % Should only shift Q -10 in all beats
 testCase.verifyEqual(ovrbeats.Q, beats_orig.Q-6);
@@ -2420,10 +2570,23 @@ ap = aparam();
 qp = qparam();
 
 % Process ECG with spike detection on
-[~, ~, beats_orig, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~] = ...
-    batch_calc(ecg, [], [], [], [], [], ap, qp, 0, '', []);
+batchout = batch_calc(ecg, [], [], [], [], [], ap, qp, 0, '', []);
+beats_orig = batchout.beats_final;
 
 testCase.verifyEqual(beats_orig.QRS',[441 933 1422 1914 2413 2904 3398 3897 4384]);
+
+
+% Now turn on interpolation to make sure no changes.  Interpolation should
+% only affect the signals that are processed, it should not affect the R
+% peak detection in any signal with or without pacing spikes detected
+
+% Turn on interpolation
+ap.interpolate = 1;
+
+batchout = batch_calc(ecg, [], [], [], [], [], ap, qp, 0, '', []);
+beats_interpon = batchout.beats_final;
+
+testCase.verifyEqual(beats_interpon.QRS',[441 933 1422 1914 2413 2904 3398 3897 4384]);
 
 end
 
@@ -2440,8 +2603,8 @@ ap = aparam();
 qp = qparam();
 
 % Process ECG 
-[~, ~, beats_orig, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~] = ...
-    batch_calc(ecg, [], [], [], [], [], ap, qp, 0, '', []);
+batchout = batch_calc(ecg, [], [], [], [], [], ap, qp, 0, '', []);
+beats_orig = batchout.beats_final;
 
 testCase.verifyEqual(beats_orig.QRS',[316 819 1322 1832 2347 3361 3870 4391]);
 
@@ -2450,8 +2613,8 @@ testCase.verifyEqual(beats_orig.QRS',[316 819 1322 1832 2347 3361 3870 4391]);
 ap.modz_cutoff = 10;
 
 % Process ECG 
-[~, ~, beats_10, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~] = ...
-    batch_calc(ecg, [], [], [], [], [], ap, qp, 0, '', []);
+batchout = batch_calc(ecg, [], [], [], [], [], ap, qp, 0, '', []);
+beats_10 = batchout.beats_final;
 
 testCase.verifyEqual(beats_10.QRS',[316 819 1322 1832 2347 2856 3361 3870 4391]);
 
@@ -2460,8 +2623,8 @@ testCase.verifyEqual(beats_10.QRS',[316 819 1322 1832 2347 2856 3361 3870 4391])
 ap.modz_cutoff = 0.5;
 
 % Process ECG 
-[~, ~, beats_05, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~] = ...
-    batch_calc(ecg, [], [], [], [], [], ap, qp, 0, '', []);
+batchout = batch_calc(ecg, [], [], [], [], [], ap, qp, 0, '', []);
+beats_05 = batchout.beats_final;
 
 testCase.verifyEqual(beats_05.QRS',[316 1832]);
 
@@ -2533,8 +2696,8 @@ ap = aparam();
 qp = qparam();
 
 % Process ECG
-[~, ~, ~, quality, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~] = ...
-    batch_calc(ecg, [], [], [], [], [], ap, qp, 0, '', []);
+batchout = batch_calc(ecg, [], [], [], [], [], ap, qp, 0, '', []);
+quality = batchout.quality;
 
 Q = struct;
     Q.qt = 0;
@@ -2593,8 +2756,8 @@ qp = qparam();
     qp.lf_noise = [0, 0]; 
 
 % Process ECG
-[~, ~, ~, quality, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~] = ...
-    batch_calc(ecg, [], [], [], [], [], ap, qp, 0, '', []);
+batchout = batch_calc(ecg, [], [], [], [], [], ap, qp, 0, '', []);
+quality = batchout.quality;
 
 Q = struct;
     Q.qt = 1;
@@ -2638,8 +2801,8 @@ qp = qparam();
 
 % Process ECG
 ecg = ECG12(char('Example ECGs/example3.xml'), 'muse_xml');
-[~, ~, ~, q1, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~] = ...
-    batch_calc(ecg, [], [], [], [], [], ap, qp, 0, '', []);
+batchout = batch_calc(ecg, [], [], [], [], [], ap, qp, 0, '', []);
+q1 = batchout.quality;
 
 testCase.verifyEqual(double(q1.prob_value), 0.9978, "AbsTol", 1e-4)
 testCase.verifyEqual(double(q1.prob), 0, "AbsTol", 1e-7)
@@ -2653,8 +2816,8 @@ qp.prob = [0.05, 1];
 
 % Process ECG
 ecg = ECG12(char('Example ECGs/example2.xml'), 'muse_xml');
-[~, ~, ~, q1, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~] = ...
-    batch_calc(ecg, [], [], [], [], [], ap, qp, 0, '', []);
+batchout = batch_calc(ecg, [], [], [], [], [], ap, qp, 0, '', []);
+q1 = batchout.quality;
 
 testCase.verifyEqual(double(q1.prob_value), 0.0420, "AbsTol", 1e-4)
 testCase.verifyEqual(double(q1.prob), 1, "AbsTol", 1e-7)
@@ -2665,8 +2828,8 @@ qp.prob = [0.03, 1];
 
 % Process ECG
 ecg = ECG12(char('Example ECGs/example2.xml'), 'muse_xml');
-[~, ~, ~, q1, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~] = ...
-    batch_calc(ecg, [], [], [], [], [], ap, qp, 0, '', []);
+batchout = batch_calc(ecg, [], [], [], [], [], ap, qp, 0, '', []);
+q1 = batchout.quality;
 
 testCase.verifyEqual(double(q1.prob), 0, "AbsTol", 1e-7)
 
@@ -2695,9 +2858,10 @@ ap.blanking_window_t = 20;
 qp = qparam();
 
 % Process ECG
-[~, ~, ~, ~, ~, medianvcg1, ~, median_12L, ~, medianbeat, ...
-    ~, ~, ~, ~, ~, ~, ~] = ...
-    batch_calc(ecg, [], [], [], [], [], ap, qp, 0, 'example1.xml', []);
+batchout = batch_calc(ecg, [], [], [], [], [], ap, qp, 0, 'example1.xml', []);
+median_12L = batchout.median_12L;
+medianvcg1 = batchout.medianvcg1;
+medianbeat = batchout.medianbeat;
 
 % Calculate results
 [geh, ~, ~] = module_output(median_12L, medianvcg1, medianbeat, ap, flags);
@@ -2738,9 +2902,10 @@ ap.blanking_window_q = 5;
 ap.blanking_window_t = 320;
 
 % Process ECG
-[~, ~, ~, ~, ~, medianvcg1, ~, median_12L, ~, medianbeat, ...
-    ~, ~, ~, ~, ~, ~, ~] = ...
-    batch_calc(ecg, [], [], [], [], [], ap, qp, 0, 'example1.xml', []);
+batchout = batch_calc(ecg, [], [], [], [], [], ap, qp, 0, 'example1.xml', []);
+median_12L = batchout.median_12L;
+medianvcg1 = batchout.medianvcg1;
+medianbeat = batchout.medianbeat;
 
 % Calculate results
 [geh, ~, ~] = module_output(median_12L, medianvcg1, medianbeat, ap, flags);

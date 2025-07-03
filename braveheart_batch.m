@@ -323,22 +323,16 @@ parfor (i = 1:num_files, workers)
 				note = 'manual';        % Lets you know this ECG had manual editing performed
                 
                 % If apfile includes beats, then pass beats & anno parameters into batch_calc
-				
-                [hr, num_initial_beats, ~, quality, corr, medianvcg1, beatsig_vcg, median_12L, beatsig_12L, medianbeat, beat_stats, ecg_raw, vcg_raw, filtered_ecg, filtered_vcg, noise, sumfig] = ...
-                batch_calc(ecg, beats, [], [], [], [], ap, qp, save_figures, basename, []);
-                
-
-                [geh, lead_morph, vcg_morph] = module_output(median_12L, medianvcg1, medianbeat, ap, flags);
+				  
+                batchout = batch_calc(ecg, beats, [], [], [], [], ap, qp, save_figures, basename, []);
+                [geh, lead_morph, vcg_morph] = module_output(batchout.median_12L, batchout.medianvcg1, batchout.medianbeat, ap, flags);
  
             else
                 
                 % If apfile only includes anno parameters and no beats, pass the annoparameters into batch_calc
                 
-                [hr, num_initial_beats, beats, quality, corr, medianvcg1, beatsig_vcg, median_12L, beatsig_12L, medianbeat, beat_stats, ecg_raw, vcg_raw, filtered_ecg, filtered_vcg, noise, sumfig] = ...
-                batch_calc(ecg, [], [], [], [], [], ap, qp, save_figures, basename, []);
-                
-				    
-            [geh, lead_morph, vcg_morph] = module_output(median_12L, medianvcg1, medianbeat, ap, flags);
+                batchout = batch_calc(ecg, [], [], [], [], [], ap, qp, save_figures, basename, []);  
+                [geh, lead_morph, vcg_morph] = module_output(batchout.median_12L, batchout.medianvcg1, batchout.medianbeat, ap, flags);
             
             end
             
@@ -347,21 +341,20 @@ parfor (i = 1:num_files, workers)
 			beats = [];
             
             % Pass ecg and anno parameters into batch_calc
-            [hr, num_initial_beats, beats, quality, corr, medianvcg1, beatsig_vcg, median_12L, beatsig_12L, medianbeat, beat_stats, ecg_raw, vcg_raw, filtered_ecg, filtered_vcg, noise, sumfig] = ...
-                batch_calc(ecg, beats, [], [], [], [], ap, qp, save_figures, basename, []);
-            
-            
-            [geh, lead_morph, vcg_morph] = module_output(median_12L, medianvcg1, medianbeat, ap, flags);
+            batchout = batch_calc(ecg, beats, [], [], [], [], ap, qp, save_figures, basename, []);
+            [geh, lead_morph, vcg_morph] = module_output(batchout.median_12L, batchout.medianvcg1, batchout.medianbeat, ap, flags);
 
         end
 	
 		% At this point, all data is generated - need to organize for export
         
         % Generate row of results for output file
-		results{i} = AnnoResult(strcat(basename,fext), note, format, ap, ecg, hr, num_initial_beats, beats, beat_stats, corr, noise, quality.prob_value, quality.missing_lead, geh, lead_morph, vcg_morph);
+		results{i} = AnnoResult(strcat(basename,fext), note, format, ap, ecg, batchout.hr_orig, batchout.NQRS_orig, ...
+            batchout.beats_final, batchout.beat_stats, batchout.correlation_test, batchout.noise, batchout.quality.prob_value, batchout.quality.missing_lead, ...
+            batchout.lead_ispaced, geh, lead_morph, vcg_morph);
 		
         % Signal quality object
-		quality_mat{i} = quality;
+		quality_mat{i} = batchout.quality;
 		
         % Figure file names/path for saving
 		fig_filename = char(strcat(basename,'.png'));
@@ -369,18 +362,18 @@ parfor (i = 1:num_files, workers)
 		
         % If some quality object was flagged, will add the ECG/figure to
         % the check ECG list
-		if quality.counter() >= 1
+		if batchout.quality.counter() >= 1
 			quality_full{i} = [strcat(basename,fext) num2cell(quality_mat{i}.vector())];
 			qindex(i) = 1;  % Increment counter for number of ECGs that were flagged for quality issues
 			
 			% Save figure in separate directory for easy viewing
-			if save_figures; saveas(sumfig,fullfile(checkfig_directory, fig_filename)); end	
+			if save_figures; saveas(batchout.sumfig,fullfile(checkfig_directory, fig_filename)); end	
 		end
 		
 		% Save figure
 		if save_figures
-			saveas(sumfig,fig_full_path);
-			close(sumfig)
+			saveas(batchout.sumfig,fig_full_path);
+			close(batchout.sumfig)
 		end
 		
 		if save_data
@@ -388,21 +381,24 @@ parfor (i = 1:num_files, workers)
         	sig = struct( ...
                 'filename',file_list{i}, ...
                 'annoparams', ap, ...
-                'ecg_raw', ecg_raw, ...
-                'ecg_filtered', filtered_ecg, ...
-                'vcg_raw', vcg_raw, ...
-                'vcg_filtered', filtered_vcg, ...
-                'beats', beats, ...
-                'beat_stats', beat_stats, ...
+                'ecg_raw', batchout.ecg_raw, ...
+                'ecg_filtered', batchout.filtered_ecg, ...
+                'vcg_raw', batchout.vcg_raw, ...
+                'vcg_filtered', batchout.filtered_vcg, ...
+                'ecg_raw_postinterp', batchout.ecg_raw_postinterp, ...
+                'pacer_spikes', batchout.pacer_spikes, ...
+                'lead_ispaced', batchout.lead_ispaced, ...
+                'beats', batchout.beats_final, ...
+                'beat_stats', batchout.beat_stats, ...
                 'geh', geh, ...
-                'median_vcg', medianvcg1, ...
-                'median_12L', median_12L, ...
-                'medianbeat', medianbeat, ...
-                'beats_median_vcg', beatsig_vcg, ...
-                'beats_median_12L', beatsig_12L, ...
+                'median_vcg', batchout.medianvcg1, ...
+                'median_12L', batchout.median_12L, ...
+                'medianbeat', batchout.medianbeat, ...
+                'beats_median_vcg', batchout.beatsig_vcg, ...
+                'beats_median_12L', batchout.beatsig_12L, ...
                 'lead_morph', lead_morph, ...
                 'vcg_morph', vcg_morph, ...
-                'quality', quality);
+                'quality', batchout.quality);
 			
 			save_struct_parfor(data_directory, basename, sig)
 			
@@ -411,7 +407,7 @@ parfor (i = 1:num_files, workers)
 		if save_annotations
 			annotation_filename = char(strcat(basename, anno_ext));
 			annotation_full_path = char(fullfile(annotation_directory, annotation_filename));
-			ap.to_file(beats, annotation_full_path);
+			ap.to_file(batchout.beats_final, annotation_full_path);
 		end
 
 		if isnan(geh.svg_x) && vcg_calc_flag == 1

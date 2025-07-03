@@ -39,6 +39,8 @@ classdef AnnoResult
         num_outliers_removed
         num_manual_removed
         num_bad_removed
+        pacing_detected
+        num_paced_leads
 		hr
         cross_corr 
         noise_hf
@@ -73,8 +75,8 @@ classdef AnnoResult
 					end
 					
 					
-				case 16
-					[filename, note, source_str, ap, ecg, hr, num_initial_beats, beats, beat_stats, cross_corr, noise, qual_prob, missing_lead, geh, lead_morph, vcg_morph] = varargin{:};
+				case 17
+					[filename, note, source_str, ap, ecg, hr, num_initial_beats, beats, beat_stats, cross_corr, noise, qual_prob, missing_lead, lead_ispaced, geh, lead_morph, vcg_morph] = varargin{:};
 					obj.filename = {filename};
 					obj.note = {note};
 					
@@ -98,6 +100,30 @@ classdef AnnoResult
                     obj.num_bad_removed = num2cell(length(beats.QRS_rem_bad));
                     obj.hr = num2cell(hr);  
                     
+                    if isempty(lead_ispaced)
+                        obj.pacing_detected = {''};
+                        obj.num_paced_leads = {''};
+                    
+                    % If sum of lead_ispaced is -12, then spikes were
+                    % detected by the old spike width filter, and will
+                    % indicated this differently in output files
+
+                    % If the CWT filter was used
+                    elseif sum(cell2mat(struct2cell(lead_ispaced(:)))) > 0
+                        if sum(cell2mat(struct2cell(lead_ispaced(:)))) >= ap.pacer_spike_num
+                            obj.pacing_detected = num2cell(sign(sum(cell2mat(struct2cell(lead_ispaced(:))))));
+                        else
+                            obj.pacing_detected = num2cell(0);
+                        end
+
+                        obj.num_paced_leads = num2cell(sum(cell2mat(struct2cell(lead_ispaced(:)))));
+
+                    % If pacing detected using the old spike width filter    
+                    else
+                        obj.pacing_detected = num2cell(1);
+                        obj.num_paced_leads = {''};
+                    end
+
                     obj.cross_corr = num2cell(min([cross_corr.X cross_corr.Y cross_corr.Z]));
 					obj.noise_hf = num2cell(noise(1));
                     obj.noise_lf = num2cell(noise(2));
@@ -106,7 +132,7 @@ classdef AnnoResult
                     obj.missing_lead = num2cell(missing_lead);
 
                     % VERSION MANUALLY UPDATED HERE
-                    obj.version = {'1.4.0'};
+                    obj.version = {'1.5.0'};
                    
 			end
 		end
@@ -122,7 +148,7 @@ classdef AnnoResult
 				
 				
 				info_labels = [{'filename'} {'version'} {'note'} {'proc_date'} {'proc_time'} {'source'} {'freq'} {'num_samples'} {'num_beats'} {'initial_num_beats'} {'num_pvcs_removed'} ...
-                    {'num_outliers_removed'} {'num_manual_removed'} {'num_bad_removed'} {'hr'} {'cross_corr'} {'noise_hf'} {'noise_lf'} {'quality_prob'} {'missing_lead'}];
+                    {'num_outliers_removed'} {'num_manual_removed'} {'num_bad_removed'} {'pacing_detected'} {'num_paced_leads'} {'hr'} {'cross_corr'} {'noise_hf'} {'noise_lf'} {'quality_prob'} {'missing_lead'}];
 				% you have to do it this way in order to deal properly with the nested cells and with empty cells								
 				excel_header = [info_labels vcg_blank.labels() aps_blank.labels() beat_stats_blank.labels() beats_blank.labels() lead_morph_blank.labels() vcg_morph_blank.labels()];				
 				p = properties(obj);

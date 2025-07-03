@@ -43,6 +43,7 @@ classdef ECG12
         V6
         
     end
+
     methods
         function obj = ECG12(varargin)
             if nargin == 0; return; end
@@ -304,11 +305,15 @@ classdef ECG12
 			ecg1.units = obj.units; ecg2.units = obj.units;
 		end
 
+        function l = lead(obj, i)
+            ll = {'I', 'II', 'III', 'avR', 'avF', 'avL', 'V1', 'V2', 'V3', 'V4', 'V5', 'V6'};
+            l = obj.(ll{i});
+        end
 
         function t = sample_time(obj); t = 1000/obj.hz; end
 		function l = length(obj); l = length(obj.I); end
         % default copy, destructor, assignment
     end
     
-    
+
 end

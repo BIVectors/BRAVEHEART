@@ -21,7 +21,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-function z = mod_z_score(x, hz)
+function z = mod_z_score(x, ~)
     
     z = zeros(1,length(x));
     x_median = median(x,'omitnan');
