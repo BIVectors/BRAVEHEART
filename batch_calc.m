@@ -211,7 +211,7 @@ else
         % be a 1x12 vector of -1s.  This will be interpreted by AnnoResult
         % as pacing detected by the spike width filter rather than the CWT
         % spike filter
-        if ~isequal(QRS2, QRS2_old) 
+        if ~isequal(vcg2.peaks(ap), vcg3.peaks(ap)) 
             lead_ispaced.I = -1;
             lead_ispaced.II = -1;
             lead_ispaced.III = -1;

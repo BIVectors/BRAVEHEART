@@ -128,6 +128,8 @@ The software has been used for ECG/VCG analysis in the following publications:
 
 14. [M Gurnani, K Patlatzoglou, J Barker, D Bivona, L Pastika, E Sieliwonczyk, B Zeidaabadi, P Inglese, L Curran, AD Arnold, D O'Regan, Z Whinnett, KC Bilchick, NS Peters, DB Kramer, JW Waks, A Sau, and FS Ng. Revisiting Abnormalities of Ventricular Depolarization: Redefining Phenotypes and Associated Outcomes Using Tree-Based Dimensionality Reduction.  Siamese neural network-enhanced electrocardiography can re-identify anonymised healthcare data. _J Am Heart Assoc_. 2025, Jun 18:e040814.](https://www.ahajournals.org/doi/10.1161/JAHA.124.040814)
 
+15. [Y Liang, A Sau, B Zeidaabadi, J Barker, K Patlatzoglou, L Pastika, E Sieliwonczyk, Z Whinnett, NS Peters, Z Yu, X Liu, S Wang, H Lu, DB Kramer, JW Waks, Y Su, J Ge, and FS Ng. Artificial intelligence-enhanced electrocardiography to predict regurgitant valvular heart diseases: an international study. _Eur Heart J_. 2025 Jul 16:ehaf448.](https://academic.oup.com/eurheartj/advance-article/doi/10.1093/eurheartj/ehaf448/8203433)
+
 
 
 If you have used BRAVEHEART for your research project we would be happy to include a reference to your manuscript!
