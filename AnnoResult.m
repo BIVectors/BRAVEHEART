@@ -26,7 +26,7 @@ classdef AnnoResult
 
 	properties
 		filename
-        version
+        version = {'1.6.0'}
 		note
 		date
 		time
@@ -129,14 +129,11 @@ classdef AnnoResult
                     obj.noise_lf = num2cell(noise(2));
                     
                     obj.qual_prob = num2cell(qual_prob);
-                    obj.missing_lead = num2cell(missing_lead);
-
-                    % VERSION MANUALLY UPDATED HERE
-                    obj.version = {'1.5.1'};
-                   
+                    obj.missing_lead = num2cell(missing_lead);    
 			end
-		end
-			
+        end
+
+			% Export data
 			function [excel_header, data] = export_data(obj)
 				
 				vcg_blank = VCG_Calc();
@@ -157,7 +154,12 @@ classdef AnnoResult
 					temp = obj.(p{i});
 					data = [data vertcat(temp{:})]; %#ok<AGROW>
 				end
-			end
+            end
+
+            % Return BRAVEHEART version
+            function v = get_version(obj)
+                v = obj.version;
+            end
 			
 		end
 	end

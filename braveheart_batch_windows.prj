@@ -8,13 +8,13 @@
       <file>${PROJECT_ROOT}\braveheart_batch_windows_resources\icon_24.png</file>
       <file>${PROJECT_ROOT}\braveheart_batch_windows_resources\icon_16.png</file>
     </param.icons>
-    <param.version>1.5.1</param.version>
+    <param.version>1.6.0</param.version>
     <param.authnamewatermark>Hans F. Stabenau and Jonathan W. Waks</param.authnamewatermark>
     <param.email>braveheart.ecg@gmail.com</param.email>
     <param.company />
     <param.summary />
     <param.description>BRAVHEART ECG/VCG Analysis Software -- Command Line Version
-Version 1.5.1</param.description>
+Version 1.6.0</param.description>
     <param.screenshot>${PROJECT_ROOT}\braveheart_splash.png</param.screenshot>
     <param.guid />
     <param.installpath.string>\braveheart_batch\</param.installpath.string>
@@ -50,7 +50,7 @@ Version 1.5.1</param.description>
 	 varargin  input arguments 
  Description 
  	 BRAVHEART ECG/VCG Analysis Software -- Command Line Version
-Version 1.5.1</param.help.text>
+Version 1.6.0</param.help.text>
     <unset>
       <param.company />
       <param.summary />
@@ -82,6 +82,7 @@ Version 1.5.1</param.help.text>
       <file>${PROJECT_ROOT}\braveheart_batch.m</file>
     </fileset.main>
     <fileset.resources>
+      <file>${PROJECT_ROOT}\batch_convert.m</file>
       <file>${PROJECT_ROOT}\biosig_str2double.m</file>
       <file>${PROJECT_ROOT}\ecg_axis.m</file>
       <file>${PROJECT_ROOT}\elecpos.mat</file>
@@ -99,6 +100,7 @@ Version 1.5.1</param.help.text>
       <file>${PROJECT_ROOT}\load_edandat.m</file>
       <file>${PROJECT_ROOT}\load_edf.m</file>
       <file>${PROJECT_ROOT}\load_megacarexml.m</file>
+      <file>${PROJECT_ROOT}\load_mfer.m</file>
       <file>${PROJECT_ROOT}\load_norav.m</file>
       <file>${PROJECT_ROOT}\load_physionet_csv.m</file>
       <file>${PROJECT_ROOT}\load_physionet_dat.m</file>

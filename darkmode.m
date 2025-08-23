@@ -91,7 +91,7 @@ end
 % Black text should change to white and vice versa - change background and text
 try
     if strcmp(A(i).Style, 'text') && (sum(A(i).ForegroundColor == light_colors.txtcolor) == 3 || sum(A(i).ForegroundColor == dark_colors.txtcolor) == 3) ...
-        && (~strcmp(A(i).Tag,'quality_score_txt')) && (~strcmp(A(i).Tag,'quality_count_txt'))
+        && (~strcmp(A(i).Tag,'quality_score_txt')) && (~strcmp(A(i).Tag,'quality_count_txt'))    
             A(i).ForegroundColor = new_colors.txtcolor;
             A(i).BackgroundColor = new_colors.bgcolor;
     end

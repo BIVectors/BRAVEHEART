@@ -51,6 +51,9 @@ menu and change to 100%.
 + **Mac OS:** Open System Preferences and then Display. Choose Scaled Resolution and then
 More Space
 
+## Frequently Encountered Issue - GUI Looks Abnormal in R2025a
+If you are using MATLAB R2025a, please upgrade to version 1.6.0 or later. 
+
 ## Supported ECG Formats:
 BRAVEHEART can read a wide variety of 12-lead ECG formats including:
 1. GE MUSE XML
@@ -71,6 +74,7 @@ BRAVEHEART can read a wide variety of 12-lead ECG formats including:
 16. Norav 1200M .rdt
 17. Megacare XML
 18. Edan .dat
+19. MFER .mwf
 
 If you need BRAVEHEART to read another ECG format let us know and we will help add it.
 
@@ -130,6 +134,11 @@ The software has been used for ECG/VCG analysis in the following publications:
 
 15. [Y Liang, A Sau, B Zeidaabadi, J Barker, K Patlatzoglou, L Pastika, E Sieliwonczyk, Z Whinnett, NS Peters, Z Yu, X Liu, S Wang, H Lu, DB Kramer, JW Waks, Y Su, J Ge, and FS Ng. Artificial intelligence-enhanced electrocardiography to predict regurgitant valvular heart diseases: an international study. _Eur Heart J_. 2025 Jul 16:ehaf448.](https://academic.oup.com/eurheartj/advance-article/doi/10.1093/eurheartj/ehaf448/8203433)
 
+16. [AJ Shepherd, HF Stabenau, A Sau, P Tung, TR Maher, S Yang, AH Locke, P Zimetbaum, GF Michaud, A d'Avila, NS Peters, AE Buxton, FS Ng, DB Kramer, and JW Waks. Larger Spatial Ventricular Gradient Magnitude is Associated with Higher Rates of Response to Cardiac Resynchronization Therapy. _Heart Rhythm O2_, 2025 In Press.](https://www.heartrhythmopen.com/article/S2666-5018(25)00402-7/fulltext)
+
+17. [A Sau, H Zhang, J Barker, L Pastika, K Patlatzoglou, B Zeidaabadi, A El-Medany, GR Khattak, KA McGurk, E Sieliwonczyk, JS Ware, NS Peters, DB Kramer, JW Waks, and, FS Ng. Artificial Intelligence-Enhanced Electrocardiography for Complete Heart Block Risk Stratification. _JAMA Cardiol_., 2025 Aug 20:e252522.](https://jamanetwork.com/journals/jamacardiology/fullarticle/2837611)
+
+18. [A Sau, E Sieliwonczyk, J Barker, B Zeidaabadi, L Pastika, K Patlatzoglou, GR Khattak, KA McGurk, NS Peters, DB Kramer, JW Waks, JS Ware, and FS Ng. Prediction of incident atrial fibrillation: a comprehensive evaluation of conventional and AI-enhanced approaches. _Heart Rhythm_, 2025 In Press.](https://www.heartrhythmjournal.com/article/S1547-5271(25)02778-X/fulltext)
 
 
 If you have used BRAVEHEART for your research project we would be happy to include a reference to your manuscript!
