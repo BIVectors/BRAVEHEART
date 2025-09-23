@@ -188,10 +188,14 @@ title(sprintf('Median Beat Lead %s',string(lead{n})));
 
 set(gcf, 'Position', [0, 0, 1600, 700])  % set figure size
 
-% Increase font size on mac due to pc/mac font differences
-    if ismac
-        fontsize(gcf,scale=1.25)
-    end
+
+% Increase font size on mac due to pc/mac font differences if version prior to R2025a
+currentVersion = char(matlabRelease.Release);
+currentVersion = str2double(currentVersion(2:5));
+
+if ismac && currentVersion < 2025
+    fontsize(gcf,scale=1.25)
+end
 
     
 end

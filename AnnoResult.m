@@ -26,7 +26,7 @@ classdef AnnoResult
 
 	properties
 		filename
-        version = {'1.6.0'}
+        version = {'1.6.1'}
 		note
 		date
 		time
@@ -100,28 +100,45 @@ classdef AnnoResult
                     obj.num_bad_removed = num2cell(length(beats.QRS_rem_bad));
                     obj.hr = num2cell(hr);  
                     
+                    % If do not have any pacemaker spikes then data output is empty
                     if isempty(lead_ispaced)
-                        obj.pacing_detected = {''};
-                        obj.num_paced_leads = {''};
-                    
-                    % If sum of lead_ispaced is -12, then spikes were
-                    % detected by the old spike width filter, and will
-                    % indicated this differently in output files
-
-                    % If the CWT filter was used
-                    elseif sum(cell2mat(struct2cell(lead_ispaced(:)))) > 0
-                        if sum(cell2mat(struct2cell(lead_ispaced(:)))) >= ap.pacer_spike_num
-                            obj.pacing_detected = num2cell(sign(sum(cell2mat(struct2cell(lead_ispaced(:))))));
+                        % Didn't look for spikes so have pacing_detected = empty
+                        if ap.cwt_spike_removal == 0 && ap.spike_removal == 0
+                            obj.pacing_detected = {''};
+                        % Did look for spikes so have pacing_detected = 0    
                         else
                             obj.pacing_detected = num2cell(0);
                         end
+                        % Since to pacing detected, paced leads is empty
+                            obj.num_paced_leads = {''};
 
-                        obj.num_paced_leads = num2cell(sum(cell2mat(struct2cell(lead_ispaced(:)))));
+                    % If do have pacing detection enabled check leads    
+                    else  
+                        % If sum of lead_ispaced is -12, then spikes were
+                        % detected by the old spike width filter, and will
+                        % indicated this differently in output files
+    
+                        % If the CWT filter detects pacing make sure enough
+                        % leads had pacing detected to call it "paced"
+                        if sum(cell2mat(struct2cell(lead_ispaced(:)))) > 0
+                            if sum(cell2mat(struct2cell(lead_ispaced(:)))) >= ap.pacer_spike_num
+                                obj.pacing_detected = num2cell(sign(sum(cell2mat(struct2cell(lead_ispaced(:))))));
+                            else
+                                obj.pacing_detected = num2cell(0);
+                            end
+    
+                            obj.num_paced_leads = num2cell(sum(cell2mat(struct2cell(lead_ispaced(:)))));
+    
+                        % If pacing detected using the old spike width filter    
+                        elseif sum(cell2mat(struct2cell(lead_ispaced(:)))) < 0
+                            obj.pacing_detected = num2cell(1);
+                            obj.num_paced_leads = {''};
 
-                    % If pacing detected using the old spike width filter    
-                    else
-                        obj.pacing_detected = num2cell(1);
-                        obj.num_paced_leads = {''};
+                        % If neither filter detected pacing
+                        else
+                            obj.pacing_detected = num2cell(0);
+                            obj.num_paced_leads = {''};
+                        end
                     end
 
                     obj.cross_corr = num2cell(min([cross_corr.X cross_corr.Y cross_corr.Z]));

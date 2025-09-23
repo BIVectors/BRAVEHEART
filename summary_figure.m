@@ -222,8 +222,11 @@ function summary_figure(vcg, beats, median_vcg, medianbeat, correlation_test, pr
     set(gca,'Color', colors.bgfigcolor);
     hold off
     
-    % Increase font size on mac due to pc/mac font differences
-    if ismac
+    % Increase font size on mac due to pc/mac font differences if version prior to R2025a
+    currentVersion = char(matlabRelease.Release);
+    currentVersion = str2double(currentVersion(2:5));
+
+    if ismac && currentVersion < 2025
         fontsize(gcf,scale=1.25)
         savebutton.FontSize = 10;
     end

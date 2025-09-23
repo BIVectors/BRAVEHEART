@@ -58,12 +58,26 @@ properties (SetAccess=private)
         t_var_s3_total          % Pct of total variance made up by 3rd T singular value
         
         qrs_loop_normal         % Vector normal to best fit QRS loop plane
+        qrs_loop_plane_az       % Azimuth of the best fit QRS loop plane
+        qrs_loop_plane_el       % Elevation of the best fit QRS loop plane
         t_loop_normal           % Vector normal to best fit T loop plane
+        t_loop_plane_az         % Azimuth of the best fit T loop plane
+        t_loop_plane_el         % Elevation of the best fit T loop plane
         qrst_dihedral_ang       % Dihedral angle between best fit QRS loop and T loop planes
 
         TMD                     % T-Wave Morphology Dispersion (deg)
         TWR_abs                 % Absolute T-wave residuum (mv2)
         TWR_rel                 % Relative T-wave residuum (%)
+ 
+        xy_qrs_loop_dir          % Direction of QRS loop in XY plane (CW or CCW)
+        xy_qrs_signed_area      % Signed area of QRS loop in XY plane
+        xz_qrs_loop_dir         % Direction of QRS loop in XZ plane (CW or CCW)
+        xz_qrs_signed_area      % Signed area of QRS loop in XZ plane
+        zy_qrs_loop_dir         % Direction of QRS loop in ZY plane (CW or CCW)
+        zy_qrs_signed_area      % Signed area of QRS loop in ZY plane
+        best_qrs_loop_dir       % Direction of QRS loop in best fit plane (CW or CCW)
+        best_qrs_signed_area    % Signed area of QRS loop in best fit plane
+
 end
     
     
@@ -88,8 +102,12 @@ methods
         [obj.t_loop_normal, ~, ~, ~, obj.tloop_residual, obj.tloop_rmse, obj.t_var_s1_total,  obj.t_var_s2_total,obj.t_var_s3_total, obj.t_S1, obj.t_S2, obj.t_S3, ~, obj.tloop_roundness, ~, ~, ~, obj.tloop_area, obj.tloop_perimeter] = ...
             plane_svd(vcg.X(fidpts(3):fidpts(4)), vcg.Y(fidpts(3):fidpts(4)), vcg.Z(fidpts(3):fidpts(4)), 0);
 
-        [obj.qrs_loop_normal, ~, ~, ~, obj.qrsloop_residual, obj.qrsloop_rmse, obj.qrs_var_s1_total,  obj.qrs_var_s2_total,  obj.qrs_var_s3_total, obj.qrs_S1, obj.qrs_S2, obj.qrs_S3, ~, obj.qrsloop_roundness, ~, ~, ~, obj.qrsloop_area, obj.qrsloop_perimeter] = ...
+        [obj.qrs_loop_normal, ~, ~, ~, obj.qrsloop_residual, obj.qrsloop_rmse, obj.qrs_var_s1_total,  obj.qrs_var_s2_total,  obj.qrs_var_s3_total, obj.qrs_S1, obj.qrs_S2, obj.qrs_S3, V_qrs, obj.qrsloop_roundness, ~, ~, ~, obj.qrsloop_area, obj.qrsloop_perimeter] = ...
             plane_svd(vcg.X(fidpts(1):fidpts(3)), vcg.Y(fidpts(1):fidpts(3)), vcg.Z(fidpts(1):fidpts(3)), 0);
+
+        % Convert normals to az/el (r = 1 because unit vectors)
+        [~, obj.qrs_loop_plane_az, obj.qrs_loop_plane_el] = xyz2azel(obj.qrs_loop_normal(1), obj.qrs_loop_normal(2), obj.qrs_loop_normal(3));
+        [~, obj.t_loop_plane_az, obj.t_loop_plane_el] = xyz2azel(obj.t_loop_normal(1), obj.t_loop_normal(2), obj.t_loop_normal(3));
 
         % Dihedral angle between QRS and T loop planes
         obj.qrst_dihedral_ang = dihedral(obj.t_loop_normal, obj.qrs_loop_normal);
@@ -97,7 +115,20 @@ methods
         % TMD/TWR
         [obj.TMD, obj.TWR_abs, obj.TWR_rel] = svd_twave(ecg,fidpts);
 
-           
+        
+        % QRS Loop rotation direction (CW vs CCW etc)
+        % Frontal plane (XY) viewed from front
+        [obj.xy_qrs_loop_dir, obj.xy_qrs_signed_area] = loop_rotation_dir(vcg.X(fidpts(1):fidpts(3)), vcg.Y(fidpts(1):fidpts(3)), vcg.Z(fidpts(1):fidpts(3)), [0 0 -1], [1 0 0], [0 -1 0], 0.1);
+
+        % Transverse plane (XZ) viewed from below with back facing down
+        [obj.xz_qrs_loop_dir, obj.xz_qrs_signed_area] = loop_rotation_dir(vcg.X(fidpts(1):fidpts(3)), vcg.Y(fidpts(1):fidpts(3)), vcg.Z(fidpts(1):fidpts(3)), [0 -1 0], [1 0 0], [0 0 -1], 0.1);
+
+        % Frontal plane (XY) viewed from front
+        [obj.zy_qrs_loop_dir, obj.zy_qrs_signed_area] = loop_rotation_dir(vcg.X(fidpts(1):fidpts(3)), vcg.Y(fidpts(1):fidpts(3)), vcg.Z(fidpts(1):fidpts(3)), [1 0 0], [0 0 1], [0 -1 0], 0.1);
+
+        % Best fit plane viewed from N
+        [obj.best_qrs_loop_dir, obj.best_qrs_signed_area] = loop_rotation_dir(vcg.X(fidpts(1):fidpts(3)), vcg.Y(fidpts(1):fidpts(3)), vcg.Z(fidpts(1):fidpts(3)), obj.qrs_loop_normal', V_qrs(:,1)', V_qrs(:,2)', 0.1);
+
     end     % End main VCG_Morphology methods 
     
     
@@ -119,15 +150,17 @@ function v = cells(obj)
             lab = obj.labels();
             v = cell(1, length(lab));
             for i = 1:length(lab)
-                
-                v{i} = mat2str(obj.(lab{i})');
+
+                if ischar(obj.(lab{i})) || isstring(obj.(lab{i}))
+                    v{i} = char(obj.(lab{i}));  % Don't convert text
+                else % Numeric
+                 v{i} = mat2str(obj.(lab{i})');
                 T = v{i};
                 T(T=='[') = [];
                 T(T==']') = [];
                 v{i} = T;
-                
-            end
-            
+                end  
+            end           
         end    
                
 end     % End methods

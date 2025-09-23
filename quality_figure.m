@@ -87,8 +87,11 @@ InSet(4) = InSet(4)+0.015;
 InSet(3) = InSet(3)+0.015;
 set(gca, 'Position', [InSet(1:2), 1-InSet(1)-InSet(3), 1-InSet(2)-InSet(4)]);
 
-% Increase font size on mac due to pc/mac font differences
-    if ismac
+% Increase font size on mac due to pc/mac font differences if version prior to R2025a
+currentVersion = char(matlabRelease.Release);
+currentVersion = str2double(currentVersion(2:5));
+
+    if ismac && currentVersion < 2025
         fontsize(gcf,scale=1.25)
     end
 

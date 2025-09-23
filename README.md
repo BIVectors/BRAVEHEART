@@ -140,6 +140,8 @@ The software has been used for ECG/VCG analysis in the following publications:
 
 18. [A Sau, E Sieliwonczyk, J Barker, B Zeidaabadi, L Pastika, K Patlatzoglou, GR Khattak, KA McGurk, NS Peters, DB Kramer, JW Waks, JS Ware, and FS Ng. Prediction of incident atrial fibrillation: a comprehensive evaluation of conventional and AI-enhanced approaches. _Heart Rhythm_, 2025 In Press.](https://www.heartrhythmjournal.com/article/S1547-5271(25)02778-X/fulltext)
 
+19. [HF Stabenau, JD Matos, DB Kramer, A Sau, L Pastika, E Sieliwonczyk, K Patlatzoglou, NS Peters, P Tung, FS Ng, R Nezafat, and JW Waks. The Spatial Ventricular Gradient is a Non-Invasive, Vectorcardiographic Correlate of Cardiac Fibrosis. _J Interv Card Electrophysiol_, 2025  In Press]()
+
 
 If you have used BRAVEHEART for your research project we would be happy to include a reference to your manuscript!
 

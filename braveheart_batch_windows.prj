@@ -1,5 +1,5 @@
 <deployment-project plugin="plugin.ezdeploy" plugin-version="1.0">
-  <configuration build-checksum="2994240401" file="C:\Users\jwaks\Documents\GitHub\BRAVEHEART_DEV\braveheart_batch_windows.prj" location="C:\Users\jwaks\Documents\GitHub\BRAVEHEART_DEV" name="braveheart_batch_windows" preferred-package-location="C:\Users\jwaks\Documents\GitHub\BRAVEHEART_DEV\braveheart_batch_windows\for_redistribution" preferred-package-type="package.type.exe" target="target.ezdeploy.standalone" target-name="Application Compiler">
+  <configuration build-checksum="3923539073" file="C:\Users\jwaks\Documents\GitHub\BRAVEHEART_DEV\braveheart_batch_windows.prj" location="C:\Users\jwaks\Documents\GitHub\BRAVEHEART_DEV" name="braveheart_batch_windows" preferred-package-location="C:\Users\jwaks\Documents\GitHub\BRAVEHEART_DEV\braveheart_batch_windows\for_redistribution" preferred-package-type="package.type.exe" target="target.ezdeploy.standalone" target-name="Application Compiler">
     <param.appname>braveheart_batch</param.appname>
     <param.icon>${PROJECT_ROOT}\braveheart_batch_windows_resources\icon.ico</param.icon>
     <param.icons>
@@ -8,13 +8,13 @@
       <file>${PROJECT_ROOT}\braveheart_batch_windows_resources\icon_24.png</file>
       <file>${PROJECT_ROOT}\braveheart_batch_windows_resources\icon_16.png</file>
     </param.icons>
-    <param.version>1.6.0</param.version>
+    <param.version>1.6.1</param.version>
     <param.authnamewatermark>Hans F. Stabenau and Jonathan W. Waks</param.authnamewatermark>
     <param.email>braveheart.ecg@gmail.com</param.email>
     <param.company />
     <param.summary />
     <param.description>BRAVHEART ECG/VCG Analysis Software -- Command Line Version
-Version 1.6.0</param.description>
+Version 1.6.1</param.description>
     <param.screenshot>${PROJECT_ROOT}\braveheart_splash.png</param.screenshot>
     <param.guid />
     <param.installpath.string>\braveheart_batch\</param.installpath.string>
@@ -50,7 +50,7 @@ Version 1.6.0</param.description>
 	 varargin  input arguments 
  Description 
  	 BRAVHEART ECG/VCG Analysis Software -- Command Line Version
-Version 1.6.0</param.help.text>
+Version 1.6.1</param.help.text>
     <unset>
       <param.company />
       <param.summary />
@@ -82,6 +82,7 @@ Version 1.6.0</param.help.text>
       <file>${PROJECT_ROOT}\braveheart_batch.m</file>
     </fileset.main>
     <fileset.resources>
+      <file>${PROJECT_ROOT}\azel2xyz.m</file>
       <file>${PROJECT_ROOT}\batch_convert.m</file>
       <file>${PROJECT_ROOT}\biosig_str2double.m</file>
       <file>${PROJECT_ROOT}\ecg_axis.m</file>
@@ -106,6 +107,7 @@ Version 1.6.0</param.help.text>
       <file>${PROJECT_ROOT}\load_physionet_dat.m</file>
       <file>${PROJECT_ROOT}\load_schillerxml.m</file>
       <file>${PROJECT_ROOT}\load_scpecg.m</file>
+      <file>${PROJECT_ROOT}\loop_rotation_dir.m</file>
       <file>${PROJECT_ROOT}\open_ext_pdf.m</file>
       <file>${PROJECT_ROOT}\parse_claris_txt.m</file>
       <file>${PROJECT_ROOT}\physicalunits.m</file>
@@ -116,6 +118,7 @@ Version 1.6.0</param.help.text>
       <file>${PROJECT_ROOT}\sopen.m</file>
       <file>${PROJECT_ROOT}\svd_twave.m</file>
       <file>${PROJECT_ROOT}\wavelet_find_spikes.m</file>
+      <file>${PROJECT_ROOT}\xyz2azel.m</file>
     </fileset.resources>
     <fileset.package>
       <file>${PROJECT_ROOT}\Annoparams.csv</file>

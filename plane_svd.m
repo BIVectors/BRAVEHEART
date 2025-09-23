@@ -49,6 +49,22 @@ s = svd(XYZ);   % simplifies storage of singular values
 % B = -b/c
 % C = (N dot cent)/c
 
+
+% Deal with sign ambiguity in V
+% Enforce Z componant of N to be negative (facing anterior)
+if V(3,3) > 0
+   V(:,3) = -V(:,3) ;
+end
+
+% Enforce X componant of N to be postive (facing left)
+if V(1,1) < 0
+   V(:,1) = -V(:,1) ;
+end
+
+% Enforce right handed coordinate system
+V(:,2) = cross(V(:,3), V(:,1));
+
+
 % Normal vector and componants N = [a,b,c]
 N = V(:,3);
 a = N(1);

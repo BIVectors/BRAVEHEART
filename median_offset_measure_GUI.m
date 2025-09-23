@@ -91,8 +91,11 @@ ylim( [ min( [min(vcg.VM) min(vcg_noshift.VM)]) max( [max(vcg.VM) max(vcg_noshif
 hold off
 legend('Uncorrected VM','Corrected VM','Location','northeast')
 
-% Increase font size on mac due to pc/mac font differences
-    if ismac
+% Increase font size on mac due to pc/mac font differences if version prior to R2025a
+currentVersion = char(matlabRelease.Release);
+currentVersion = str2double(currentVersion(2:5));
+
+    if ismac && currentVersion < 2025
         fontsize(gcf,scale=1.25)
     end
 
@@ -117,8 +120,11 @@ if ~get(handles.baseline_correct_checkbox,'Value')
     msgbox('Baseline Correction Off', 'Baseline Offsets','help'); 
 end
 
-% Increase font size on mac due to pc/mac font differences
-    if ismac
+% Increase font size on mac due to pc/mac font differences if version prior to R2025a
+currentVersion = char(matlabRelease.Release);
+currentVersion = str2double(currentVersion(2:5));
+
+    if ismac && currentVersion < 2025
         fontsize(gcf,scale=1.25)
     end
 

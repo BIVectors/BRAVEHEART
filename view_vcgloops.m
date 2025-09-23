@@ -22,21 +22,37 @@
 
 function view_vcgloops(vcg, fp, filename, save_folder, save_flag, colors)
 
+% Calculate directions of loops
+[xy_area_direction, ~] = loop_rotation_dir(vcg.X(fp.Q:fp.S), vcg.Y(fp.Q:fp.S), vcg.Z(fp.Q:fp.S), [0 0 -1], [1 0 0], [0 -1 0], 0.1);
+
+% Transverse plane (XZ) viewed from below with back facing down
+[xz_area_direction, ~] = loop_rotation_dir(vcg.X(fp.Q:fp.S), vcg.Y(fp.Q:fp.S), vcg.Z(fp.Q:fp.S), [0 -1 0], [1 0 0], [0 0 -1], 0.1);
+
+% Frontal plane (XY) viewed from front
+[yz_area_direction, ~] = loop_rotation_dir(vcg.X(fp.Q:fp.S), vcg.Y(fp.Q:fp.S), vcg.Z(fp.Q:fp.S), [1 0 0], [0 0 1], [0 -1 0], 0.1);
+
+
 % fp = fiducial points of median beat
 
 vcgloop_fig = figure('name','Median VCG Loops','numbertitle','off','Color',colors.bgcolor, 'SizeChangedFcn',{@move_button});
-set(gcf, 'Position', [0, 0, 1000 800])  % set figure size
+set(gcf, 'Position', [0, 0, 1300 800])  % set figure size
 set(vcgloop_fig,'PaperSize',[8.5 11]); %set the paper size to what you want  
 sgtitle('Median VCG Loops','fontweight','bold', 'color', colors.txtcolor)
 
 % Save button
 save_filename = fullfile(save_folder,strcat(filename(1:end-4),'_vcg_loops.png'));
 savebutton = uicontrol('Parent',vcgloop_fig,'Style','pushbutton','String','Save .png','Units','pixels','BackgroundColor',colors.buttoncolor,...
-   'FontWeight','bold', 'ForegroundColor',colors.txtcolor,'Position',[900 760 80 30],'Visible','on','Callback',{@save_fig_from_button, save_filename});
+   'FontWeight','bold', 'ForegroundColor',colors.txtcolor,'Position',[1200 760 80 30],'Visible','on','Callback',{@save_fig_from_button, save_filename});
+
+% Progression colormap toggle button
+colorbutton = uicontrol('Parent',vcgloop_fig,'Style','pushbutton','String','Toggle Color','Units','pixels','BackgroundColor',colors.buttoncolor,...
+   'FontWeight','bold', 'ForegroundColor',colors.txtcolor,'Position',[1200 720 80 30],'Visible','on','Callback', @(src,evt) toggleColors());
 
 dx = 3;
 dy = 2;
 gr = 0.25;  % Grid size
+
+colordotsize = 40;
 
 X = vcg.X(fp.Q:fp.Tend);
 Y = vcg.Y(fp.Q:fp.Tend);
@@ -44,16 +60,15 @@ Z = vcg.Z(fp.Q:fp.Tend);
 
 subplot(dy,dx,1)
 hold on
-%scatter3(vcg.X, vcg.Y, vcg.Z, 14, 'filled')
-plot3(X, Y, Z,'-o','Color','#0072BD','MarkerSize',3,'MarkerFaceColor','#0072BD', 'linewidth',1.75, 'Color', colors.xyzecg)
-plot3(X(1),Y(1),Z(1),'-o','Color','k','MarkerSize',5,'MarkerFaceColor','k', 'linewidth',1.75, 'Color', colors.xyzecg)
-plot3(X(end),Y(end),Z(end),'-o','Color','r','MarkerSize',5,'MarkerFaceColor','r', 'linewidth',1.75, 'Color', colors.xyzecg)
-plot3(X(fp.S-fp.Q),Y(fp.S-fp.Q),Z(fp.S-fp.Q),'-o','Color','[0 0.702 0]','MarkerSize',5,'MarkerFaceColor','[0 0.702 0]', 'linewidth',1.75, 'Color', colors.xyzecg)
+plot3(X, Y, Z,'-o','MarkerSize',3,'MarkerFaceColor','#0072BD', 'linewidth',1.75, 'Color', colors.xyzecg)
+scatter3(X(1),Y(1),Z(1),60,'filled','MarkerEdgeColor','k','MarkerFaceColor','k')
+scatter3(X(end),Y(end),Z(end),60,'filled','MarkerEdgeColor','r','MarkerFaceColor','r')
+scatter3(X(fp.S-fp.Q),Y(fp.S-fp.Q),Z(fp.S-fp.Q),60,'filled','MarkerEdgeColor','[0 0.702 0]','MarkerFaceColor','[0 0.702 0]')
 view ([0 0 1]); % XY
 xlabel('X (mV)','FontWeight','bold','FontSize',9, 'Color', colors.txtcolor);
 ylabel('Y (mV)','FontWeight','bold','FontSize',9, 'Color', colors.txtcolor);
 set (gca,'Ydir','reverse');
-title('Frontal', 'Color', colors.txtcolor)
+title(sprintf('Frontal - %s QRS Rotation',xy_area_direction), 'Color', colors.txtcolor)
 set(gca,'DataAspectRatio',[1 1 1])
 set(gca,'xtick',[(floor(min(X)*2)/2):gr:(ceil(max(X)*4)/4)])
 set(gca,'ytick',[(floor(min(Y)*2)/2):gr:(ceil(max(Y)*4)/4)])
@@ -64,19 +79,34 @@ set(gca,'ZColor', colors.txtcolor)
 xlim([(floor(min(X)*4)/4) (ceil(max(X)*4)/4)])
 ylim([(floor(min(Y)*4)/4) (ceil(max(Y)*4)/4)])
 grid on
+
+% Color points in order
+% Use only part of the colormap to get more dramatic differences
+n_points = min(length(X), fp.S-fp.Q);
+color_indices = round(linspace(1, 256, n_points)); 
+hcolor1 = scatter3(X(1:n_points), Y(1:n_points), Z(1:n_points), colordotsize, color_indices, 'filled', 'MarkerEdgeColor', 'k');
+
+% Add reference lines
+xl = xlim; 
+zl = zlim;
+yl = ylim;
+plot3([0 0], [0 0], zl, 'k--', 'LineWidth', 1);  % Vertical line at x=0
+plot3([0 0], yl, [0 0], 'k--', 'LineWidth', 1);  % Vertical line at y=0
+plot3(xl, [0 0], [0 0], 'k--', 'LineWidth', 1);  % Horizontal line at z=0
+
 hold off
 
 
 subplot(dy,dx,2)
 hold on
-plot3(X, Y, Z,'-o','Color','#0072BD','MarkerSize',3,'MarkerFaceColor','#0072BD', 'linewidth',1.75, 'Color', colors.xyzecg)
-plot3(X(1),Y(1),Z(1),'-o','Color','k','MarkerSize',5,'MarkerFaceColor','k', 'linewidth',1.75, 'Color', colors.xyzecg)
-plot3(X(end),Y(end),Z(end),'-o','Color','r','MarkerSize',5,'MarkerFaceColor','r', 'linewidth',1.75, 'Color', colors.xyzecg)
-plot3(X(fp.S-fp.Q),Y(fp.S-fp.Q),Z(fp.S-fp.Q),'-o','Color','[0 0.702 0]','MarkerSize',5,'MarkerFaceColor','[0 0.702 0]', 'linewidth',1.75, 'Color', colors.xyzecg)
+plot3(X, Y, Z,'-o','MarkerSize',3,'MarkerFaceColor','#0072BD', 'linewidth',1.75, 'Color', colors.xyzecg)
+scatter3(X(1),Y(1),Z(1),60,'filled','MarkerEdgeColor','k','MarkerFaceColor','k')
+scatter3(X(end),Y(end),Z(end),60,'filled','MarkerEdgeColor','r','MarkerFaceColor','r')
+scatter3(X(fp.S-fp.Q),Y(fp.S-fp.Q),Z(fp.S-fp.Q),60,'filled','MarkerEdgeColor','[0 0.702 0]','MarkerFaceColor','[0 0.702 0]')
 view ([0 -1 0]); % XZ
 xlabel('X (mV)','FontWeight','bold','FontSize',9, 'Color', colors.txtcolor);
 zlabel('Z (mV)','FontWeight','bold','FontSize',9, 'Color', colors.txtcolor);
-title('Transverse', 'Color', colors.txtcolor)
+title(sprintf('Transverse - %s QRS Rotation',xz_area_direction), 'Color', colors.txtcolor)
 set (gca,'Zdir','reverse');
 set(gca,'DataAspectRatio',[1 1 1])
 set(gca,'xtick',[(floor(min(X)*2)/2):gr:(ceil(max(X)*4)/4)])
@@ -88,19 +118,35 @@ set(gca,'ZColor', colors.txtcolor)
 xlim([(floor(min(X)*4)/4) (ceil(max(X)*4)/4)])
 zlim([(floor(min(Z)*4)/4) (ceil(max(Z)*4)/4)])
 grid on
+
+% Color points in order
+n_points = min(length(X), fp.S-fp.Q);
+color_indices = round(linspace(1, 256, n_points)); 
+hcolor2 = scatter3(X(1:n_points), Y(1:n_points), Z(1:n_points), colordotsize, color_indices, 'filled', 'MarkerEdgeColor', 'k');
+
+grid on
+
+% Add reference lines
+xl = xlim; 
+zl = zlim;
+yl = ylim;
+plot3([0 0], [0 0], zl, 'k--', 'LineWidth', 1);  % Vertical line at x=0
+plot3([0 0], yl, [0 0], 'k--', 'LineWidth', 1);  % Vertical line at y=0
+plot3(xl, [0 0], [0 0], 'k--', 'LineWidth', 1);  % Horizontal line at z=0
+
 hold off
 
 
 subplot(dy,dx,3)
 hold on
-plot3(vcg.X, vcg.Z, vcg.Y,'-o','Color','#0072BD','MarkerSize',3,'MarkerFaceColor','#0072BD', 'linewidth',1.75, 'Color', colors.xyzecg) % Swap Y and Z
-plot3(X(1),Z(1),Y(1),'-o','Color','k','MarkerSize',5,'MarkerFaceColor','k', 'linewidth',1.75, 'Color', colors.xyzecg)
-plot3(X(end),Z(end),Y(end),'-o','Color','r','MarkerSize',5,'MarkerFaceColor','r', 'linewidth',1.75, 'Color', colors.xyzecg)
-plot3(X(fp.S-fp.Q),Z(fp.S-fp.Q),Y(fp.S-fp.Q),'-o','Color','[0 0.702 0]','MarkerSize',5,'MarkerFaceColor','[0 0.702 0]', 'linewidth',1.75, 'Color', colors.xyzecg)
+plot3(vcg.X, vcg.Z, vcg.Y,'-o','MarkerSize',3,'MarkerFaceColor','#0072BD', 'linewidth',1.75, 'Color', colors.xyzecg) % Swap Y and Z
+scatter3(X(1),Z(1),Y(1),60,'filled','MarkerEdgeColor','k','MarkerFaceColor','k')
+scatter3(X(end),Z(end),Y(end),60,'filled','MarkerEdgeColor','r','MarkerFaceColor','r')
+scatter3(X(fp.S-fp.Q),Z(fp.S-fp.Q),Y(fp.S-fp.Q),60,'filled','MarkerEdgeColor','[0 0.702 0]','MarkerFaceColor','[0 0.702 0]')
 ylabel('Z (mV)','FontWeight','bold','FontSize',9, 'Color', colors.txtcolor);
 zlabel('Y (mV)','FontWeight','bold','FontSize',9, 'Color', colors.txtcolor);
 xlabel('X (mV)','FontWeight','bold','FontSize',9, 'Color', colors.txtcolor);
-title('Left Sagital', 'Color', colors.txtcolor);
+title(sprintf('Left Sagital - %s QRS Rotation',yz_area_direction), 'Color', colors.txtcolor);
 set (gca,'Zdir','reverse');
 set (gca,'Ydir','reverse');
 set(gca,'Color', colors.bgfigcolor)
@@ -114,8 +160,31 @@ set(gca,'ztick',[(floor(min(Y)*2)/2):gr:(ceil(max(Y)*4)/4)]) % Swap Y and Z
 ylim([(floor(min(Z)*4)/4) (ceil(max(Z)*4)/4)]) % Swap Y and Z
 zlim([(floor(min(Y)*4)/4) (ceil(max(Y)*4)/4)]) % Swap Y and Z
 grid on
+
+% Color points in order
+n_points = min(length(X), fp.S-fp.Q);
+color_indices = round(linspace(1, 256, n_points)); 
+hcolor3 = scatter3(X(1:n_points), Z(1:n_points), Y(1:n_points), colordotsize, color_indices, 'filled', 'MarkerEdgeColor', 'k');
+
+grid on
+
+% Add reference lines
+xl = xlim; 
+zl = zlim;
+yl = ylim;
+plot3([0 0], [0 0], zl, 'k--', 'LineWidth', 1);  % Vertical line at x=0
+plot3([0 0], yl, [0 0], 'k--', 'LineWidth', 1);  % Vertical line at y=0
+plot3(xl, [0 0], [0 0], 'k--', 'LineWidth', 1);  % Horizontal line at z=0
 hold off
 
+% Show colormap
+colormap(flipud(jet(256)));
+
+% Assign color map plots to button data
+colorbutton.UserData = [hcolor1, hcolor2, hcolor3];
+
+
+% Median Beats
 subplot(dy,dx,4)
 plot(vcg.X,'linewidth',1.75,'Color',colors.xyzecg)
 title('Median X', 'Color', colors.txtcolor);
@@ -131,6 +200,7 @@ set(gca,'YColor', colors.txtcolor)
 set(gca,'ZColor', colors.txtcolor)
 ylabel('mV','FontWeight','bold','FontSize',9, 'Color', colors.txtcolor);
 xlabel('Samples','FontWeight','bold','FontSize',9, 'Color', colors.txtcolor);
+grid on
 hold off
 
 subplot(dy,dx,5)
@@ -148,6 +218,7 @@ set(gca,'YColor', colors.txtcolor)
 set(gca,'ZColor', colors.txtcolor)
 ylabel('mV','FontWeight','bold','FontSize',9, 'Color', colors.txtcolor);
 xlabel('Samples','FontWeight','bold','FontSize',9, 'Color', colors.txtcolor);
+grid on
 hold off
 
 subplot(dy,dx,6)
@@ -167,6 +238,7 @@ set(gca,'YColor', colors.txtcolor)
 set(gca,'ZColor', colors.txtcolor)
 ylabel('mV','FontWeight','bold','FontSize',9, 'Color', colors.txtcolor);
 xlabel('Samples','FontWeight','bold','FontSize',9, 'Color', colors.txtcolor);
+grid on
 hold off
 
 
@@ -180,10 +252,14 @@ InSet(4) = InSet(4)+0.015;
 set(gca, 'Position', [InSet(1:2), 1-InSet(1)-InSet(3), 1-InSet(2)-InSet(4)]);
 set(gcf, 'InvertHardCopy', 'off');
 
-% Increase font size on mac due to pc/mac font differences
-if ismac
+% Increase font size on mac due to pc/mac font differences if version prior to R2025a
+currentVersion = char(matlabRelease.Release);
+currentVersion = str2double(currentVersion(2:5));
+
+if ismac && currentVersion < 2025
     fontsize(gcf,scale=1.25)
     savebutton.FontSize = 10;
+    colorbutton.FontSize = 10;
 end
 
 
@@ -199,4 +275,19 @@ end
 
 end
 
+
+% Toggle Colormap function
+function toggleColors()
+    btn = gcbo;  % Get the button that was clicked
+    cmaps = btn.UserData;
+    
+    % Check current visibility state
+    if strcmp(cmaps(1).Visible, 'on')
+        % Hide colored points
+        set(cmaps, 'Visible', 'off');
+    else
+        % Show colored points
+        set(cmaps, 'Visible', 'on');
+    end
+end
 

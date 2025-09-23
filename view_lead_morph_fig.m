@@ -229,8 +229,11 @@ sgtitle(strcat("Median Beat Morphology - ", filename(1:end-4)),'interpreter','no
 set(gcf, 'Position', [0,0, 1600, 1000])  % set figure size
 
 
-% Increase font size on mac due to pc/mac font differences
-if ismac
+% Increase font size on mac due to pc/mac font differences if version prior to R2025a
+currentVersion = char(matlabRelease.Release);
+currentVersion = str2double(currentVersion(2:5));
+
+if ismac && currentVersion < 2025
     fontsize(gcf,scale=1.25)
 end
 
@@ -273,8 +276,11 @@ ylabel('mV', 'color', colors.txtcolor)
 
 set(gca,'Color', colors.bgfigcolor);
 
-% Increase font size on mac due to pc/mac font differences
-if ismac
+% Increase font size on mac due to pc/mac font differences if version prior to R2025a
+currentVersion = char(matlabRelease.Release);
+currentVersion = str2double(currentVersion(2:5));
+
+if ismac && currentVersion < 2025
     fontsize(gcf,scale=1.25)
     savebutton.FontSize = 10;
     scalebutton.FontSize = 10;

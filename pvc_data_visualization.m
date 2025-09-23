@@ -189,9 +189,11 @@ xlim([0 N+1])
 xticks(1:1:N)
 
 set(gcf, 'Position', [200, 100, 900, 1000])  % set figure size
+% Increase font size on mac due to pc/mac font differences if version prior to R2025a
+currentVersion = char(matlabRelease.Release);
+currentVersion = str2double(currentVersion(2:5));
 
-% Increase font size on mac due to pc/mac font differences
-    if ismac
+    if ismac && currentVersion < 2025
         fontsize(gcf,scale=1.25)
     end
 

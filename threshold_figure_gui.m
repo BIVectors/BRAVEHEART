@@ -98,10 +98,14 @@ legend([p_green p_line p_dot_red p_area_red p_dot_blue p_area_blue p_area_overla
     {p_green_txt, p_line_txt,'Odd R Peak','Window Around Odd R Peaks','Even R Peak','Window Around Even R Peaks', 'Window Overlap'}, ...
     'location','eastoutside','fontsize',12);
 
-% Increase font size on mac due to pc/mac font differences
-    if ismac
+% Increase font size on mac due to pc/mac font differences if version prior to R2025a
+currentVersion = char(matlabRelease.Release);
+currentVersion = str2double(currentVersion(2:5));
+
+    if ismac && currentVersion < 2025
         fontsize(gcf,scale=1.25)
     end
+    
 hold off
 
 
@@ -153,10 +157,14 @@ legend([ecg_grey p_vm_filt p_green_filt p_line_filt p_dot_black p_dot_red p_area
     'location','eastoutside','fontsize',12);
 
 
-% Increase font size on mac due to pc/mac font differences
-    if ismac
+% Increase font size on mac due to pc/mac font differences if version prior to R2025a
+currentVersion = char(matlabRelease.Release);
+currentVersion = str2double(currentVersion(2:5));
+
+    if ismac && currentVersion < 2025
         fontsize(gcf,scale=1.25)
     end
+
 hold off
 
 
