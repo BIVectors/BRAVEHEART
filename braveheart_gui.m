@@ -1750,7 +1750,7 @@ result = AnnoResult(results);
 
 % Append to existing file if file already exists
 if isfile(excelfilename)
-f = readcell(char(excelfilename));
+f = readcell(char(excelfilename),'DatetimeType', 'text');
 missingind = cellfun(@(x) all(ismissing(x)), f); % took me a long time to figure that out!
 f(missingind) = {''}; % you can't writecell() on a cell array with missing values; has to be empty array instead
 f = [f ; a];
@@ -4493,7 +4493,43 @@ ecg_filename = handles.filename;
 
 aps = handles.aps;
 
+% Misc additions
+basename = handles.filename;
+source_str = handles.source_str;
+corr = handles.correlation_test;
+noise = handles.noise;
+hr = handles.hr;
+num_initial_beats = handles.num_initial_beats;
 quality = handles.quality;
+
+% Create an AnnoResult class object
+i = 1;  % Deal with issue in how AnnoResult handles single ecgs outide of batch. HFS: don't change!
+results{i} = AnnoResult(basename, '', source_str, aps, ecg, hr, num_initial_beats, beats, ...
+    beat_stats, corr, noise, quality.prob_value, quality.missing_lead, lead_ispaced, geh, ...
+    lead_morph, vcg_morph);
+	
+% Choose the relevant parts of AnnoResult to avoid duplication
+% of data in output files.  Will copy results{i} which is the
+% AnnoResult data into a new variable 'ar' for manipulation
+
+warning('off', 'MATLAB:structOnObject');        % Turn off warning as this is intentional
+ar = struct(results{i});
+warning('on', 'MATLAB:structOnObject');
+% Remove the data that is already in other parts of the output
+% file so we can see just the remaining misc data
+ar = rmfield(ar, {'geh', 'vcg_morph', 'lead_morph', 'ap', 'beat_stats', 'beats', 'filename'});
+
+% Reformat so can export without errors
+ar_fields = fieldnames(ar);
+for cc = 1:length(ar_fields)
+    ff = ar_fields{cc};
+    if iscell(ar.(ff)) && numel(ar.(ff)) == 1
+            ar.(ff) = ar.(ff){1};
+    end
+    if isempty(ar.(ff))
+            ar.(ff) = [];  % Convert empty string to []
+    end
+end
 
 data = struct( ...
     'filename',ecg_filename, ...
@@ -4507,7 +4543,7 @@ data = struct( ...
     'lead_ispaced', lead_ispaced, ...
     'beats', beats, ...
     'beat_stats', beat_stats, ...
-    'geh', geh, ...
+    'vcg_calc', geh, ...
     'median_vcg', median_vcg, ...
     'median_12L', median_12L, ...
     'medianbeat', medianbeat, ...
@@ -4515,7 +4551,8 @@ data = struct( ...
     'beats_median_12L', beatsig_12L, ...
     'lead_morph', lead_morph, ...
     'vcg_morph', vcg_morph, ...
-    'quality', quality);
+    'quality', quality, ...
+    'misc', ar);
 
 save(export_filename,'data');
 
@@ -4925,6 +4962,7 @@ if isfield(handles,'lead_morph')
     median_vcg = handles.median_vcg;
     medianbeat = handles.medianbeat;
     lead_morph = handles.lead_morph;
+    geh = handles.geh;
     save = 0;
     
     % Get colors based on if in light/dark mode
@@ -4936,7 +4974,7 @@ if isfield(handles,'lead_morph')
         colors = light_colors;
     end
 
-    view_lead_morph_fig(median_12L, median_vcg, medianbeat, lead_morph, save, filename, save_folder, colors)
+    view_lead_morph_fig(median_12L, median_vcg, medianbeat, lead_morph, geh, save, filename, save_folder, colors)
 
 end
 

@@ -22,26 +22,12 @@
 
 function [is_dark, dark_colors, light_colors] = check_darkmode(handles)
 
-% Checks if GUI background is normal gray color
-% If not, assumes in dark mode
-% This is important for figure saving
+% Set colors here as MATLAB RGB triplets range 0-1 for 0-255 (NOT hex codes)
 
 % Initialize color structures
 % Easier to adjust colors for other aspects of the GUI this way
 dark_colors = struct;
 light_colors = struct;
-
-% Get all objects in the GUI
-A = findobj;
-
-% Get current color of GUI to see if in darkmode or lightmode
-if isequal(A(1).Children.Color, [0.94 0.94 0.94])
-    is_dark = 0;
-else
-    is_dark = 1;
-end
-    
-% Set colors here as MATLAB RGB triplets range 0-1 for 0-255 (NOT hex codes)
 
 % Colors to use after change of color mode to LIGHT MODE
 light_colors.bgcolor = [0.94 0.94 0.94];                % Background of GUI
@@ -67,6 +53,20 @@ dark_colors.bluetxtcolor = [0.18 0.56 1];
 dark_colors.pvcmarker = [0.9 0.9 0.9];
 dark_colors.outliermarker = [0 0.91 1];   
 
+% Checks if GUI background is normal gray color
+% If not, assumes in dark mode
+% This is important for figure saving
+
+% Get all objects in the GUI
+A = findobj;
+
+    % Get current color of GUI to see if in darkmode or lightmode
+    if isequal(A(1).Children(1).Color, light_colors.bgcolor)
+        is_dark = 0;
+    else
+        is_dark = 1;
+    end
+        
 end
 
 

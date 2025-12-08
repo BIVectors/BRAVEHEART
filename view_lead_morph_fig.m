@@ -20,7 +20,7 @@
 % This software is for research purposes only and is not intended to diagnose or treat any disease.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function view_lead_morph_fig(median_12L, median_vcg, medianbeat, lead_morph, save, filename, save_folder, colors)
+function view_lead_morph_fig(median_12L, median_vcg, medianbeat, lead_morph, geh, save, filename, save_folder, colors)
 
 % List of lead names to help streamline code
 lead = [{'L1'} {'L2'} {'L3'} {'avF'} {'avL'} {'avR'} {'V1'} {'V2'} {'V3'} {'V4'} {'V5'} {'V6'} {'X'} {'Y'} {'Z'} {'VM'}];
@@ -91,8 +91,8 @@ for i = 1:16
     % Find index of [lead]_r_wave - this also finds [lead]_s_wave (index+1) and [lead]_rs_wave (index+2)
     idx = find(contains(fn_m, lead{i}+"_r_wave"));
         r_idx = idx(1);           % [lead]_r_wave
-        s_idx = idx(1) + 1;       % [lead]_s_wave
-        rs_idx = idx(1) + 2;      % [lead]_rs_wave
+        s_idx = idx(1) + 2;       % [lead]_s_wave
+        rs_idx = idx(1) + 4;      % [lead]_rs_wave
 
         r_vals(i) = m.(fn_m{r_idx});
         s_vals(i) = m.(fn_m{s_idx});
@@ -338,11 +338,14 @@ elseif m.qrs_frontal_axis > 90
 end
 
 set(gca,'Color', colors.bgfigcolor);
-
+set(gcf, 'Position', [200,200, 700, 500])  % set figure size
 title(sprintf("QRS Axis = %3.0f° -- %s",m.qrs_frontal_axis, ax_str), 'color', colors.txtcolor)
 
-end
 
+% UITable of values
+lead_morph_uitable(lead_morph, geh, filename);
+
+end
 
 
 % Helper function to rescale the Y axes so leads are all set to same scale
@@ -456,8 +459,8 @@ for i = 1:16
     % Find index of [lead]_r_wave - this also finds [lead]_s_wave (index+1) and [lead]_rs_wave (index+2)
     idx = find(contains(fn_m, lead{i}+"_r_wave"));
         r_idx = idx(1);           % [lead]_r_wave
-        s_idx = idx(1) + 1;       % [lead]_s_wave
-        rs_idx = idx(1) + 2;      % [lead]_rs_wave
+        s_idx = idx(1) + 2;       % [lead]_s_wave
+        rs_idx = idx(1) + 4;      % [lead]_rs_wave
 
         r_vals(i) = m.(fn_m{r_idx});
         s_vals(i) = m.(fn_m{s_idx});

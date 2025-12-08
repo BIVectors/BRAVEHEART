@@ -173,6 +173,10 @@ classdef ECG12
                     case 'mfer'
                         [obj.hz, obj.I, obj.II, obj.III, obj.avR, obj.avF, obj.avL, ...
                             obj.V1, obj.V2, obj.V3, obj.V4, obj.V5, obj.V6] = load_mfer(filename); 
+
+                    case 'zoncare_xml'
+                        [obj.hz, obj.I, obj.II, obj.III, obj.avR, obj.avF, obj.avL, ...
+                            obj.V1, obj.V2, obj.V3, obj.V4, obj.V5, obj.V6] = load_zoncarexml(filename);     
 					
                     otherwise
                         error('unknown format %s', format);

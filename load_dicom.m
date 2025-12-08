@@ -26,6 +26,21 @@ function [hz, I, II, III, avR, avF, avL, V1, V2, V3, V4, V5, V6] = ...
 % Load DICOM file
 D = dicominfo(filename);
 
+% Check that is a DICOM with ECG waveforms and not an image DICOM or some other DICOM format
+validECGClasses = {
+'1.2.840.10008.5.1.4.1.1.9.1.1',  % 12-Lead ECG Waveform Storage
+'1.2.840.10008.5.1.4.1.1.9.1.2',  % General ECG Waveform Storage
+'1.2.840.10008.5.1.4.1.1.9.1.3'   % Ambulatory ECG Waveform Storage
+};
+
+% Check if it's a valid ECG waveform class
+    if ~any(strcmp(D.SOPClassUID, validECGClasses))
+        error('load_dicom:InvalidSOPClass', ...
+              ['load_dicom: Unsupported SOP Class UID: %s\n' ...
+               'This does not appear to be an ECG Waveform Storage format DICOM file.'], ...
+              D.SOPClassUID);
+    end
+
 % Pull out waveform part of DICOM and the field names in that part of DICOM
 ws_fn = fieldnames(D.WaveformSequence);
 
@@ -36,7 +51,7 @@ len_ws_fn = length(ws_fn);
 itemN = 0;
 
 % Only take the RHYTHM data, although could modify to get other types of waveforms if needed
-for i = 1:length(len_ws_fn)
+for i = 1:len_ws_fn
 
     if strcmp(string(D.WaveformSequence.(ws_fn{i}).MultiplexGroupLabel),"RHYTHM")
         itemN = i;
@@ -46,7 +61,7 @@ end
 
 % Check that found a RHYTHM waveform
 if itemN == 0
-    error('load_dicom.m: Didnt find a RHYTHM WaveformSequence')
+    error('load_dicom.m: Did not find a RHYTHM WaveformSequence')
 end
 
 % Choose the RHYTHM Waveforms
@@ -55,23 +70,40 @@ waveform = ws.WaveformData;
 
 % Sample frequency
 hz = ws.SamplingFrequency;
-num_leads = int32(ws.NumberOfWaveformChannels);
-num_samples = int32(ws.NumberOfWaveformSamples);
+num_leads = double(ws.NumberOfWaveformChannels);
+num_samples = double(ws.NumberOfWaveformSamples);
 
 % Details on each of the 12 leads
 ch_def = ws.ChannelDefinitionSequence;
 ch_def_fn = fieldnames(ch_def);
 
-mcv_perunit = zeros(1,num_leads);   % MICROVOLTS (convert to millivolts later)
+sensitivity = zeros(1,num_leads);   % MICROVOLTS (convert to millivolts later)
 baseline = zeros(1,num_leads);
 correction = zeros(1,num_leads);
+lead_str = strings(1,num_leads);
+unit_str = strings(1,num_leads);
+unitspermv = zeros(1,num_leads);
 
 % obtain data on each lead
 for i = 1:num_leads
-    mcv_perunit(i) = ch_def.(ch_def_fn{i}).ChannelSensitivity;
+    sensitivity(i) = ch_def.(ch_def_fn{i}).ChannelSensitivity;
     baseline(i) = ch_def.(ch_def_fn{i}).ChannelBaseline;
     correction(i) = ch_def.(ch_def_fn{i}).ChannelSensitivityCorrectionFactor;
-    lead_str{i} = ch_def.(ch_def_fn{i}).ChannelSourceSequence.Item_1.CodeMeaning;
+    lead_str(i) = ch_def.(ch_def_fn{i}).ChannelSourceSequence.Item_1.CodeMeaning;
+    unit_str(i) = ch_def.(ch_def_fn{i}).ChannelSensitivityUnitsSequence.Item_1.CodeValue;
+
+end
+
+% Pull out units needed to convert to mV at end
+for i = 1:num_leads
+switch unit_str(i)
+    case "uV"
+        unitspermv(i) = 1000;
+    case "mV"
+        unitspermv(i) = 1;
+    otherwise
+        error('load_dicom.m: Did not find signal units')
+end
 end
 
 % Convert into int16 based on whatever encoding DICOM using
@@ -85,48 +117,55 @@ elseif strcmp(E, 'uint8')
     % Convert uint8 to int16
     fullsignal = double(typecast(uint8(waveform), 'int16'));
 elseif strcmp(E, 'int16')
-    fullsignal = waveform;
+    fullsignal = double(waveform);
 else
     error('Check WaveformSequence.Item_N.WaveformData encoding - may need to add current encoding to load_dicom.m')
 end
 
-% get each lead out of the singla waveform
+% get each lead out of the signal waveform
 L = zeros(num_leads, num_samples);
+L = reshape(fullsignal,num_leads,[]);
+
+% L is now the raw waveform data in ADC units
+
+% Calculate the scaling factor to get ADC units into mV
+% Note that in most cases ADC units are microvolts
+scaling_factor = (sensitivity./correction) ./ unitspermv;
+
+% To get data in mV substract the baseline and then multiply by scaling factor.
+L_mv = (L - baseline') .* scaling_factor'; 
+
+% Signal is now in MILLIVOLTS
 
 for s = 1:num_leads
-    for i = 1:num_samples  
-        L(s,i) = (((fullsignal(s + (12*(i-1)))) + baseline(s)) * (mcv_perunit(s)/1000 * correction(s))); 
-    end
     % Read lead_str to determine which lead it is
     % Now will not break if the lead labels are not exactly "Lead x"
     % But to avoid missing lead II and III had to change order of cases
     switch true
-        case strfind(string(lead_str(s)),'Lead III') == 1
-              III = L(s,:);
-        case strfind(string(lead_str(s)),'Lead II') == 1
-              II = L(s,:);
-        case strfind(string(lead_str(s)),'Lead I') == 1
-              I = L(s,:);
-        case strfind(string(lead_str(s)),'Lead aVR') == 1
-              avR = L(s,:);
-        case strfind(string(lead_str(s)),'Lead aVL') == 1
-              avL = L(s,:);
-        case strfind(string(lead_str(s)),'Lead aVF') == 1
-              avF = L(s,:);
+        case ~isempty(regexpi(char(lead_str(s)), '(^|[^A-Za-z0-9])iii([^A-Za-z0-9]|$)', 'match'))
+              III = L_mv(s,:);
+        case ~isempty(regexpi(char(lead_str(s)), '(^|[^A-Za-z0-9])ii([^A-Za-z0-9]|$)', 'match'))
+              II = L_mv(s,:);
+        case ~isempty(regexpi(char(lead_str(s)), '(^|[^A-Za-z0-9])i([^A-Za-z0-9]|$)', 'match'))
+              I = L_mv(s,:);
+        case ~isempty(regexpi(char(lead_str(s)), '(^|[^A-Za-z0-9])aVR([^A-Za-z0-9]|$)', 'match'))
+              avR = L_mv(s,:);
+        case ~isempty(regexpi(char(lead_str(s)), '(^|[^A-Za-z0-9])aVL([^A-Za-z0-9]|$)', 'match'))
+              avL = L_mv(s,:);
+        case ~isempty(regexpi(char(lead_str(s)), '(^|[^A-Za-z0-9])aVF([^A-Za-z0-9]|$)', 'match'))
+              avF = L_mv(s,:);
 
-        case strfind(string(lead_str(s)),'Lead V1') == 1
-              V1 = L(s,:);
-        case strfind(string(lead_str(s)),'Lead V2') == 1
-              V2 = L(s,:);
-        case strfind(string(lead_str(s)),'Lead V3') == 1
-              V3 = L(s,:);
-        case strfind(string(lead_str(s)),'Lead V4') == 1
-              V4 = L(s,:);
-        case strfind(string(lead_str(s)),'Lead V5') == 1
-              V5 = L(s,:);
-        case strfind(string(lead_str(s)),'Lead V6') == 1
-              V6 = L(s,:);
+        case ~isempty(regexpi(char(lead_str(s)), '(^|[^A-Za-z0-9])V1([^A-Za-z0-9]|$)', 'match'))
+              V1 = L_mv(s,:);
+        case ~isempty(regexpi(char(lead_str(s)), '(^|[^A-Za-z0-9])V2([^A-Za-z0-9]|$)', 'match'))
+              V2 = L_mv(s,:);
+        case ~isempty(regexpi(char(lead_str(s)), '(^|[^A-Za-z0-9])V3([^A-Za-z0-9]|$)', 'match'))
+              V3 = L_mv(s,:);
+        case ~isempty(regexpi(char(lead_str(s)), '(^|[^A-Za-z0-9])V4([^A-Za-z0-9]|$)', 'match'))
+              V4 = L_mv(s,:);
+        case ~isempty(regexpi(char(lead_str(s)), '(^|[^A-Za-z0-9])V5([^A-Za-z0-9]|$)', 'match'))
+              V5 = L_mv(s,:);
+        case ~isempty(regexpi(char(lead_str(s)), '(^|[^A-Za-z0-9])V6([^A-Za-z0-9]|$)', 'match'))
+              V6 = L_mv(s,:);
     end
 end
-
-% Signal is now in MILLIVOLTS

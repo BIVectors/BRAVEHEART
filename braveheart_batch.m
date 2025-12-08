@@ -377,7 +377,30 @@ parfor (i = 1:num_files, workers)
 		end
 		
 		if save_data
-	
+
+            % Choose the relevant parts of AnnoResult to avoid duplication
+            % of data in output files.  Will copy results{i} which is the
+            % AnnoResult data into a new variable 'ar' for manipulation
+
+            warning('off', 'MATLAB:structOnObject');        % Turn off warning as this is intentional
+            ar = struct(results{i});
+            warning('on', 'MATLAB:structOnObject');
+            % Remove the data that is already in other parts of the output
+            % file so we can see just the remaining misc data
+            ar = rmfield(ar, {'geh', 'vcg_morph', 'lead_morph', 'ap', 'beat_stats', 'beats', 'filename'});
+            
+            % Reformat so can export without errors
+            ar_fields = fieldnames(ar);
+            for cc = 1:length(ar_fields)
+                ff = ar_fields{cc};
+                if iscell(ar.(ff)) && numel(ar.(ff)) == 1
+                        ar.(ff) = ar.(ff){1};
+                end
+                if isempty(ar.(ff))
+                        ar.(ff) = [];  % Convert empty string to []
+                end
+            end
+
         	sig = struct( ...
                 'filename',file_list{i}, ...
                 'annoparams', ap, ...
@@ -390,7 +413,7 @@ parfor (i = 1:num_files, workers)
                 'lead_ispaced', batchout.lead_ispaced, ...
                 'beats', batchout.beats_final, ...
                 'beat_stats', batchout.beat_stats, ...
-                'geh', geh, ...
+                'vcg_calc', geh, ...
                 'median_vcg', batchout.medianvcg1, ...
                 'median_12L', batchout.median_12L, ...
                 'medianbeat', batchout.medianbeat, ...
@@ -398,7 +421,8 @@ parfor (i = 1:num_files, workers)
                 'beats_median_12L', batchout.beatsig_12L, ...
                 'lead_morph', lead_morph, ...
                 'vcg_morph', vcg_morph, ...
-                'quality', batchout.quality);
+                'quality', batchout.quality, ...
+                'misc', ar);
 			
 			save_struct_parfor(data_directory, basename, sig)
 			
@@ -439,7 +463,7 @@ parfor (i = 1:num_files, workers)
         if parallel_proc
             send(D, i);          % Send iteration counter to DataQueue
         else
-            k = num_files - i+1  % Turns out if there are 0 workers parfor seems to go in reverse order!
+            k = num_files - i+1;  % Turns out if there are 0 workers parfor seems to go in reverse order!
             waitbar(k/num_files, H, sprintf('Processed %i out of %i Total ECGs (%i%%)',k,num_files,round(100*(k/num_files))),'Name','Processing...');
         end
     end

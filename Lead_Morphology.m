@@ -26,9 +26,11 @@ classdef Lead_Morphology
     
     properties (SetAccess=private)
         
-        % 12 lead ECG properties        
+                % 12 lead ECG properties        
         L1_r_wave      % R wave height
+        L1_r_wave_loc  % Location of R peak (ms after QRS onset)
         L1_s_wave      % S wave height
+        L1_s_wave_loc  % Location of S peak (ms after QRS onset)
         L1_rs_wave     % R+S wave (height of entire QRS complex)
         L1_rs_ratio    % R/(R+S) ratio
         L1_sr_ratio    % S/(R+S) ratio
@@ -37,9 +39,13 @@ classdef Lead_Morphology
         L1_qrs_area    % Area of QRS complex
         L1_t_area      % Area of T wave
         L1_qrst_area   % Area of QRST complex
+        L1_jpt         % Amplitude of signal at J point (QRS off)
+        L1_jpt60       % Amplitude of signal at J point + 60 ms
         
         L2_r_wave
+        L2_r_wave_loc
         L2_s_wave
+        L2_s_wave_loc
         L2_rs_wave
         L2_rs_ratio
         L2_sr_ratio
@@ -48,9 +54,13 @@ classdef Lead_Morphology
         L2_qrs_area
         L2_t_area
         L2_qrst_area
+        L2_jpt
+        L2_jpt60
         
         L3_r_wave
+        L3_r_wave_loc
         L3_s_wave
+        L3_s_wave_loc
         L3_rs_wave
         L3_rs_ratio
         L3_sr_ratio
@@ -59,9 +69,13 @@ classdef Lead_Morphology
         L3_qrs_area
         L3_t_area
         L3_qrst_area
+        L3_jpt
+        L3_jpt60
         
         avF_r_wave
+        avF_r_wave_loc
         avF_s_wave
+        avF_s_wave_loc
         avF_rs_wave
         avF_rs_ratio
         avF_sr_ratio
@@ -70,9 +84,13 @@ classdef Lead_Morphology
         avF_qrs_area
         avF_t_area
         avF_qrst_area
+        avF_jpt
+        avF_jpt60
         
         avL_r_wave
+        avL_r_wave_loc
         avL_s_wave
+        avL_s_wave_loc
         avL_rs_wave
         avL_rs_ratio
         avL_sr_ratio
@@ -81,9 +99,13 @@ classdef Lead_Morphology
         avL_qrs_area
         avL_t_area
         avL_qrst_area
+        avL_jpt
+        avL_jpt60
         
         avR_r_wave
+        avR_r_wave_loc
         avR_s_wave
+        avR_s_wave_loc
         avR_rs_wave
         avR_rs_ratio
         avR_sr_ratio
@@ -92,9 +114,13 @@ classdef Lead_Morphology
         avR_qrs_area
         avR_t_area
         avR_qrst_area
+        avR_jpt
+        avR_jpt60
         
         V1_r_wave
+        V1_r_wave_loc
         V1_s_wave
+        V1_s_wave_loc
         V1_rs_wave
         V1_rs_ratio
         V1_sr_ratio
@@ -103,9 +129,13 @@ classdef Lead_Morphology
         V1_qrs_area
         V1_t_area
         V1_qrst_area
+        V1_jpt
+        V1_jpt60
         
         V2_r_wave
+        V2_r_wave_loc
         V2_s_wave
+        V2_s_wave_loc
         V2_rs_wave
         V2_rs_ratio
         V2_sr_ratio
@@ -114,9 +144,13 @@ classdef Lead_Morphology
         V2_qrs_area
         V2_t_area
         V2_qrst_area
+        V2_jpt
+        V2_jpt60
         
         V3_r_wave
+        V3_r_wave_loc
         V3_s_wave
+        V3_s_wave_loc
         V3_rs_wave
         V3_rs_ratio
         V3_sr_ratio
@@ -125,9 +159,13 @@ classdef Lead_Morphology
         V3_qrs_area
         V3_t_area
         V3_qrst_area
+        V3_jpt
+        V3_jpt60
         
         V4_r_wave
+        V4_r_wave_loc
         V4_s_wave
+        V4_s_wave_loc
         V4_rs_wave
         V4_rs_ratio
         V4_sr_ratio
@@ -136,9 +174,13 @@ classdef Lead_Morphology
         V4_qrs_area
         V4_t_area
         V4_qrst_area
+        V4_jpt
+        V4_jpt60
         
         V5_r_wave
+        V5_r_wave_loc
         V5_s_wave
+        V5_s_wave_loc
         V5_rs_wave
         V5_rs_ratio
         V5_sr_ratio
@@ -147,9 +189,13 @@ classdef Lead_Morphology
         V5_qrs_area
         V5_t_area
         V5_qrst_area
+        V5_jpt
+        V5_jpt60
         
         V6_r_wave
+        V6_r_wave_loc
         V6_s_wave
+        V6_s_wave_loc
         V6_rs_wave
         V6_rs_ratio
         V6_sr_ratio
@@ -158,41 +204,59 @@ classdef Lead_Morphology
         V6_qrs_area
         V6_t_area
         V6_qrst_area
+        V6_jpt
+        V6_jpt60
         
         
         % X, Y, Z, VM Properties        
         X_r_wave
+        X_r_wave_loc
         X_s_wave
+        X_s_wave_loc
         X_rs_wave
         X_rs_ratio
         X_sr_ratio
         X_t_max
         X_t_max_loc
+        X_jpt
+        X_jpt60
         
         Y_r_wave
+        Y_r_wave_loc
         Y_s_wave
+        Y_s_wave_loc
         Y_rs_wave
         Y_rs_ratio
         Y_sr_ratio
         Y_t_max
         Y_t_max_loc
+        Y_jpt
+        Y_jpt60
         
         Z_r_wave
+        Z_r_wave_loc
         Z_s_wave
+        Z_s_wave_loc
         Z_rs_wave
         Z_rs_ratio
         Z_sr_ratio
         Z_t_max
         Z_t_max_loc
+        Z_jpt
+        Z_jpt60
         
         VM_r_wave
+        VM_r_wave_loc
         VM_s_wave
+        VM_s_wave_loc
         VM_rs_wave
         VM_rs_ratio
         VM_sr_ratio
         VM_t_max
         VM_t_max_loc
-        VM_max_rpk_loc     % Location of maximum R peak (ms after QRS onset)
+        VM_jpt
+        VM_jpt60
+        %VM_max_rpk_loc     % Location of maximum R peak (ms after QRS onset) - replaced with VM_r_wave_loc
      
          
 %         % Individual beat SAI and SVG (X Y Z VM leads)
@@ -282,8 +346,8 @@ classdef Lead_Morphology
 
 
             % Parameters to allow easier addition of more parameters in future
-            num_12L_params = 10;     % Number of parameters for each of the 12L medians
-            num_vcg_params = 7;      % Number of parameters for each of the VCG/VM medians
+            num_12L_params = 14;     % Number of parameters for each of the 12L medians
+            num_vcg_params = 11;      % Number of parameters for each of the VCG/VM medians
 
             % Loop through ECG12 class
             for j=1:length(lead_names_ecg)
@@ -299,13 +363,17 @@ classdef Lead_Morphology
                 % Zero reference for this calculation is the start of the QRS complex at fiducial point q(i)
                 
                 try
-                    [r_wave, s_wave, rs_wave, rs_ratio, sr_ratio] = rs_values(signal,fidpts,endspike);
+                    [r_wave, r_wave_loc, s_wave, s_wave_loc, rs_wave, rs_ratio, sr_ratio, jpt, jpt60] = rs_values(signal,fidpts,ecg.hz,endspike);
                 catch
                     r_wave = nan;
+                    r_wave_loc = nan;
                     s_wave = nan;
+                    s_wave_loc = nan;
                     rs_wave = nan;
                     rs_ratio = nan;
                     sr_ratio = nan;
+                    jpt = nan;
+                    jpt60 = nan;
                 end
 
                 try
@@ -320,7 +388,8 @@ classdef Lead_Morphology
                 twave_max_loc = round((1000/freq)*(twave_max_loc - fidpts(1)));
 
                 % Rpeak location after QRS onset (just VM lead for now)
-                obj.VM_max_rpk_loc = round((1000/freq)*(fidpts(2) - fidpts(1)));
+                % Renamed to VM_r_wave_loc for consistency
+                %obj.VM_max_rpk_loc = round((1000/freq)*(fidpts(2) - fidpts(1)));
 
                 % Calculate areas for 12L medians
                 try
@@ -330,18 +399,20 @@ classdef Lead_Morphology
                     t_area =  nan;
                 end
 
-                
-                % Take median values for all beats to report (ignoring NaN)
-                obj.(lead_morph_fields{step+1+(num_12L_params*(j-1))}) = r_wave;         % R wave
-                obj.(lead_morph_fields{step+2+(num_12L_params*(j-1))}) = s_wave;         % S wave
-                obj.(lead_morph_fields{step+3+(num_12L_params*(j-1))}) = rs_wave;        % R+S wave (height of entire QRS complex)
-                obj.(lead_morph_fields{step+4+(num_12L_params*(j-1))}) = rs_ratio;       % R/(R+S) ratio
-                obj.(lead_morph_fields{step+5+(num_12L_params*(j-1))}) = sr_ratio;       % S/(R+S) ratio
-                obj.(lead_morph_fields{step+6+(num_12L_params*(j-1))}) = twave_max;      % T max amplitude
-                obj.(lead_morph_fields{step+7+(num_12L_params*(j-1))}) = twave_max_loc;  % T max location (ms after QRS onset)
-                obj.(lead_morph_fields{step+8+(num_12L_params*(j-1))}) = qrs_area;       % QRS area
-                obj.(lead_morph_fields{step+9+(num_12L_params*(j-1))}) = t_area;         % T area
-                obj.(lead_morph_fields{step+10+(num_12L_params*(j-1))}) = qrs_area + t_area;  % QRST area
+                obj.(lead_morph_fields{step+1+(num_12L_params*(j-1))}) = r_wave;                % R wave
+                obj.(lead_morph_fields{step+2+(num_12L_params*(j-1))}) = r_wave_loc;            % R wave location (ms after QRS onset)
+                obj.(lead_morph_fields{step+3+(num_12L_params*(j-1))}) = s_wave;                % S wave
+                obj.(lead_morph_fields{step+4+(num_12L_params*(j-1))}) = s_wave_loc;            % S wave location (ms after QRS onset)
+                obj.(lead_morph_fields{step+5+(num_12L_params*(j-1))}) = rs_wave;               % R+S wave (height of entire QRS complex)
+                obj.(lead_morph_fields{step+6+(num_12L_params*(j-1))}) = rs_ratio;              % R/(R+S) ratio
+                obj.(lead_morph_fields{step+7+(num_12L_params*(j-1))}) = sr_ratio;              % S/(R+S) ratio
+                obj.(lead_morph_fields{step+8+(num_12L_params*(j-1))}) = twave_max;             % T max amplitude
+                obj.(lead_morph_fields{step+9+(num_12L_params*(j-1))}) = twave_max_loc;         % T max location (ms after QRS onset)
+                obj.(lead_morph_fields{step+10+(num_12L_params*(j-1))}) = qrs_area;             % QRS area
+                obj.(lead_morph_fields{step+11+(num_12L_params*(j-1))}) = t_area;               % T area
+                obj.(lead_morph_fields{step+12+(num_12L_params*(j-1))}) = qrs_area + t_area;    % QRST area
+                obj.(lead_morph_fields{step+13+(num_12L_params*(j-1))}) = jpt;                  % J point voltage
+                obj.(lead_morph_fields{step+14+(num_12L_params*(j-1))}) = jpt60;                % J point + 60 ms voltage
                 
             end   % end for loop
             
@@ -353,13 +424,17 @@ classdef Lead_Morphology
                 freq = vcg.hz;
                 
                 try
-                    [r_wave, s_wave, rs_wave, rs_ratio, sr_ratio] = rs_values(signal,fidpts,endspike);
+                    [r_wave, r_wave_loc, s_wave, s_wave_loc, rs_wave, rs_ratio, sr_ratio, jpt, jpt60] = rs_values(signal,fidpts,ecg.hz,endspike);
                 catch
                     r_wave = nan;
+                    r_wave_loc = nan;
                     s_wave = nan;
+                    s_wave_loc = nan;
                     rs_wave = nan;
                     rs_ratio = nan;
                     sr_ratio = nan;
+                    jpt = nan;
+                    jpt60 = nan;
                 end
 
                 try
@@ -370,14 +445,17 @@ classdef Lead_Morphology
                     twave_max_loc = nan;
                 end
                 
-                % Take median values for all beats to report (ignoring NaN)
-                obj.(lead_morph_fields{step+1+(num_vcg_params*(j-1))}) = r_wave;      % R wave
-                obj.(lead_morph_fields{step+2+(num_vcg_params*(j-1))}) = s_wave;      % S wave
-                obj.(lead_morph_fields{step+3+(num_vcg_params*(j-1))}) = rs_wave;     % R+S wave (height of entire QRS complex)
-                obj.(lead_morph_fields{step+4+(num_vcg_params*(j-1))}) = rs_ratio;    % R/(R+S) ratio
-                obj.(lead_morph_fields{step+5+(num_vcg_params*(j-1))}) = sr_ratio;    % S/(R+S) ratio
-                obj.(lead_morph_fields{step+6+(num_vcg_params*(j-1))}) = twave_max;      % T max amplitude
-                obj.(lead_morph_fields{step+7+(num_vcg_params*(j-1))}) = twave_max_loc;  % T max location (ms after QRS onset)
+                obj.(lead_morph_fields{step+1+(num_vcg_params*(j-1))}) = r_wave;            % R wave
+                obj.(lead_morph_fields{step+2+(num_vcg_params*(j-1))}) = r_wave_loc;        % R wave location (ms after QRS onset)
+                obj.(lead_morph_fields{step+3+(num_vcg_params*(j-1))}) = s_wave;            % S wave
+                obj.(lead_morph_fields{step+4+(num_vcg_params*(j-1))}) = s_wave_loc;        % S wave location (ms after QRS onset)
+                obj.(lead_morph_fields{step+5+(num_vcg_params*(j-1))}) = rs_wave;           % R+S wave (height of entire QRS complex)
+                obj.(lead_morph_fields{step+6+(num_vcg_params*(j-1))}) = rs_ratio;          % R/(R+S) ratio
+                obj.(lead_morph_fields{step+7+(num_vcg_params*(j-1))}) = sr_ratio;          % S/(R+S) ratio
+                obj.(lead_morph_fields{step+8+(num_vcg_params*(j-1))}) = twave_max;         % T max amplitude
+                obj.(lead_morph_fields{step+9+(num_vcg_params*(j-1))}) = twave_max_loc;     % T max location (ms after QRS onset)
+                obj.(lead_morph_fields{step+10+(num_vcg_params*(j-1))}) = jpt;              % J point voltage
+                obj.(lead_morph_fields{step+11+(num_vcg_params*(j-1))}) = jpt60;            % J point + 60 ms voltage
                 
             end
             
@@ -462,7 +540,7 @@ classdef Lead_Morphology
             lead_morph_fields = properties(obj)';
             % Delete VM NaN labels/values
             
-            delete_names = [{'VM_s_wave'} {'VM_rs_wave'} {'VM_rs_ratio'} {'VM_sr_ratio'}];
+            delete_names = [{'VM_s_wave'} {'VM_rs_wave'} {'VM_rs_ratio'} {'VM_sr_ratio'} {'VM_s_wave_loc'}];
             
             for k = 1:length(delete_names)
                 lead_idx_ecg(k) = find(strcmp(lead_morph_fields,delete_names{k}));

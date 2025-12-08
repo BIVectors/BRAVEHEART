@@ -75,6 +75,7 @@ BRAVEHEART can read a wide variety of 12-lead ECG formats including:
 17. Megacare XML
 18. Edan .dat
 19. MFER .mwf
+20. Zoncare ZQECG XML
 
 If you need BRAVEHEART to read another ECG format let us know and we will help add it.
 
@@ -138,10 +139,15 @@ The software has been used for ECG/VCG analysis in the following publications:
 
 17. [A Sau, H Zhang, J Barker, L Pastika, K Patlatzoglou, B Zeidaabadi, A El-Medany, GR Khattak, KA McGurk, E Sieliwonczyk, JS Ware, NS Peters, DB Kramer, JW Waks, and, FS Ng. Artificial Intelligence-Enhanced Electrocardiography for Complete Heart Block Risk Stratification. _JAMA Cardiol_., 2025 Aug 20:e252522.](https://jamanetwork.com/journals/jamacardiology/fullarticle/2837611)
 
-18. [A Sau, E Sieliwonczyk, J Barker, B Zeidaabadi, L Pastika, K Patlatzoglou, GR Khattak, KA McGurk, NS Peters, DB Kramer, JW Waks, JS Ware, and FS Ng. Prediction of incident atrial fibrillation: a comprehensive evaluation of conventional and AI-enhanced approaches. _Heart Rhythm_, 2025 In Press.](https://www.heartrhythmjournal.com/article/S1547-5271(25)02778-X/fulltext)
+18. [A Sau, E Sieliwonczyk, J Barker, B Zeidaabadi, L Pastika, K Patlatzoglou, GR Khattak, KA McGurk, NS Peters, DB Kramer, JW Waks, JS Ware, and FS Ng. Prediction of incident atrial fibrillation: a comprehensive evaluation of conventional and AI-enhanced approaches. _Heart Rhythm_, 2025 Oct 14:S1547-5271](https://www.heartrhythmjournal.com/article/S1547-5271(25)02778-X/fulltext)
 
-19. [HF Stabenau, JD Matos, DB Kramer, A Sau, L Pastika, E Sieliwonczyk, K Patlatzoglou, NS Peters, P Tung, FS Ng, R Nezafat, and JW Waks. The Spatial Ventricular Gradient is a Non-Invasive, Vectorcardiographic Correlate of Cardiac Fibrosis. _J Interv Card Electrophysiol_, 2025  In Press]()
+19. [HF Stabenau, JD Matos, DB Kramer, A Sau, L Pastika, E Sieliwonczyk, K Patlatzoglou, NS Peters, P Tung, FS Ng, R Nezafat, and JW Waks. The Spatial Ventricular Gradient is a Non-Invasive, Vectorcardiographic Correlate of Cardiac Fibrosis. _J Interv Card Electrophysiol_, 2025 Oct 9.](https://doi.org/10.1007/s10840-025-02149-x)
 
+20. [E Sieliwonczyk, A Sau, K Patlatzoglou, KA McGurk, L Pastika, PK Thami, M Mangino, SL Zheng, G Powell, L Curran, RJ Buchan, P Theotokis, NS Peters, B Loeys, DB Kramer, JW Waks, FS Ng, and JS Ware. Unsupervised Feature Extraction Using Deep Learning Empowers Discovery of Genetic Determinants of the Electrocardiogram. _Genome Med}_, 2025 Oct 9;17(1):118.](https://doi.org/10.1186/s13073-025-01510-z)
+
+21. [K Patlatzoglou, L Pastika, J Barker, E Sieliwonczyk, GR Khattak, B Zeidaabadi, AH Ribeiro, JS Ware, NS Peters, ALP Ribeiro, DB Kramer, JW Waks, A Sau, and FS Ng. The Cost of Explainability in Artificial Intelligence-Enhanced Electrocardiogram Models. _NPJ Digit. Med._ 2025 8, 747.](https://doi.org/10.1038/s41746-025-02122-y)
+
+22. [M Gurnani, K Patlatzoglo, J Barker, L Pastika, B Zeidaabadi, I Antoun, GA Ng, P Inglese, L Curran, D O’Regan, NS Peters, DB Kramer, JW Waks, A Sau, and FS Ng. Deriving Novel Atrial Fibrillation Phenotypes Using a Tree-Based Artificial Intelligence-Enhanced Electrocardiography Approach. _NPJ Digit. Med._ 2025 Dec 4.](https://doi.org/10.1038/s41746-025-02159-z)
 
 If you have used BRAVEHEART for your research project we would be happy to include a reference to your manuscript!
 
