@@ -1,6 +1,6 @@
 MUSE .xml,muse_xml,.xml,500
-BIDMC .txt,bidmc_format,.txt,500
-Prucka .txt,prucka_format,.txt,997
+BIDMC .txt,bidmc_txt,.txt,500
+Prucka .txt,prucka_txt,.txt,977
 Philips .xml,philips_xml,.xml,500
 ISHNE .ecg,ISHNE,.ecg,1000
 GE .mrq,mrq_ascii,.mrq,500
@@ -21,3 +21,5 @@ MegaCare .xml,megacare_xml,.xml,500
 Edan .dat,edan_dat,.dat,1000
 MFER .mwf,mfer,.mwf,500
 Zoncare .xml,zoncare_xml,.xml,1000
+EP Tracer .txt,eptracer,.txt,1000
+Labsystem Pro .txt,labsystempro,.txt,1000

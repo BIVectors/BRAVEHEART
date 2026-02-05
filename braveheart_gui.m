@@ -44,7 +44,7 @@ function varargout = braveheart_gui(varargin)
 
 % Edit the above text to modify the response to help braveheart_gui
 
-% Last Modified by GUIDE v2.5 21-Apr-2025 22:25:21
+% Last Modified by GUIDE v2.5 03-Feb-2026 08:43:27
 
 % Update the current L&F for mac button issues...
 % Windows will use the normal Windows theme
@@ -155,7 +155,12 @@ guidata(hObject, handles);  % Save to handles
 
 % Update GUI title bar/logo with version from AnnoResult
 v = AnnoResult().version{1};
-set(hObject, 'Name',sprintf('BRAVEHEART GUI v%s',v))
+if isdeployed
+    set(hObject, 'Name',sprintf('BRAVEHEART GUI v%s - Compiled',v))
+else
+    set(hObject, 'Name',sprintf('BRAVEHEART GUI v%s',v))
+end
+
 set(handles.version_txt,'String',sprintf('Version %s',v));
 
 % Get current version of MATLAB to deal with graphics changes after R2025a

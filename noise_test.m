@@ -26,11 +26,30 @@ function [sig_noise_ratio, hf_noise_flag, hf_noise_matrix, hf_noise_min, lf_nois
 
 highpass_value = aps.highpass; % Save highpass value in aps for use later
 aps.highpass = 0; % Temporarily turn off highpass to avoid triggering detection of HF noise due to LF wander in noise signal
-ecg_filtered = ecg_raw.filter(NaN, aps);
 
-maxRR_hr = 30;  % Placeholder -- doesnt do anything.
+freq = ecg_raw.hz;
 
-% generate measure of noise defined as raw ECG - lvl 5 LPF filtered ECG
+% Update in 1.7.0:
+% Previously compared the filtered signal to the raw signal and computed SNR
+% But this measurement depended on the user chosen LPF level, and therefore
+% was not really a measure of inherent noise of the signal
+
+% Now will filter at level n where n corresponds to the level (Ln) at which the
+% frequency content of the signal is > ~Ln_freq hz, or more specifically
+% the first level that is BELOW Ln_freq so that 40 hz and above are always
+% included. However, freq below 40 Hz may also be included.
+
+Ln_freq = 40;
+Ln = ceil(log2(freq/(2*Ln_freq)));
+
+% Will create a new copy of aps with this LPF level 
+aps_hf = aps;
+aps_hf.lowpass = 1;
+aps_hf.wavelet_level_lowpass = Ln;
+
+ecg_filtered = ecg_raw.filter(NaN, aps_hf);
+
+% generate measure of noise defined as raw ECG - lvl n LPF filtered ECG
 L1 = ecg_raw.I;
 L2 = ecg_raw.II;
 L3 = ecg_raw.III;
@@ -77,10 +96,10 @@ hf_noise_min = min(sig_noise_ratio);
 
 % Assess low frequency noise
 
-% Will filter at around 1-2 Hz and look at the basline signal below this
-% freq.  If use higher levels may miss HF noise, and can't just use the
-% typical filtering params because this usually fileters <0.5 Hz, and if
-% has higher freq baseline wander will miss it.
+maxRR_hr = 30;  % For use later to measure LF noise
+
+% Will filter at level corresponding to < 0.5 Hz to estimate LF
+% noise/wander
 
 % Calculate the level needed to get close to 2 Hz:
 % cutoff freq = (f/2) / (2^lvl)
@@ -88,28 +107,25 @@ hf_noise_min = min(sig_noise_ratio);
 % for f = 500 Hz, cutoff = 2 Hz; lvl = 7
 % for f = 1000 Hz, cutoff = 2 Hz; lvl = 8
 
-freq = ecg_raw.hz;
-cutoff = 2;          % Hz
-lvl = ceil(freq/ (2*cutoff));
-
-aps.highpass = lvl; % Revert highpass filter on/off to original settings
+% Passing lvl 0 into wander_remove filters at level corresponding to 0.5 Hz
+% based on passing in maxRR_hr = 30
 
 % lvl 0 filtering is auto level selection based on maxRR_hr
-[~, aL1o, ~] = wander_remove(freq, maxRR_hr, L1, aps.wavelet_name_highpass, 0);
-[~, aL2o, ~] = wander_remove(freq, maxRR_hr, L2, aps.wavelet_name_highpass, 0);
-[~, aL3o, ~] = wander_remove(freq, maxRR_hr, L3, aps.wavelet_name_highpass, 0);
+[~, aL1o, ~] = wander_remove(freq, maxRR_hr, mirror(L1), aps.wavelet_name_highpass, 0);
+[~, aL2o, ~] = wander_remove(freq, maxRR_hr, mirror(L2), aps.wavelet_name_highpass, 0);
+[~, aL3o, ~] = wander_remove(freq, maxRR_hr, mirror(L3), aps.wavelet_name_highpass, 0);
 
-[~, aavRo, ~] = wander_remove(freq, maxRR_hr, avR, aps.wavelet_name_highpass, 0);
-[~, aavLo, ~] = wander_remove(freq, maxRR_hr, avL, aps.wavelet_name_highpass, 0);
-[~, aavFo, ~] = wander_remove(freq, maxRR_hr, avF, aps.wavelet_name_highpass, 0);
+[~, aavRo, ~] = wander_remove(freq, maxRR_hr, mirror(avR), aps.wavelet_name_highpass, 0);
+[~, aavLo, ~] = wander_remove(freq, maxRR_hr, mirror(avL), aps.wavelet_name_highpass, 0);
+[~, aavFo, ~] = wander_remove(freq, maxRR_hr, mirror(avF), aps.wavelet_name_highpass, 0);
 
-[~, aV1o, ~] = wander_remove(freq, maxRR_hr, V1, aps.wavelet_name_highpass, 0);
-[~, aV2o, ~] = wander_remove(freq, maxRR_hr, V2, aps.wavelet_name_highpass, 0);
-[~, aV3o, ~] = wander_remove(freq, maxRR_hr, V3, aps.wavelet_name_highpass, 0);
+[~, aV1o, ~] = wander_remove(freq, maxRR_hr, mirror(V1), aps.wavelet_name_highpass, 0);
+[~, aV2o, ~] = wander_remove(freq, maxRR_hr, mirror(V2), aps.wavelet_name_highpass, 0);
+[~, aV3o, ~] = wander_remove(freq, maxRR_hr, mirror(V3), aps.wavelet_name_highpass, 0);
 
-[~, aV4o, ~] = wander_remove(freq, maxRR_hr, V4, aps.wavelet_name_highpass, 0);
-[~, aV5o, ~] = wander_remove(freq, maxRR_hr, V5, aps.wavelet_name_highpass, 0);
-[~, aV6o, ~] = wander_remove(freq, maxRR_hr, V6, aps.wavelet_name_highpass, 0);
+[~, aV4o, ~] = wander_remove(freq, maxRR_hr, mirror(V4), aps.wavelet_name_highpass, 0);
+[~, aV5o, ~] = wander_remove(freq, maxRR_hr, mirror(V5), aps.wavelet_name_highpass, 0);
+[~, aV6o, ~] = wander_remove(freq, maxRR_hr, mirror(V6), aps.wavelet_name_highpass, 0);
 
 %lf_noise_mad = 100* [ mad(aL1o) mad(aL2o) mad(aL3o) mad(aavRo) mad(aavFo) mad(aavLo) mad(aV1o) mad(aV2o) mad(aV3o) mad(aV4o) mad(aV5o) mad(aV6o)];
 % don't include III, avL, avF, avR

@@ -23,8 +23,12 @@
 function currentDir = getcurrentdir()
 
 if isdeployed && ispc % Compiled PC
-    [status, result] = system('set path');
-    currentDir = char(regexpi(result, 'Path=(.*?);', 'tokens', 'once'));
+    %[status, result] = system('set path');
+    %currentDir = char(regexpi(result, 'Path=(.*?);', 'tokens', 'once'));
+
+    % This works better than old method above
+    [~, result] = system('cd');
+    currentDir = strtrim(result);
 
 elseif isdeployed && ismac % Compiled Mac
     % v1.2.1 onward

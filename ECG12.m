@@ -66,7 +66,7 @@ classdef ECG12
                 % ADD NEW ECG FORMATS TO THIS SWITCH STATEMENT
                 switch format
                     
-                    case 'bidmc_format'
+                    case 'bidmc_txt'
                         obj.hz = 500;
                         unitspermv = 200;
                         [obj.I, obj.II, obj.III, obj.avR, obj.avF, obj.avL, ...
@@ -80,11 +80,9 @@ classdef ECG12
                         obj.avR = -0.5*obj.I - 0.5*obj.II;
                         obj.avL = obj.I - 0.5*obj.II;
                     
-                    case 'prucka_format'
-                        obj.hz = 997;
-                        unitspermv = 1;
-                        [obj.I, obj.II, obj.III, obj.avR, obj.avF, obj.avL, ...
-                            obj.V1, obj.V2, obj.V3, obj.V4, obj.V5, obj.V6] = load_ecg(filename, unitspermv, format);
+                    case 'prucka_txt'
+                        [obj.hz, obj.I, obj.II, obj.III, obj.avR, obj.avF, obj.avL, ...
+                            obj.V1, obj.V2, obj.V3, obj.V4, obj.V5, obj.V6] = load_prucka(filename);
                         
                     case 'unformatted'
                         unitspermv = 1;
@@ -177,6 +175,15 @@ classdef ECG12
                     case 'zoncare_xml'
                         [obj.hz, obj.I, obj.II, obj.III, obj.avR, obj.avF, obj.avL, ...
                             obj.V1, obj.V2, obj.V3, obj.V4, obj.V5, obj.V6] = load_zoncarexml(filename);     
+
+                    case 'eptracer'
+                        [obj.hz, obj.I, obj.II, obj.III, obj.avR, obj.avF, obj.avL, ...
+                            obj.V1, obj.V2, obj.V3, obj.V4, obj.V5, obj.V6] = load_eptracer(filename);   
+
+                    case 'labsystempro'
+                        [obj.hz, obj.I, obj.II, obj.III, obj.avR, obj.avF, obj.avL, ...
+                            obj.V1, obj.V2, obj.V3, obj.V4, obj.V5, obj.V6] = load_labsystempro(filename);
+
 					
                     otherwise
                         error('unknown format %s', format);
@@ -213,7 +220,10 @@ classdef ECG12
             % highpass_lvl_min is level chosen by auto (if used)
 
             % Check that aps.wavelet_level_highpass is not > max level = floor(log2(num_samples))
-            if aps.wavelet_level_highpass > floor(log2(length(obj.I))) 
+            % only throw error if highpass filtering is active.  Even when
+            % HPF is disabled, it was pulling the level and testing here.
+            % If HPF is disabled, the error shouldn't matter.
+            if aps.wavelet_level_highpass > floor(log2(length(obj.I))) && aps.highpass == 1
                 error('Error! Max level of wavelet decomposition for a signal of length %i is %i - you chose %i.', ...
                     length(obj.I), floor(log2(length(obj.I))), aps.wavelet_level_highpass);
             end

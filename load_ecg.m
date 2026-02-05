@@ -48,13 +48,14 @@ switch source
         V1 = double(M{7})'; V2 = double(M{8})'; V3 = double(M{9})'; 
         V4 = double(M{10})'; V5 = double(M{11})'; V6 = double(M{12})';
 
-    case 'prucka_format'
-        %Prucka txt files
-        M = textscan(fid, '%f %f %f %f %f %f %f %f %f %f %f %f %f %f');
-        L1 = double(M{1})'; L2 = double(M{2})'; L3 = double(M{3})';
-        avR = double(M{4})'; avL = double(M{5})'; avF= double(M{6})'; 
-        V1 = double(M{7})'; V2 = double(M{8})'; V3 = double(M{9})'; 
-        V4 = double(M{10})'; V5 = double(M{11})'; V6 = double(M{12})';
+% Prucka format now loads via separate load_prucka.m
+%   case 'prucka_format'
+%         %Prucka txt files
+%         M = textscan(fid, '%f %f %f %f %f %f %f %f %f %f %f %f %f %f');
+%         L1 = double(M{1})'; L2 = double(M{2})'; L3 = double(M{3})';
+%         avR = double(M{4})'; avL = double(M{5})'; avF= double(M{6})'; 
+%         V1 = double(M{7})'; V2 = double(M{8})'; V3 = double(M{9})'; 
+%         V4 = double(M{10})'; V5 = double(M{11})'; V6 = double(M{12})';
 
     case 'rdsamp_format'
         % (output from rdann) text files

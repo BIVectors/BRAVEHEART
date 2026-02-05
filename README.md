@@ -27,7 +27,7 @@ The most up to date version of the software can be found on GitHub at http://www
 
 ## License
 ![badge](https://badgen.net/badge/License/GPL-3.0/?color=red)  
-**Copyright 2016-2025 Jonathan W. Waks and Hans F. Stabenau**  
+**Copyright 2016-2026 Jonathan W. Waks and Hans F. Stabenau**  
 All rights reserved.  
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.  This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.  You should have received a copy of the GNU General Public License along with this program. If not, see https://www.gnu.org/licenses/ or the [LICENSE](https://github.com/BIVectors/BRAVEHEART/blob/main/LICENSE) file included in this repository.
 
@@ -52,7 +52,7 @@ menu and change to 100%.
 More Space
 
 ## Frequently Encountered Issue - GUI Looks Abnormal in R2025a
-If you are using MATLAB R2025a, please upgrade to version 1.6.0 or later. 
+If you are using MATLAB R2025a or later, please upgrade to BRAVEHEART version 1.6.0 or later. 
 
 ## Supported ECG Formats:
 BRAVEHEART can read a wide variety of 12-lead ECG formats including:
@@ -68,14 +68,16 @@ BRAVEHEART can read a wide variety of 12-lead ECG formats including:
 10. EDF
 11. Physionet .dat
 12. Physionet .csv
-13. GE Prucka
-14. Abbott Workmate Claris ASCII
+13. GE Prucka recording system
+14. Abbott Workmate Claris recording system .txt
 15. Unformatted .txt and .csv
 16. Norav 1200M .rdt
 17. Megacare XML
 18. Edan .dat
 19. MFER .mwf
 20. Zoncare ZQECG XML
+21. EP Tracer recording system
+22. Labsystem Pro recording system
 
 If you need BRAVEHEART to read another ECG format let us know and we will help add it.
 
@@ -105,7 +107,7 @@ Bibtex:
 
 ## Publications
 The software has been used for ECG/VCG analysis in the following publications:  
-1. [HF Stabenau, C Shen, LG Tereshchenko, and JW. Waks. Changes in global electrical heterogeneity associated with dofetilide, quinidine, ranolazine, and verapamil. _Heart Rhythm_, 2020 Mar;17(3):460-467.](https://www.heartrhythmjournal.com/article/S1547-5271(19)30850-1/fulltext)
+1. [HF Stabenau, C Shen, LG Tereshchenko, and JW Waks. Changes in global electrical heterogeneity associated with dofetilide, quinidine, ranolazine, and verapamil. _Heart Rhythm_, 2020 Mar;17(3):460-467.](https://www.heartrhythmjournal.com/article/S1547-5271(19)30850-1/fulltext)
 
 2. [HF Stabenau, C Shen, P Zimetbaum, AE Buxton, LG Tereshchenko, and JW Waks. Global electrical heterogeneity associated with drug-induced torsades de pointes. _Heart Rhythm_, 2021 Jan;18(1):57-62.](https://www.heartrhythmjournal.com/article/S1547-5271(20)30754-2/fulltext)
 
@@ -121,7 +123,7 @@ The software has been used for ECG/VCG analysis in the following publications:
 
 8. [L Pastika, A Sau, K Patlatzoglou, E Sieliwonczyk, AH Ribeiro, KA McGurk, S Khan, D Mandic, WR Scott, JS Ware, NS Peters, ALP Ribeiro, DB Kramer, JW Waks, and FS Ng. Deep Neural Network-derived Electrocardiographic Body Mass Index as a Predictor of Cardiometabolic Disease. _NPJ Digit. Med._ 2024 Jun 25;7(1):167.](https://doi.org/10.1038/s41746-024-01170-0)
 
-9. [A Sau, L Pastika, E Sieliwonczyk, K Patlatzoglou, AH Ribeiro, KA McGurk, B Zeidaabadi, H Zhang, K Macierzanka, D Mandic, E Sabino, L Giatti, SM Barreto, L do Valle Camelo, I Tzoulaki, DP O’Regan, NS Peters, JS Ware, ALP Ribeiro, DB Kramer, JW Waks, and FS Ng.  Artificial intelligence-enabled electrocardiogram for mortality and cardiovascular risk estimation: a model development and validation study _Lancet Digit Health_. 2024 Nov;6(11):e791-e802](https://www.thelancet.com/journals/landig/article/PIIS2589-7500(24)00172-9/fulltext)
+9. [A Sau, L Pastika, E Sieliwonczyk, K Patlatzoglou, AH Ribeiro, KA McGurk, B Zeidaabadi, H Zhang, K Macierzanka, D Mandic, E Sabino, L Giatti, SM Barreto, L do Valle Camelo, I Tzoulaki, DP O’Regan, NS Peters, JS Ware, ALP Ribeiro, DB Kramer, JW Waks, and FS Ng.  Artificial intelligence-enabled electrocardiogram for mortality and cardiovascular risk estimation: a model development and validation study. _Lancet Digit Health_. 2024 Nov;6(11):e791-e802](https://www.thelancet.com/journals/landig/article/PIIS2589-7500(24)00172-9/fulltext)
 
 10. [M Raad, DB Kramer, HF Stabenau, E Anyanwu, DS Frankel, and JW Waks. The Spatial Ventricular Gradient Is Associated with Pacing-Induced Cardiomyopathy. _Heart Rhythm_. 2024. In Press](https://www.heartrhythmjournal.com/article/S1547-5271(24)03710-X/)
 
@@ -129,9 +131,9 @@ The software has been used for ECG/VCG analysis in the following publications:
 
 12. [K Macierzanka, A Sau, K Patlatzoglou, L Pastika, E Sieliwonczyk, M Gurnani, NS Peters, JW Waks, DB Kramer, and FS Ng. Siamese neural network-enhanced electrocardiography can re-identify anonymised healthcare data. _Eur Heart J Digit Health_. 2025, Feb 25.](https://academic.oup.com/ehjdh/advance-article/doi/10.1093/ehjdh/ztaf011/8042356)
 
-13. [A Sau, E Sieliwonczyk, K Patlatzoglou, L Pastika, K McGurk, AH Ribeiro, ALP Ribeiro, JE Ho, NS Peters, JS Ware, U Tayal, DB Kramer, JW Waks, and FS Ng. Artificial intelligence- enhanced electrocardiography for the identification of a sex-related cardiovascular risk continuum: a retrospective cohort study. _Lancet Digit Health_. 2025 Mar;7(3):e184-e194.](https://www.sciencedirect.com/science/article/pii/S258975002400270X)
+13. [A Sau, E Sieliwonczyk, K Patlatzoglou, L Pastika, K McGurk, AH Ribeiro, ALP Ribeiro, JE Ho, NS Peters, JS Ware, U Tayal, DB Kramer, JW Waks, and FS Ng. Artificial intelligence-enhanced electrocardiography for the identification of a sex-related cardiovascular risk continuum: a retrospective cohort study. _Lancet Digit Health_. 2025 Mar;7(3):e184-e194.](https://www.sciencedirect.com/science/article/pii/S258975002400270X)
 
-14. [M Gurnani, K Patlatzoglou, J Barker, D Bivona, L Pastika, E Sieliwonczyk, B Zeidaabadi, P Inglese, L Curran, AD Arnold, D O'Regan, Z Whinnett, KC Bilchick, NS Peters, DB Kramer, JW Waks, A Sau, and FS Ng. Revisiting Abnormalities of Ventricular Depolarization: Redefining Phenotypes and Associated Outcomes Using Tree-Based Dimensionality Reduction.  Siamese neural network-enhanced electrocardiography can re-identify anonymised healthcare data. _J Am Heart Assoc_. 2025, Jun 18:e040814.](https://www.ahajournals.org/doi/10.1161/JAHA.124.040814)
+14. [M Gurnani, K Patlatzoglou, J Barker, D Bivona, L Pastika, E Sieliwonczyk, B Zeidaabadi, P Inglese, L Curran, AD Arnold, D O'Regan, Z Whinnett, KC Bilchick, NS Peters, DB Kramer, JW Waks, A Sau, and FS Ng. Revisiting Abnormalities of Ventricular Depolarization: Redefining Phenotypes and Associated Outcomes Using Tree-Based Dimensionality Reduction. _J Am Heart Assoc_. 2025, Jun 18:e040814.](https://www.ahajournals.org/doi/10.1161/JAHA.124.040814)
 
 15. [Y Liang, A Sau, B Zeidaabadi, J Barker, K Patlatzoglou, L Pastika, E Sieliwonczyk, Z Whinnett, NS Peters, Z Yu, X Liu, S Wang, H Lu, DB Kramer, JW Waks, Y Su, J Ge, and FS Ng. Artificial intelligence-enhanced electrocardiography to predict regurgitant valvular heart diseases: an international study. _Eur Heart J_. 2025 Jul 16:ehaf448.](https://academic.oup.com/eurheartj/advance-article/doi/10.1093/eurheartj/ehaf448/8203433)
 
@@ -149,7 +151,9 @@ The software has been used for ECG/VCG analysis in the following publications:
 
 22. [M Gurnani, K Patlatzoglo, J Barker, L Pastika, B Zeidaabadi, I Antoun, GA Ng, P Inglese, L Curran, D O’Regan, NS Peters, DB Kramer, JW Waks, A Sau, and FS Ng. Deriving Novel Atrial Fibrillation Phenotypes Using a Tree-Based Artificial Intelligence-Enhanced Electrocardiography Approach. _NPJ Digit. Med._ 2025 Dec 4.](https://doi.org/10.1038/s41746-025-02159-z)
 
-If you have used BRAVEHEART for your research project we would be happy to include a reference to your manuscript!
+23. [JW Waks, M Poulin, P Tung, HF Stabenau, A Haouzi, JD Clarke, P Zimetbaum, A d’Avila, B Ultimo, KA Guibone, K Kiernan, A Medline, NS Peters, A Sau, FS Ng, DB Kramer, A Shvilkin, RJ Laham, and AE Buxton. _Heart Rhythm O2._ 2026 In Press.](https://www.heartrhythmopen.com/article/S2666-5018(26)00035-8/fulltext)
+
+If you have used BRAVEHEART for your research project, let us know, as we would be happy to include a reference to your manuscript!
 
 ## Contributing
 Please contact the authors by email at braveheart.ecg@gmail.com if you are interested in contributing to the project.

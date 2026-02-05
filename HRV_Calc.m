@@ -112,41 +112,51 @@ classdef HRV_Calc
 
 
             % Percent changes for subsequent RR intervals
+            % Only run if more than 1 RR interval 
+            if length(obj.RR) > 1
+            
+                for i = 1:length(obj.RR)-1
+                    RR_pct(i+1) = 100 * ((obj.RR(i+1) - obj.RR(i)) / (obj.RR(i)));
+                end
+                obj.RR_pct = round(RR_pct,3)';
+    
+                for i = 1:length(obj.RR_n)-1
+                    RR_pct_n(i+1) = 100 * ((obj.RR_n(i+1) - obj.RR_n(i)) / (obj.RR_n(i)));
+                end
+                obj.RR_pct_n = round(RR_pct_n,3)';
+    
+    
+    
+                % Absolute changes for subsequent RR intervals
+                if ~isempty(diff(obj.RR_n))
+                    obj.RR_sd_n = [0 ; diff(obj.RR_n)];
+                else
+                    obj.RR_sd_n = [];
+                end
+    
+                if ~isempty(diff(obj.RR))
+                    obj.RR_sd = [0 ; diff(obj.RR)];
+                else
+                    obj.RR_sd = [];
+                end
+    
+    
+                % Calculations
+                obj.SDRR = std(obj.RR);
+                obj.SDNN = std(obj.RR_n);
+    
+                obj.RMSSD_all = rms(diff(obj.RR));
+                obj.RMSSD_n = rms(diff(obj.RR_n));
 
-            for i = 1:length(obj.RR)-1
-                RR_pct(i+1) = 100 * ((obj.RR(i+1) - obj.RR(i)) / (obj.RR(i)));
-            end
-            obj.RR_pct = round(RR_pct,3)';
-
-            for i = 1:length(obj.RR_n)-1
-                RR_pct_n(i+1) = 100 * ((obj.RR_n(i+1) - obj.RR_n(i)) / (obj.RR_n(i)));
-            end
-            obj.RR_pct_n = round(RR_pct_n,3)';
-
-
-
-            % Absolute changes for subsequent RR intervals
-            if ~isempty(diff(obj.RR_n))
-                obj.RR_sd_n = [0 ; diff(obj.RR_n)];
-            else
+            else  % Only 1 RR interval, everything is empty
+                obj.RR_pct_n = [];
                 obj.RR_sd_n = [];
+                obj.SDRR = [];
+                obj.SDNN = [];
+                obj.RMSSD_all = [];
+                obj.RMSSD_n = [];
             end
-
-            if ~isempty(diff(obj.RR))
-                obj.RR_sd = [0 ; diff(obj.RR)];
-            else
-                obj.RR_sd = [];
-            end
-
-
-            % Calculations
-            obj.SDRR = std(obj.RR);
-            obj.SDNN = std(obj.RR_n);
-
-            obj.RMSSD_all = rms(diff(obj.RR));
-            obj.RMSSD_n = rms(diff(obj.RR_n));
-
-
+    
         end % End main function
 
 

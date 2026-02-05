@@ -120,7 +120,7 @@ for j = 1:num_leads
 end
 
 % There is a possibility that the end of a single lead could be artifact
-% becauseit fell off at the very end, but all other leads are artifact
+% because it fell off at the very end, but all other leads are artifact
 % free.  For now, for simplicity, will remove the ending segment of ALL
 % leads if >= 1 has a constant artifact longer than set value  BUT shorter 
 % than the duration of 1 DataRecordDuration

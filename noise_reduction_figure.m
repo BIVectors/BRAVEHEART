@@ -34,7 +34,7 @@ scale = 10;
 % Original raw ecg signals
 L1o = ecg_raw.I*scale;
 L2o = ecg_raw.II*scale;
-L3o = ecg_raw.II*scale;
+L3o = ecg_raw.III*scale;
 avRo = ecg_raw.avR*scale;
 avFo = ecg_raw.avF*scale;
 avLo = ecg_raw.avL*scale;
@@ -48,7 +48,7 @@ V6o = ecg_raw.V6*scale;
 % Filtered/baseline corrected signals
 L1 = ecg.I*scale;
 L2 = ecg.II*scale;
-L3 = ecg.II*scale;
+L3 = ecg.III*scale;
 avR = ecg.avR*scale;
 avF = ecg.avF*scale;
 avL = ecg.avL*scale;
@@ -253,7 +253,7 @@ lf_noise_var = 1000 * lf_noise_var;
 figure('name','ECG Noise/Wander Estimates','numbertitle','off')
 
 subplot(2,1,1)
-title(sprintf('ECG Signal to Noise Ratio Estimates (Cutoff = %d)',hf_thresh))
+title(sprintf('ECG Signal to Noise Ratio Estimates (Cutoff < %d)',hf_thresh))
 hold on
 
 for i=1:length(hf_noise_matrix)
@@ -285,7 +285,7 @@ set(gca,'YTickLabel',[]);
 set(gca,'XTickLabel',[]);
 
 subplot(2,1,2)
-title(sprintf('ECG Baseline Wander Noise Estimates (Cutoff = %1.2f \\muV)',lf_thresh*1000))
+title(sprintf('ECG Baseline Wander Noise Estimates (Cutoff > %1.2f \\muV)',lf_thresh*1000))
 hold on
 
 for i=1:length(lf_noise_matrix)
