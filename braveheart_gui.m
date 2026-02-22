@@ -44,7 +44,7 @@ function varargout = braveheart_gui(varargin)
 
 % Edit the above text to modify the response to help braveheart_gui
 
-% Last Modified by GUIDE v2.5 03-Feb-2026 08:43:27
+% Last Modified by GUIDE v2.5 06-Feb-2026 12:39:52
 
 % Update the current L&F for mac button issues...
 % Windows will use the normal Windows theme
@@ -175,6 +175,17 @@ else
     if ismac
         changeGUIfont(handles);
     end
+end
+
+% GPU data
+gpu_count = gpuDeviceCount;
+if gpu_count > 0
+    set(handles.gpu_txt,'String','GPU Detected');
+else
+    set(handles.gpu_txt,'String','No GPU Detected');
+    set(handles.gpu_options,'Enable','Off')
+    set(handles.exec_env_txt1,'Enable','Off')
+    set(handles.exec_env_txt2,'Enable','Off')
 end
 
 % Show About Information regarding License etc 
@@ -6098,4 +6109,27 @@ else
     set(handles.pacer_zcut_txtbox, 'enable', 'on');
     set(handles.pacer_maxscale_txtbox, 'enable', 'on');
     set(handles.pacer_num_leads_txtbox, 'enable','on');
+end
+
+
+% --- Executes on selection change in gpu_options.
+function gpu_options_Callback(hObject, eventdata, handles)
+% hObject    handle to gpu_options (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: contents = cellstr(get(hObject,'String')) returns gpu_options contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from gpu_options
+
+
+% --- Executes during object creation, after setting all properties.
+function gpu_options_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to gpu_options (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: popupmenu controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
 end

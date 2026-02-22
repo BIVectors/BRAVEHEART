@@ -111,26 +111,33 @@ maxRR_hr = 30;  % For use later to measure LF noise
 % based on passing in maxRR_hr = 30
 
 % lvl 0 filtering is auto level selection based on maxRR_hr
-[~, aL1o, ~] = wander_remove(freq, maxRR_hr, mirror(L1), aps.wavelet_name_highpass, 0);
-[~, aL2o, ~] = wander_remove(freq, maxRR_hr, mirror(L2), aps.wavelet_name_highpass, 0);
-[~, aL3o, ~] = wander_remove(freq, maxRR_hr, mirror(L3), aps.wavelet_name_highpass, 0);
+% If this fails, usually due to the level corresponding to 0.5 Hz being > max level in short signals,
+% will set signal to NaN
+try
+    [~, aL1o, ~] = wander_remove(freq, maxRR_hr, mirror(L1), aps.wavelet_name_highpass, 0);
+    [~, aL2o, ~] = wander_remove(freq, maxRR_hr, mirror(L2), aps.wavelet_name_highpass, 0);
+    [~, aL3o, ~] = wander_remove(freq, maxRR_hr, mirror(L3), aps.wavelet_name_highpass, 0);
+    
+    [~, aavRo, ~] = wander_remove(freq, maxRR_hr, mirror(avR), aps.wavelet_name_highpass, 0);
+    [~, aavLo, ~] = wander_remove(freq, maxRR_hr, mirror(avL), aps.wavelet_name_highpass, 0);
+    [~, aavFo, ~] = wander_remove(freq, maxRR_hr, mirror(avF), aps.wavelet_name_highpass, 0);
+    
+    [~, aV1o, ~] = wander_remove(freq, maxRR_hr, mirror(V1), aps.wavelet_name_highpass, 0);
+    [~, aV2o, ~] = wander_remove(freq, maxRR_hr, mirror(V2), aps.wavelet_name_highpass, 0);
+    [~, aV3o, ~] = wander_remove(freq, maxRR_hr, mirror(V3), aps.wavelet_name_highpass, 0);
+    
+    [~, aV4o, ~] = wander_remove(freq, maxRR_hr, mirror(V4), aps.wavelet_name_highpass, 0);
+    [~, aV5o, ~] = wander_remove(freq, maxRR_hr, mirror(V5), aps.wavelet_name_highpass, 0);
+    [~, aV6o, ~] = wander_remove(freq, maxRR_hr, mirror(V6), aps.wavelet_name_highpass, 0);
+    
+    %lf_noise_mad = 100* [ mad(aL1o) mad(aL2o) mad(aL3o) mad(aavRo) mad(aavFo) mad(aavLo) mad(aV1o) mad(aV2o) mad(aV3o) mad(aV4o) mad(aV5o) mad(aV6o)];
+    % don't include III, avL, avF, avR
+    %lf_noise_mad = [ mad(aL1o) mad(aL2o) mad(aL3o) mad(aavRo) mad(aavLo) mad(aavFo) mad(aV1o) mad(aV2o) mad(aV3o) mad(aV4o) mad(aV5o) mad(aV6o)];
+    lf_noise_var = [ var(aL1o) var(aL2o) var(aL3o) var(aavRo) var(aavLo) var(aavFo) var(aV1o) var(aV2o) var(aV3o) var(aV4o) var(aV5o) var(aV6o)];
 
-[~, aavRo, ~] = wander_remove(freq, maxRR_hr, mirror(avR), aps.wavelet_name_highpass, 0);
-[~, aavLo, ~] = wander_remove(freq, maxRR_hr, mirror(avL), aps.wavelet_name_highpass, 0);
-[~, aavFo, ~] = wander_remove(freq, maxRR_hr, mirror(avF), aps.wavelet_name_highpass, 0);
-
-[~, aV1o, ~] = wander_remove(freq, maxRR_hr, mirror(V1), aps.wavelet_name_highpass, 0);
-[~, aV2o, ~] = wander_remove(freq, maxRR_hr, mirror(V2), aps.wavelet_name_highpass, 0);
-[~, aV3o, ~] = wander_remove(freq, maxRR_hr, mirror(V3), aps.wavelet_name_highpass, 0);
-
-[~, aV4o, ~] = wander_remove(freq, maxRR_hr, mirror(V4), aps.wavelet_name_highpass, 0);
-[~, aV5o, ~] = wander_remove(freq, maxRR_hr, mirror(V5), aps.wavelet_name_highpass, 0);
-[~, aV6o, ~] = wander_remove(freq, maxRR_hr, mirror(V6), aps.wavelet_name_highpass, 0);
-
-%lf_noise_mad = 100* [ mad(aL1o) mad(aL2o) mad(aL3o) mad(aavRo) mad(aavFo) mad(aavLo) mad(aV1o) mad(aV2o) mad(aV3o) mad(aV4o) mad(aV5o) mad(aV6o)];
-% don't include III, avL, avF, avR
-%lf_noise_mad = [ mad(aL1o) mad(aL2o) mad(aL3o) mad(aavRo) mad(aavLo) mad(aavFo) mad(aV1o) mad(aV2o) mad(aV3o) mad(aV4o) mad(aV5o) mad(aV6o)];
-lf_noise_var = [ var(aL1o) var(aL2o) var(aL3o) var(aavRo) var(aavLo) var(aavFo) var(aV1o) var(aV2o) var(aV3o) var(aV4o) var(aV5o) var(aV6o)];
+catch
+    lf_noise_var = nan(1,12);
+end
 
 % for lf_threshold, higher values are less sensitive to wander
 lf_noise_flag = lf_noise_var;

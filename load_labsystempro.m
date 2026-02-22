@@ -148,10 +148,17 @@ V6 =  getLeadDatafromTable(data_table_mV,'V6');
 % Sampling frequency
 hz = H.hz;
 
-% Check that are not mising any leads
+
+% Now deal with possibly missing limb leads - reconstruct the missing limb leads
 if isempty(I) || isempty(II) || isempty(III) || ...
-   isempty(avR) || isempty(avL) || isempty(avF) || ...
-   isempty(V1) || isempty(V2) || isempty(V3) || ...
+   isempty(avR) || isempty(avL) || isempty(avF)
+
+   [I, II, III, avR, avL, avF] = reconstruct_limb_leads(I, II, III, avR, avL, avF);
+
+end
+
+% Check that are not missing any precordial leads
+if isempty(V1) || isempty(V2) || isempty(V3) || ...
    isempty(V4) || isempty(V5) || isempty(V6) 
 
    error('Missing one or more leads from Labsystem Pro file');

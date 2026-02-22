@@ -26,8 +26,9 @@ function [signal_nowander, approx_signal, lvl] = wander_remove(freq, hr, signal,
 % set level to 0 if doing automatic level detection based on HR frequency
 % (feature to be added in future)
 
-num_samples = length(signal)/3;      % This signal is actually the mirrored signal
-max_lvl = floor(log2(num_samples));  % max level of wavelet decomposition based on signal length
+%num_samples = length(signal)/3;      % This signal is actually the mirrored signal
+%max_lvl = floor(log2(num_samples));  % max level of wavelet decomposition based on signal length
+max_lvl = wmaxlev(length(signal), wavelet_name_lf); % max level of wavelet decomposition based on signal length and wavelet
 
 %1D wavelet decomposition using specified wavelet and max_lvl levels   
     [A,D]=wavedec(signal,max_lvl,wavelet_name_lf); 
@@ -43,11 +44,9 @@ end
 if wavelet_level_lf == 0  
 
     freq_c = hr/60;  % HR frequency cutoff
-    
     n=ceil(log2((freq/2)/freq_c)); % choose level that removes all freq below HR freq
 
 end
-
 
 % wavelet reconstruction using wavelet and level specified by user.  
 % levels 8-10 seem to work well and correspond to freq of respiration in most ppl    
@@ -55,7 +54,6 @@ end
 
     approx_signal=wrcoef('a',A,D,wavelet_name_lf,n);
     
-  
 % subtract baseline wander from original signal
     signal_nowander = signal-approx_signal;
     lvl = n;

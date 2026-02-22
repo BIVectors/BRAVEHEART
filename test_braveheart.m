@@ -94,6 +94,7 @@ function ap = aparam()
     ap.blanking_window_q = 0;           % QRS blanking window (in samples) to ignore in speed calculations
     ap.blanking_window_t = 0;           % T wave blanking window (in samples) to ignore in speed calculations - different from usual value of 20
     ap.debug = 0;                       % Debug mode (generates debug annotation figures)
+    ap.gpu_setting = 'auto';            % Force 'cpu' or 'gpu', or let MATLAB decide ('auto')
 end
 
 % Reused code for Qualparams values
@@ -3072,6 +3073,43 @@ fnV = fieldnames(V);
 for i = 1:length(fnV)
     testCase.verifyEqual(geh.(fnV{i}),V.(fnV{i}),"AbsTol",1e-7)
 end
+
+
+end
+
+%% Confirm that Annoparams.m and Annoparams.csv have the same number of parameters
+function test_braveheart_annoparams_files_same(testCase)
+
+% Count parameters in Annoparams.m
+a = Annoparams();
+a_prop = length(fieldnames(a));
+
+% load Annoparams.csv
+currentdir = getcurrentdir();      
+a_csv = readcell(fullfile(currentdir,'Annoparams.csv'));
+a_csv_prop = size(a_csv,1);
+
+% Confirm number of parameters in each is the same
+testCase.verifyEqual(a_prop,a_csv_prop)
+
+
+end
+
+
+%% Confirm that Qualparams.m and Qualparams.csv have the same number of parameters
+function test_braveheart_qualparams_files_same(testCase)
+
+% Count parameters in Annoparams.m
+q = Qualparams();
+q_prop = length(fieldnames(q));
+
+% load Annoparams.csv
+currentdir = getcurrentdir();      
+q_csv = readcell(fullfile(currentdir,'Qualparams.csv'));
+q_csv_prop = size(q_csv,1);
+
+% Confirm number of parameters in each is the same
+testCase.verifyEqual(q_prop,q_csv_prop)
 
 
 end

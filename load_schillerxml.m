@@ -121,33 +121,17 @@ for i = 1:num_leads
 
 end
 
-% Account for possiblity that only get 8 independent leads
-if isempty(III)
-    III = -I + II;
-end
-
-if isempty(AVR)
-    AVR = -0.5*I - 0.5*II;
-end
-
-if isempty(AVF)
-    AVF = II - 0.5*I;
-end
-
-if isempty(AVL)
-    AVL = I - 0.5*II;
-end
-
-
-
-% Check that are not mising any leads
-
+% Now deal with possibly missing limb leads - reconstruct the missing limb leads
 if isempty(I) || isempty(II) || isempty(III) || ...
-   isempty(AVR) || isempty(AVL) || isempty(AVF) || ...
-   isempty(V1) || isempty(V2) || isempty(V3) || ...
+   isempty(AVR) || isempty(AVL) || isempty(AVF)
+
+   [I, II, III, AVR, AVL, AVF] = reconstruct_limb_leads(I, II, III, AVR, AVL, AVF);
+
+end
+
+% Check that are not missing any precordial leads
+if isempty(V1) || isempty(V2) || isempty(V3) || ...
    isempty(V4) || isempty(V5) || isempty(V6) 
 
-   error('Missing one or more leads from xml file');
-
-
+   error('Missing one or more leads from Schiller XML file');
 end

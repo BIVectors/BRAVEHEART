@@ -113,7 +113,7 @@ classdef Beats
                     % If using nnet for median reanno
                     if strcmp(aps.median_reanno_method,'NNet') && length(QRS) == 1
                         
-                        [obj.Q, obj.S, obj.T, obj.Tend, obj.nnet_flag, obj.nnet_nan] = nnet_median_annotate(vcg, aps.debug);
+                        [obj.Q, obj.S, obj.T, obj.Tend, obj.nnet_flag, obj.nnet_nan] = nnet_median_annotate(vcg, aps.gpu_setting, aps.debug);
                         obj.QRS = QRS;
                     end
                     

@@ -176,8 +176,17 @@ aps = Annoparams;       % Declare as Annoparams class (will pull in default valu
     aps.pacer_maxscale = str2double(get(handles.pacer_maxscale_txtbox, 'String'));
     aps.pacer_spike_num = str2double(get(handles.pacer_num_leads_txtbox, 'String'));
     
-
-
+% GPU/CPU Execution Environment
+    if get(handles.gpu_options, 'Value') == 1
+         aps.gpu_setting = 'auto';
+    end
+    if get(handles.gpu_options, 'Value') == 2
+         aps.gpu_setting = 'cpu';
+    end
+    if get(handles.gpu_options, 'Value') == 3
+         aps.gpu_setting = 'gpu';
+    end
+    
 	% Septum search window
 	%aps.septumwindow = str2double(get(handles.septal_txt, 'String'));
 end

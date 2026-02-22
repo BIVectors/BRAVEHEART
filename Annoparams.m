@@ -108,6 +108,7 @@ classdef Annoparams
         
 		% Misc
 		debug = 0;                       % Debug mode (generates debug annotation figures)
+        gpu_setting = 'auto';            % Force 'cpu' or 'gpu', or let MATLAB decide ('auto')
 		
     
     

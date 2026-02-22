@@ -56,28 +56,29 @@ If you are using MATLAB R2025a or later, please upgrade to BRAVEHEART version 1.
 
 ## Supported ECG Formats:
 BRAVEHEART can read a wide variety of 12-lead ECG formats including:
-1. GE MUSE XML
-2. Philips XML
-3. HL7 XML
-4. DICOM
-5. ISHNE
-6. GE Marquette ASCII
-7. Cardiosoft XML
-8. Schiller XML
-9. SCP-ECG
-10. EDF
-11. Physionet .dat
-12. Physionet .csv
-13. GE Prucka recording system
-14. Abbott Workmate Claris recording system .txt
-15. Unformatted .txt and .csv
+1. Unformatted .txt and .csv
+2. GE MUSE XML
+3. Philips XML
+4. HL7 annotated ECG (aECG) XML
+5. DICOM
+6. ISHNE
+7. Physionet/WFDB .dat
+8. SCP-ECG
+9. EDF
+10. GE Marquette ASCII
+11. Cardiosoft XML
+12. Schiller XML
+13. Physionet .csv
+14. GE Prucka recording system
+15. Abbott Workmate Claris recording system .txt
 16. Norav 1200M .rdt
 17. Megacare XML
 18. Edan .dat
 19. MFER .mwf
 20. Zoncare ZQECG XML
-21. EP Tracer recording system
-22. Labsystem Pro recording system
+21. Mortara ELI XML
+22. EP Tracer recording system
+23. Labsystem Pro recording system
 
 If you need BRAVEHEART to read another ECG format let us know and we will help add it.
 

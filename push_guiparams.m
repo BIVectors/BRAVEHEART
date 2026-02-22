@@ -232,5 +232,15 @@ end
     set(handles.pacer_maxscale_txtbox, 'String', aps.pacer_maxscale);
     set(handles.pacer_num_leads_txtbox, 'String', aps.pacer_spike_num);
 
+
+% GPU/CPU Execution Environment
+    switch lower(aps.gpu_setting)
+        case 'auto'
+            set(handles.gpu_options, 'Value', 1);
+        case 'cpu'
+            set(handles.gpu_options, 'Value', 2);
+        case 'gpu'
+            set(handles.gpu_options, 'Value', 3);
+    end    
     
 end

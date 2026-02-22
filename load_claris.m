@@ -20,7 +20,7 @@
 % This software is for research purposes only and is not intended to diagnose or treat any disease.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function [hz, I, II, III, avR, avF, avL, V1, V2, V3, V4, V5, V6] = load_claris(filename)
+function [hz, I, II, III, AVR, AVF, AVL, V1, V2, V3, V4, V5, V6] = load_claris(filename)
 
 % Parse filename to get structure needed to find all of the corresponding
 % text files since the data is stored in 1 lead per file
@@ -44,7 +44,15 @@ common_file = common_file{2};
 %<L>.common_file.<N>.txt
 
 L =struct();
-leads = fieldnames(ECG12);
+
+% Initialize empty values in case leads are missing
+L.I = []; L.II = []; L.III = [];
+L.AVR = []; L.AVF = []; L.AVL = [];
+L.V1 = []; L.V2 = []; L.V3 = []; 
+L.V4 = []; L.V5 = []; L.V6 = [];
+
+% Field names of all 12 leads
+leads = upper(fieldnames(ECG12));
 
 for i = 3:14        % ECG12 fieldnames
     for N = 1:40    % Max number of leads from Claris page (may need to change)
@@ -61,7 +69,6 @@ end
 
 % Need to have at least 8 leads
 assert(numel(fieldnames(L)) >= 8, "Not enough files to make a 12-lead ECG");
-
 
 % See if an information file exists
 info_file_name = strsplit(common_file,' - ');
@@ -96,33 +103,28 @@ else
 end
 
 
+% Now deal with possibly missing limb leads - reconstruct the missing limb leads
+if isempty(L.I) || isempty(L.II) || isempty(L.III) || ...
+   isempty(L.AVR) || isempty(L.AVL) || isempty(L.AVF)
+
+   [L.I, L.II, L.III, L.AVR, L.AVL, L.AVF] = reconstruct_limb_leads(L.I, L.II, L.III, L.AVR, L.AVL, L.AVF);
+
+end
+
+% Check that are not missing any precordial leads
+if isempty(L.V1) || isempty(L.V2) || isempty(L.V3) || ...
+   isempty(L.V4) || isempty(L.V5) || isempty(L.V6) 
+
+   error('Missing one or more leads from Claris file');
+end
+
 % Form row vectors gained properly
 I = L.I' * gain;
 II = L.II' * gain;
-
-if isfield(L,'III')
-    III = L.III' * gain;
-else
-    III = -I + II;
-end
-
-if isfield(L,'avR')
-    avR = L.avR' * gain;
-else
-    avR = -0.5*I - 0.5*II;
-end
-
-if isfield(L,'avF')
-    avF = L.avF' * gain;
-else
-    avF = II - 0.5*I;
-end
-
-if isfield(L,'avL')
-    avL = L.avL' * gain;
-else
-    avL = I - 0.5*II;
-end
+III = L.III' * gain;
+AVR = L.AVR' * gain;
+AVF = L.AVF' * gain;
+AVL = L.AVL' * gain;
 
 V1 = L.V1' * gain;
 V2 = L.V2' * gain;

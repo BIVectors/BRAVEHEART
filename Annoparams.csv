@@ -44,3 +44,4 @@ keep_pvc,0
 blanking_window_q,0
 blanking_window_t,20
 debug,0
+gpu_setting,auto

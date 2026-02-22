@@ -45,48 +45,46 @@ M = M / unitspermv;
 % Parse out lead order
 lead_order = split(upper(lead_order));
 
-% Could add some lead name verification here in the future...
-
+% Set up structure L and initialize as empty
 L = struct();
+L.I = []; L.II = []; L.III = [];
+L.AVR = []; L.AVL = []; L.AVF = [];
+L.V1 = []; L.V2 = []; L.V3 = [];
+L.V4 = []; L.V5 = []; L.V6 = [];
 
 % Pull lead data into structure so can deal with different lead order
 for i = 1:length(lead_order)
     L.(lead_order{i}) = M(:,i);
 end
 
+% Now deal with possibly missing limb leads - reconstruct the missing limb leads
+if isempty(L.I) || isempty(L.II) || isempty(L.III) || ...
+   isempty(L.AVR) || isempty(L.AVL) || isempty(L.AVF)
+
+   [L.I, L.II, L.III, L.AVR, L.AVL, L.AVF] = reconstruct_limb_leads(L.I, L.II, L.III, L.AVR, L.AVL, L.AVF);
+
+end
+
+% Check that are not missing any precordial leads
+if isempty(L.V1) || isempty(L.V2) || isempty(L.V3) || ...
+   isempty(L.V4) || isempty(L.V5) || isempty(L.V6) 
+
+   error('Missing one or more leads from generic CSV file');
+end
+
+% Assign leads to output
 L1 = L.I; 
 L2 = L.II;
+L3 = L.III;
+avR = L.AVR;
+avL = L.AVL;
+avF = L.AVF;
 V1 = L.V1;
 V2 = L.V2;
 V3 = L.V3;
 V4 = L.V4;
 V5 = L.V5;
 V6 = L.V6;
-       
-% Deal with possibility of only having 8 leads
-if isfield(L,'III')
-    L3 = L.III;
-else
-    L3 = -L1 + L2;
-end
-
-if isfield(L,'AVR')
-    avR = L.AVR;
-else
-    avR = -0.5*L1 - 0.5*L2;
-end
-
-if isfield(L,'AVL')
-    avL = L.AVL;
-else
-    avL = L1 - 0.5*L2;
-end
-
-if isfield(L,'AVF')
-    avF = L.AVF;
-else
-    avF = L2 - 0.5*L1;
-end
-
+    
 
 end     % End function

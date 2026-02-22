@@ -52,10 +52,16 @@ time = data.TimeOfDay;
 time_per_sample = seconds(time(2))-seconds(time(1));
 hz = round(1/time_per_sample);
 
-% Check that are not mising any leads
+% Now deal with possibly missing limb leads - reconstruct the missing limb leads
 if isempty(I) || isempty(II) || isempty(III) || ...
-   isempty(avR) || isempty(avL) || isempty(avF) || ...
-   isempty(V1) || isempty(V2) || isempty(V3) || ...
+   isempty(avR) || isempty(avL) || isempty(avF)
+
+   [I, II, III, avR, avL, avF] = reconstruct_limb_leads(I, II, III, avR, avL, avF);
+
+end
+
+% Check that are not missing any precordial leads
+if isempty(V1) || isempty(V2) || isempty(V3) || ...
    isempty(V4) || isempty(V5) || isempty(V6) 
 
    error('Missing one or more leads from EP Tracer file');

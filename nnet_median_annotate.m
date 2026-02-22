@@ -21,7 +21,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-function [Q, S, T, Tend, flag, nan_count] = nnet_median_annotate(signal_full, debug)
+function [Q, S, T, Tend, flag, nan_count] = nnet_median_annotate(signal_full, env, debug)
 
 signal = signal_full.VM;
 signal_orig = signal;
@@ -53,7 +53,8 @@ signal_orig = signal;
     vcg_fsst = cellfun(standardizeFun,vcg_fsst,'UniformOutput',false);
 
 % Process VM median beat through NNet and calculate
-    [vcg_nnet, scores] = classify(MedianAnnoNet,vcg_fsst,'MiniBatchSize',24, 'SequenceLength','longest');
+% env sets if use 'cpu', 'gpu', or 'auto' as set in Annoparams.m
+    [vcg_nnet, scores] = classify(MedianAnnoNet,vcg_fsst,'MiniBatchSize',24, 'SequenceLength','longest', 'ExecutionEnvironment', env);
 
 % Pull out the fiducial points from the scores/NNet output
 [qonPred, qoffPred, toffPred, flag, nan_count] = extract_points(vcg_nnet);

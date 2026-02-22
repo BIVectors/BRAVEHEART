@@ -150,9 +150,9 @@ classdef ECG12
                        [obj.hz, obj.I, obj.II, obj.III, obj.avR, obj.avF, obj.avL, ...
                             obj.V1, obj.V2, obj.V3, obj.V4, obj.V5, obj.V6] = load_physionet_csv(filename);
 
-                   case 'physionet_dat'
+                   case 'wfdb_dat'
                        [obj.hz, obj.I, obj.II, obj.III, obj.avR, obj.avF, obj.avL, ...
-                            obj.V1, obj.V2, obj.V3, obj.V4, obj.V5, obj.V6] = load_physionet_dat(filename);
+                            obj.V1, obj.V2, obj.V3, obj.V4, obj.V5, obj.V6] = load_wfdb_dat(filename);
 
                     case 'megacare_xml'
                        [obj.hz, obj.I, obj.II, obj.III, obj.avR, obj.avF, obj.avL, ...
@@ -183,6 +183,10 @@ classdef ECG12
                     case 'labsystempro'
                         [obj.hz, obj.I, obj.II, obj.III, obj.avR, obj.avF, obj.avL, ...
                             obj.V1, obj.V2, obj.V3, obj.V4, obj.V5, obj.V6] = load_labsystempro(filename);
+
+                    case 'eli_xml'
+                        [obj.hz, obj.I, obj.II, obj.III, obj.avR, obj.avF, obj.avL, ...
+                            obj.V1, obj.V2, obj.V3, obj.V4, obj.V5, obj.V6] = load_elixml(filename);
 
 					
                     otherwise
