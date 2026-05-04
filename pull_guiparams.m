@@ -155,12 +155,17 @@ aps = Annoparams;       % Declare as Annoparams class (will pull in default valu
     aps.modz_cutoff = str2num(get(handles.zscore_thresh_txt,'String'));
    
 % Median beat reannotation method    
-    if get(handles.medianreanno_popup, 'Value') == 1
+    if get(handles.medianreanno_popup, 'Value') == 2
          aps.median_reanno_method = 'NNet';
     end
-    if get(handles.medianreanno_popup, 'Value') == 2
+
+    if get(handles.medianreanno_popup, 'Value') == 3
          aps.median_reanno_method = 'Std';
-	end    
+    end
+
+    if get(handles.medianreanno_popup, 'Value') == 1
+         aps.median_reanno_method = 'NNetV2';
+    end   
    
 % Pacing spike interopolation
     aps.cwt_spike_removal = logical(get(handles.cwt_pacing_remove_box, 'Value'));

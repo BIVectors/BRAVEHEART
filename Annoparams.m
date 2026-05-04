@@ -92,7 +92,7 @@ classdef Annoparams
 		Tendstr = 'Energy';              % Tend detection method ('Energy', 'Tangent', or 'Baseline')
 		
 		% Median reannotation method
-		median_reanno_method = 'NNet';   % 'NNet' for neural network and 'Std' for standard annotations
+		median_reanno_method = 'NNetV2'; % 'NNet' or 'NNetV2' for neural network and 'Std' for standard annotations
 		
 		% Outlier, pacing spike, PVC removal
 		outlier_removal = 1;             % Remove outliers
@@ -108,7 +108,7 @@ classdef Annoparams
         
 		% Misc
 		debug = 0;                       % Debug mode (generates debug annotation figures)
-        gpu_setting = 'auto';            % Force 'cpu' or 'gpu', or let MATLAB decide ('auto')
+        gpu_setting = 'cpu';             % Force 'cpu' or 'gpu' (keep 'cpu' unless have good reason)
 		
     
     

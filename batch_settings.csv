@@ -2,6 +2,7 @@ format,muse_xml
 output_ext,.csv
 output_note,batch
 parallel_proc,1
+num_par_workers,Inf
 progressbar,1
 save_figures,0
 save_data,0

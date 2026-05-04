@@ -177,7 +177,7 @@ set(gca, 'Children',C);
     
 xlim([-400 length(new_ecg(1,:)) ])
 ylim([0 yceil])
-title(strcat(filename(1:end-4)," - Median Beats"),'FontWeight','bold','FontSize',14, 'Interpreter', 'none', 'color', colors.txtcolor)
+title(strcat(filename," - Median Beats"),'FontWeight','bold','FontSize',14, 'Interpreter', 'none', 'color', colors.txtcolor)
 
 hold off
 

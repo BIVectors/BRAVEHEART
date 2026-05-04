@@ -44,7 +44,7 @@ function varargout = braveheart_gui(varargin)
 
 % Edit the above text to modify the response to help braveheart_gui
 
-% Last Modified by GUIDE v2.5 06-Feb-2026 12:39:52
+% Last Modified by GUIDE v2.5 15-Apr-2026 16:53:00
 
 % Update the current L&F for mac button issues...
 % Windows will use the normal Windows theme
@@ -110,13 +110,13 @@ set(handles.tab3,'visible','off')
 set(handles.tab4,'visible','off')
 set(handles.tab5,'visible','off')
     
-% Load neural network for median beat annotation
-load('MedianAnnoNet')
-handles.MedianAnnoNet = MedianAnnoNet;
-handles.meanTrain = meanTrain;
-handles.stdTrain = stdTrain;
-handles.standardizeFun = standardizeFun;
-guidata(hObject, handles);  % Save to handles.
+% % Load neural network for median beat annotation
+% load('MedianAnnoNet')
+% handles.MedianAnnoNet = MedianAnnoNet;
+% handles.meanTrain = meanTrain;
+% handles.stdTrain = stdTrain;
+% handles.standardizeFun = standardizeFun;
+% guidata(hObject, handles);  % Save to handles.
     
 % Link face and vcg axes
 hlink = linkprop([handles.vcg_axis, handles.face_axis],{'CameraPosition','CameraUpVector'});
@@ -188,12 +188,27 @@ else
     set(handles.exec_env_txt2,'Enable','Off')
 end
 
+% Number of available cores (if use parallel batch processing)
+[num_cores_avail, hpc] = detect_num_cores();
+set(handles.num_cores_avail_txt,'String', sprintf('# Cores Available: %i ', num_cores_avail));
+set(handles.num_cores_touse_dropdown, 'String', 1:1:num_cores_avail); % load availabe core numbers into dropdown
+set(handles.num_cores_touse_dropdown,'Value',num_cores_avail);
+
+% Add HPC text if running on HPC
+if hpc == 1
+    set(handles.num_cores_avail_txt,'String',strcat(get(handles.num_cores_avail_txt,'String'),{' '},'(HPC)'));
+end
+
+handles.num_cores_avail = num_cores_avail;
+guidata(hObject, handles);  % Save to handles
+
 % Show About Information regarding License etc 
 % (automatically updates version number)
 about_popup();
 
 % UIWAIT makes braveheart_gui wait for user response (see UIRESUME)
 % uiwait(handles.braveheart_gui);
+
 
 
 % --- Outputs from this function are returned to the command line.
@@ -1752,7 +1767,7 @@ if strcmp(note,"")
 end
 
 i = 1;  % Deal with issue in how AnnoResult handles single ecgs outide of batch. HFS: don't change!
-results{i} = AnnoResult(basename, note, source_str, aps, ecg, hr, num_initial_beats, beats, beat_stats, corr, noise, quality.prob_value, quality.missing_lead, lead_ispaced, geh, morph, vcg_morph);
+results{i} = AnnoResult(basename, note, source_str, aps, ecg, hr, num_initial_beats, beats, beat_stats, corr, noise, quality.prob_value, quality.sum_se, quality.missing_lead, lead_ispaced, geh, morph, vcg_morph);
 	
 save_folder = get(handles.save_dir_txt,'String');
 filename = handles.filename;  % filename loaded
@@ -3791,6 +3806,7 @@ end
 
 % Parallel computing
 parallel_proc = get(handles.parallel_batch_button, 'Value');
+num_par_workers = get(handles.num_cores_touse_dropdown,'Value');
 
 % Enable/Disable progress bar
 progressbar = 1;
@@ -3811,8 +3827,8 @@ batch_aps = pull_guiparams(hObject, eventdata, handles);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Now call braveheart_batch() function
-braveheart_batch('', source_str, output_ext, output_note, parallel_proc, progressbar, ...
-    save_figures, save_data, save_annotations, ...
+braveheart_batch('', source_str, output_ext, output_note, parallel_proc, num_par_workers, ...
+    progressbar, save_figures, save_data, save_annotations, ...
     vcg_calc_flag, lead_morph_flag, vcg_morph_flag, batch_aps, 'disable');
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -4479,6 +4495,8 @@ function export_mat_data_button_Callback(hObject, eventdata, handles)
 
 save_folder = get(handles.save_dir_txt,'String');
 
+note = get(handles.export_note,'String');
+
 % Load all data
 ecg_raw = handles.ecg_raw;
 vcg_raw = handles.vcg_raw;
@@ -4520,8 +4538,8 @@ quality = handles.quality;
 
 % Create an AnnoResult class object
 i = 1;  % Deal with issue in how AnnoResult handles single ecgs outide of batch. HFS: don't change!
-results{i} = AnnoResult(basename, '', source_str, aps, ecg, hr, num_initial_beats, beats, ...
-    beat_stats, corr, noise, quality.prob_value, quality.missing_lead, lead_ispaced, geh, ...
+results{i} = AnnoResult(basename, note, source_str, aps, ecg, hr, num_initial_beats, beats, ...
+    beat_stats, corr, noise, quality.prob_value, quality.sum_se, quality.missing_lead, lead_ispaced, geh, ...
     lead_morph, vcg_morph);
 	
 % Choose the relevant parts of AnnoResult to avoid duplication
@@ -4951,7 +4969,16 @@ speed_filename = fullfile(save_folder,filename_short);
 
 popout = 1;
 
-speed_graph_gui(hObject, eventdata, handles, speed_filename, save_flag, 0, str2num(get(handles.speed_blank_txt, 'String')), str2num(get(handles.speed_t_blank_txt, 'String')), accel_flag, legend_flag, popout);
+% Get colors based on if in light/dark mode
+[dm, dark_colors, light_colors] = check_darkmode(handles);
+
+if dm == 1
+    colors = dark_colors;
+else
+    colors = light_colors;
+end
+
+speed_graph_gui(hObject, eventdata, handles, speed_filename, save_flag, 0, str2num(get(handles.speed_blank_txt, 'String')), str2num(get(handles.speed_t_blank_txt, 'String')), accel_flag, legend_flag, colors, popout);
 
 
 
@@ -6125,6 +6152,29 @@ function gpu_options_Callback(hObject, eventdata, handles)
 % --- Executes during object creation, after setting all properties.
 function gpu_options_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to gpu_options (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: popupmenu controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on selection change in num_cores_touse_dropdown.
+function num_cores_touse_dropdown_Callback(hObject, eventdata, handles)
+% hObject    handle to num_cores_touse_dropdown (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: contents = cellstr(get(hObject,'String')) returns num_cores_touse_dropdown contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from num_cores_touse_dropdown
+
+
+% --- Executes during object creation, after setting all properties.
+function num_cores_touse_dropdown_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to num_cores_touse_dropdown (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 

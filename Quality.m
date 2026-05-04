@@ -58,6 +58,8 @@ properties (SetAccess = private)
     prob_value          % Actual probability (range 0-1) for 'good' quality
     nnet_flag           % NNet probabilities found more than 1 possible fiducial point
     nnet_nan            % NNet couldnt find a fiducial point (usually Tend)
+    nnet_se             % Shannon entropy for MedianAnnoNetV2 - above threshold?
+    sum_se              % Shannon entropy for MedianAnnoNetV2 - actual value
 
 end
     
@@ -85,6 +87,15 @@ if any(isnan(medianbeat.beatmatrix()))
     obj.nnet_nan = 1;
     obj.prob = 1;
     obj.prob_value = nan;
+
+        if ~isempty(medianbeat.sum_se) && ~isnan(medianbeat.sum_se)
+            obj.nnet_se = 1;
+            obj.sum_se = medianbeat.sum_se;
+        else
+            obj.nnet_se = 0;
+            obj.sum_se = [];
+        end
+
     return;
 end
 
@@ -117,14 +128,21 @@ wksp.baseline = baseline_voltage(med_vcg, medianbeat);
 obj.missing_lead = wksp.missing_lead;
 
 % NNet flags
+% nnet_se is only for MedianAnnoNetV2
 wksp.nnet_flag = medianbeat.nnet_flag;
 wksp.nnet_nan = medianbeat.nnet_nan;
+wksp.sum_se = medianbeat.sum_se;
 
 if isempty(medianbeat.nnet_flag); wksp.nnet_flag = 0; end
-if isempty(medianbeat.nnet_nan); wksp.nnet_nan = 0; end   
+if isempty(medianbeat.nnet_nan);  wksp.nnet_nan = 0;  end   
+if isempty(medianbeat.sum_se);   wksp.sum_se = [];   end   
     
 obj.nnet_flag = wksp.nnet_flag;
 obj.nnet_nan = wksp.nnet_nan;
+obj.sum_se = wksp.sum_se;
+
+% Sum Shannon Entropy value
+wksp.nnet_se = medianbeat.sum_se;
 
 % Cross correlation for X, Y, Z (just reports the min value for all 3)
 wksp.corr = min([corr.X corr.Y corr.Z]);  % Look at minimum correlation for X, Y, Z leads
@@ -134,7 +152,7 @@ wksp.hf_noise = noise(1);
 wksp.lf_noise = noise(2);
 
 % Logit probability
-% If NNet is not confident, flag regardless of probability
+% If NNet flag or NaN, flag regardless of probability
 if wksp.nnet_flag == 1 || wksp.nnet_nan == 1 || wksp.missing_lead == 1 || ...
    isnan(wksp.corr) || isnan(wksp.baseline) || isnan(wksp.t_mag) || isnan(wksp.tpqt)    
     wksp.prob_value = nan;
@@ -154,6 +172,7 @@ end
 % Dummy value for prob
 wksp.prob = wksp.prob_value;
 
+
 % Generate structure to store the names of Quality variables
 % Qvar_names will have same order as 'wksp' EXCEPT it also includes 'prob_cut'
 Qvar_names = fieldnames(Quality());
@@ -165,8 +184,8 @@ preset_names = fieldnames(qps);
 % Load preset values into Qvals structure based on names in Qualparams
 
 % Make sure lengths of file and throw error if not same length (Qualparams has errors) 
-% Subtract the 4 Quality flags that are not in Qualparams
-assert(length(preset_names) == length(Qvar_names)-4, 'Check Qualparams for errors');
+% Subtract the 5 Quality flags that are not in Qualparams
+assert(length(preset_names) == length(Qvar_names)-5, 'Check Qualparams for errors');
 
 
 % Set up variables for low and high cutoffs
@@ -178,14 +197,21 @@ end
 % Now have all of the cutpoints from  stored in structure Qvals
 
 % Loop through presets and check if satisfies conditions
-for i = 1:length(preset_names)
-      if isempty(wksp.(Qnames{i})) || isnan(wksp.(Qnames{i}))
-            obj.(Qnames{i}) = 1;
-      else
-            obj.(Qnames{i}) =  wksp.(Qnames{i}) < Qvals.(Qnames{i})(1) || wksp.(Qnames{i}) > Qvals.(Qnames{i})(2);
-      end
+    for i = 1:length(preset_names)
+          if isempty(wksp.(Qnames{i})) || isnan(wksp.(Qnames{i}))
+                obj.(Qnames{i}) = 1;
+          else
+                obj.(Qnames{i}) =  wksp.(Qnames{i}) < Qvals.(Qnames{i})(1) || wksp.(Qnames{i}) > Qvals.(Qnames{i})(2);
+          end
     end     % end for loop
-    end   % End constructor
+
+% Special case for nnet_se and sum_se since they only are useful for NNetV2
+% If sum_se = [], then dont flag nnet_se since it was not calculated
+if isempty(obj.sum_se)
+    obj.nnet_se = 0;
+end
+
+end   % End constructor
 
 
 % Helper functions:    
@@ -203,9 +229,13 @@ end
 if isempty(obj.nnet_nan)
     obj.nnet_nan = 0;  
 end
+
+if isempty(obj.sum_se)
+    obj.nnet_se = 0;
+end
     
 v = [obj.qt obj.qrs obj.tpqt obj.t_mag obj.hr obj.num_beats obj.pct_beats_removed...
-        obj.corr obj.baseline obj.missing_lead obj.hf_noise obj.lf_noise obj.prob obj.nnet_flag obj.nnet_nan];
+        obj.corr obj.baseline obj.missing_lead obj.hf_noise obj.lf_noise obj.prob obj.nnet_se obj.nnet_flag obj.nnet_nan];
 end
                 
     

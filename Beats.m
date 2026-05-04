@@ -34,10 +34,11 @@ classdef Beats
         S
         T
         Tend
-        outlier         % logical flags for beats: is outlier beat?
-        pvc             % logical flags for beats: is PVC?
-        nnet_flag       % problem with nnet annotation?
+        outlier         % Logical flags for beats: is outlier beat?
+        pvc             % Logical flags for beats: is PVC?
+        nnet_flag       % Possible problem with nnet annotation?
         nnet_nan        % NNet can't find a fiducial point in the median beat
+        sum_se         % Sum Shannon entropy (MedianAnnoNetV2)
         QRS_rem_pvc     % List of beats that were removed as PVCs
         QRS_rem_outlier % List of beats that were removed as outliers
         QRS_rem_manual  % List of beats that were manually removed
@@ -109,7 +110,6 @@ classdef Beats
                     end
 
 
-                    
                     % If using nnet for median reanno
                     if strcmp(aps.median_reanno_method,'NNet') && length(QRS) == 1
                         
@@ -117,6 +117,12 @@ classdef Beats
                         obj.QRS = QRS;
                     end
                     
+                    if strcmp(aps.median_reanno_method,'NNetV2') && length(QRS) == 1
+
+                        % Not using sum_se right now
+                        [obj.Q, obj.S, obj.T, obj.Tend, obj.nnet_flag, obj.nnet_nan, obj.sum_se] = nnet_median_annotateV2(vcg, aps.gpu_setting, aps.debug);
+                        obj.QRS = QRS;
+                    end
                     
                     
                     % check for overlapping beats

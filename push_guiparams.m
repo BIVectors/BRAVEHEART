@@ -204,24 +204,29 @@ function push_guiparams(aps, hObject, eventdata, handles)
     set(handles.zscore_thresh_txt,'String', aps.modz_cutoff);
 
 % Median beat reannotation method    
-if strcmp(aps.median_reanno_method,'NNet')
+    if strcmp(aps.median_reanno_method,'NNet')
+        set(handles.medianreanno_popup, 'Value', 2);
+    end
+
+    if strcmp(aps.median_reanno_method,'Std')
+        set(handles.medianreanno_popup, 'Value', 3);
+    end
+
+    if strcmp(aps.median_reanno_method,'NNetV2')
         set(handles.medianreanno_popup, 'Value', 1);
     end
-if strcmp(aps.median_reanno_method,'Std')
-        set(handles.medianreanno_popup, 'Value', 2);
-end
     
 % Septal activation search window
 %set(handles.septal_txt, 'String', aps.septumwindow);
     
 % Keep PVC vs native
-if aps.keep_pvc == 0
-    set(handles.keepnative_button, 'Value', 1);
-    set(handles.keeppvc_button, 'Value', 0);
-else
-    set(handles.keepnative_button, 'Value', 0);
-    set(handles.keeppvc_button, 'Value', 1);
-end
+    if aps.keep_pvc == 0
+        set(handles.keepnative_button, 'Value', 1);
+        set(handles.keeppvc_button, 'Value', 0);
+    else
+        set(handles.keepnative_button, 'Value', 0);
+        set(handles.keeppvc_button, 'Value', 1);
+    end
 
     
 % Pacing spike interopolation

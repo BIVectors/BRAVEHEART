@@ -34,7 +34,7 @@ cov_thresh,30
 shiftq,-40
 shiftt,60
 Tendstr,Energy
-median_reanno_method,NNet
+median_reanno_method,NNetV2
 outlier_removal,1
 modz_cutoff,4
 pvc_removal,1
@@ -44,4 +44,4 @@ keep_pvc,0
 blanking_window_q,0
 blanking_window_t,20
 debug,0
-gpu_setting,auto
+gpu_setting,cpu

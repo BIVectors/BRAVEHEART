@@ -24,12 +24,12 @@
 function braveheart_batch(varargin)
 
 % Takes either 0 inputs in which case it executes like a script
-% with the inputs set below, or 11 inputs in which case it ignores the
-% inputs below and takes then as the 11 inputs.
+% with the inputs set below, or 13-14 inputs in which case it ignores the
+% inputs below and takes then as the 13-14 inputs passed in to the function.
 
 % Inputs are in the order:
 % braveheart_batch(folder, format, output_ext, output_note, parallel_proc, ...
-%    progressbar, save_figures, save_data, save_annotations, ...
+%    num_par_workers, progressbar, save_figures, save_data, save_annotations, ...
 %    vcg_calc_flag, lead_morph_flag, vcg_morph_flag, [option])
 
 % [option] is only used if calling function via GUI - can ignore otherwise!
@@ -47,6 +47,7 @@ output_ext = '.csv';       % Output file extension; '.csv' or '.xlsx'
 output_note = 'batch';     % Note added to output
 
 parallel_proc = 1;         % Use parallel processing; 1 = yes, 0 = no
+num_par_workers = Inf;     % # workers to use if parallel processing (Inf = all available)
 progressbar = 1;           % Display progress bar; 1 = yes, 0 = no
 
 save_figures = 0;          % Save figure of processing/annotation; 1 = yes, 0 = no
@@ -64,25 +65,6 @@ vcg_morph_flag = 1;        % Process VCG_Morphology module; 1 = yes, 0 = no
 
 % If pass in variables rather than setting within this file
 % and DOES NOT include Annoparams object (will pull from Annoparams.m):
-elseif nargin == 12
-
-folder = varargin{1};     
-format = varargin{2};
-output_ext = varargin{3};  
-output_note = varargin{4};  
-
-parallel_proc = varargin{5};  
-progressbar = varargin{6};  
-
-save_figures = varargin{7};  
-save_data = varargin{8};  
-save_annotations = varargin{9};  
-
-vcg_calc_flag = varargin{10};  
-lead_morph_flag = varargin{11};  
-vcg_morph_flag = varargin{12};  
-
-% If DO pass in custom annoparams:
 elseif nargin == 13
 
 folder = varargin{1};     
@@ -91,21 +73,18 @@ output_ext = varargin{3};
 output_note = varargin{4};  
 
 parallel_proc = varargin{5};  
-progressbar = varargin{6};  
+num_par_workers = varargin{6};
+progressbar = varargin{7};  
 
-save_figures = varargin{7};  
-save_data = varargin{8};  
-save_annotations = varargin{9};  
+save_figures = varargin{8};  
+save_data = varargin{9};  
+save_annotations = varargin{10};  
 
-vcg_calc_flag = varargin{10};  
-lead_morph_flag = varargin{11};  
-vcg_morph_flag = varargin{12};  
+vcg_calc_flag = varargin{11};  
+lead_morph_flag = varargin{12};  
+vcg_morph_flag = varargin{13};  
 
-ap = varargin{13};  
-
-% If pass in variables via GUI - need to disable isdeloyed & read_batch_settings():
-% GUI always should pass in annoparams from the GUI itself rather than the
-% Annoparams.m file
+% If DO pass in custom annoparams:
 elseif nargin == 14
 
 folder = varargin{1};     
@@ -114,23 +93,48 @@ output_ext = varargin{3};
 output_note = varargin{4};  
 
 parallel_proc = varargin{5};  
-progressbar = varargin{6};  
+num_par_workers = varargin{6};
+progressbar = varargin{7};  
 
-save_figures = varargin{7};  
-save_data = varargin{8};  
-save_annotations = varargin{9};  
+save_figures = varargin{8};  
+save_data = varargin{9};  
+save_annotations = varargin{10};  
 
-vcg_calc_flag = varargin{10};  
-lead_morph_flag = varargin{11};  
-vcg_morph_flag = varargin{12};
+vcg_calc_flag = varargin{11};  
+lead_morph_flag = varargin{12};  
+vcg_morph_flag = varargin{13};  
 
-ap = varargin{13};  
+ap = varargin{14};  
+
+% If pass in variables via GUI - need to disable isdeloyed & read_batch_settings():
+% GUI always should pass in annoparams from the GUI itself rather than the
+% Annoparams.m file
+elseif nargin == 15
+
+folder = varargin{1};     
+format = varargin{2};
+output_ext = varargin{3};  
+output_note = varargin{4};  
+
+parallel_proc = varargin{5};  
+num_par_workers = varargin{6};
+progressbar = varargin{7};  
+
+save_figures = varargin{8};  
+save_data = varargin{9};  
+save_annotations = varargin{10};  
+
+vcg_calc_flag = varargin{11};  
+lead_morph_flag = varargin{12};  
+vcg_morph_flag = varargin{13};
+
+ap = varargin{14};  
 
 disable_read = 'disable';  % hard code this in so doesnt matter what string/value passed in
     
     
 else
-    error('Wrong Number of Inputs: %d.  Takes either 0, 12, 13, or 14 inputs', nargin);
+    error('Wrong Number of Inputs: %d.  Takes either 0, 13, 14, or 15 inputs', nargin);
 end
 
 
@@ -166,6 +170,11 @@ if isempty( ver('parallel'))
 end
 
 tic     % Start timer
+
+% Get actual number of available workers if set to Inf
+if num_par_workers == Inf
+    [num_par_workers, ~] = detect_num_cores();
+end
 
 % Extension of annotation files
 anno_ext = '.anno';     
@@ -285,7 +294,7 @@ exportsigs = strings(num_files,1);
 
 % Open parallel pool if specified use of parallel computing
 if parallel_proc
-    workers = Inf;
+    workers = num_par_workers;
 else
     workers = 0;
 end
@@ -350,7 +359,7 @@ parfor (i = 1:num_files, workers)
         
         % Generate row of results for output file
 		results{i} = AnnoResult(strcat(basename,fext), note, format, ap, ecg, batchout.hr_orig, batchout.NQRS_orig, ...
-            batchout.beats_final, batchout.beat_stats, batchout.correlation_test, batchout.noise, batchout.quality.prob_value, batchout.quality.missing_lead, ...
+            batchout.beats_final, batchout.beat_stats, batchout.correlation_test, batchout.noise, batchout.quality.prob_value, batchout.quality.sum_se, batchout.quality.missing_lead, ...
             batchout.lead_ispaced, geh, lead_morph, vcg_morph);
 		
         % Signal quality object
@@ -488,10 +497,10 @@ if sum(qindex) > 0
 	% Write list of ecgs that need quality verification (check_ecg_list.xlsx)
 	check_ecg_filename = fullfile(orig_directory,'check_ecg_list');
 	check_ecg_filename = strcat(check_ecg_filename, time_stamp,output_ext);
-	check_ecg_list_header{1}=[{'filename'}, {'qt_error'},{'qrs_error'},{'tpeakqt_error'},...
+	check_ecg_list_header{1}=[{'filename'},{'qt_error'},{'qrs_error'},{'tpeakqt_error'},...
         {'tmag_error'},{'HR_error'},{'num_beats_error'},{'num_removed_beats_error'},...
         {'median_sig_corr_error'},{'baseline'},{'missing_lead'},{'hf_noise'},{'lf_noise'},...
-        {'probability'}, {'NNet_prob_flag'}, {'NNet_NaN'}];
+        {'probability'}, {'nnet_se'}, {'nnet_prob_flag'}, {'nnet_nan'}, ];
 	quality_full = quality_full(~cellfun('isempty',quality_full));
 	check_ecg_excel_data = [check_ecg_list_header ; quality_full];
 	check_ecg_excel_data = vertcat(check_ecg_excel_data{:});
@@ -543,7 +552,7 @@ fprintf('\n\nECG PROCESSING COMPLETE! \n\n%i ECGs Processed \n%i ECGs Need Quali
 
 % Function to update the parallel waitbar
 function UpdateWaitbar(~)
-    waitbar(P/num_files, H, sprintf('Processed %i out of %i Total ECGs (%i%%)',P,num_files,round(100*(P/num_files))));
+    waitbar(P/num_files, H, sprintf('Processed %i out of %i Total ECGs (%i%%) on %i Workers',P,num_files,round(100*(P/num_files)),workers));
     P = P + 1;
 end
 

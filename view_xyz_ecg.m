@@ -148,7 +148,7 @@ set(gca, 'Children',C);
     
 xlim([-400 length(ecg_sqwave(1,:)) ])
 ylim([0 yceil])
-title(filename(1:end-4),'FontWeight','bold','FontSize',14, 'Interpreter', 'none','color',colors.txtcolor)
+title(filename,'FontWeight','bold','FontSize',14, 'Interpreter', 'none','color',colors.txtcolor)
 
 hold off
 

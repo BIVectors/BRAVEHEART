@@ -61,6 +61,7 @@ classdef Qualparams
         hf_noise = [10 Inf];             % SNR for HF noise cutoff
         lf_noise = [-Inf 0.03];          % mV for cutoff in variance in LF noise
         prob = [0.8 1];                  % Logistic regression probability (range 0-1)
+        nnet_se = [0 10];                % Sum of Shannon entropy (MedianAnnoNetV2 parameter)
 
 	end
 	

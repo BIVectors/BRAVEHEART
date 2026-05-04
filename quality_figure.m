@@ -22,6 +22,9 @@
 
 function quality_figure(quality, hObject, eventdata, handles)
 
+% Pull Annoparams from GUI in case changed between when pressed Calc and now
+aps = pull_guiparams(hObject, eventdata, handles); 
+
 % Make a single flag for either NNet issue
 if quality.nnet_flag == 1 || quality.nnet_nan == 1
     nnet_flag = 1;
@@ -31,7 +34,7 @@ end
     
 quality_matrix = [quality.qt quality.qrs quality.tpqt quality.t_mag quality.hr quality.num_beats ...
     quality.pct_beats_removed quality.corr quality.baseline quality.missing_lead quality.hf_noise quality.lf_noise ...
-    quality.prob nnet_flag];
+    quality.prob nnet_flag quality.sum_se];
 
 figure('name','Annotation Quality Assessment','numbertitle','off')
 title('Annotation Quality Assessment','fontsize',12)
@@ -63,7 +66,7 @@ end
     text(12,0.4,{'LF Noise'},'vert','bottom','horiz','center','FontWeight','bold', 'Color','k', 'interpreter', 'none');
     text(13,0.4,{'Prob'},'vert','bottom','horiz','center','FontWeight','bold', 'Color','k', 'interpreter', 'none');
     
-    if strcmp(handles.aps.median_reanno_method,'NNet')
+    if strcmp(aps.median_reanno_method,'NNet') || strcmp(aps.median_reanno_method,'NNetV2')
         if nnet_flag == 1
             color(i) = 'r';
         else
@@ -72,6 +75,24 @@ end
     
         bar(14, 1, color(i));        
         text(14,0.4,'NNet Flag','vert','bottom','horiz','center','FontWeight','bold', 'Color','k', 'interpreter', 'none');
+    else
+        % Greyed out if not using one of the NNs for annotation
+        bar(14, 1, 'FaceColor', '[0.8 0.8 0.8]'); 
+    end
+
+    % sum_se only if using MedianAnnoNetV2
+    if strcmp(aps.median_reanno_method,'NNetV2')
+        if quality.nnet_se == 1
+            color(i) = 'r';
+        else
+            color(i) = 'g'; 
+        end
+    
+        bar(15, 1, color(i));        
+        text(15,0.35,{'Sum SE',num2str(round(quality.sum_se,1))},'vert','bottom','horiz','center','FontWeight','bold', 'Color','k', 'interpreter', 'none');
+    else
+        % Greyed out if not using one of the NNs for annotation
+        bar(15, 1, 'FaceColor', '[0.8 0.8 0.8]'); 
     end
     
 hold off
@@ -80,7 +101,7 @@ ylim([0 1]);
 set(gca,'YTickLabel',[]);
 set(gca,'XTickLabel',[]);
 
-set(gcf, 'Position', [200, 100, 1600, 150])  % set figure size
+set(gcf, 'Position', [200, 100, 1700, 150])  % set figure size
 
 InSet = get(gca, 'TightInset');
 InSet(4) = InSet(4)+0.015;

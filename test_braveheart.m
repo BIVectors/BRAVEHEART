@@ -84,7 +84,7 @@ function ap = aparam()
     ap.shiftq = -40;                    % Q window expand when calculating median beat (in ms)
     ap.shiftt = 60;                     % T window expand when calculating median beat (in ms)
     ap.Tendstr = 'Energy';              % Tend detection method ('Energy', 'Tangent', or 'Baseline')
-    ap.median_reanno_method = 'NNet';   % 'NNet' for neural network and 'Std' for standard annotations
+    ap.median_reanno_method = 'NNet';   % 'NNet' for NN v1, 'NNetV2' for NN V2, and 'Std' for standard annotations
     ap.outlier_removal = 1;             % Remove outliers
     ap.modz_cutoff = 4;                 % Cutoff for mod Z-score to flag an outlier (higher less sensitive)
     ap.pvc_removal = 1;                 % Remove PVCs
@@ -94,24 +94,25 @@ function ap = aparam()
     ap.blanking_window_q = 0;           % QRS blanking window (in samples) to ignore in speed calculations
     ap.blanking_window_t = 0;           % T wave blanking window (in samples) to ignore in speed calculations - different from usual value of 20
     ap.debug = 0;                       % Debug mode (generates debug annotation figures)
-    ap.gpu_setting = 'auto';            % Force 'cpu' or 'gpu', or let MATLAB decide ('auto')
+    ap.gpu_setting = 'cpu';             % Force 'cpu' or 'gpu', or let MATLAB decide ('auto')
 end
 
 % Reused code for Qualparams values
 function qp = qparam()
-        qp = Qualparams();                  % Blank Qualparams class
-        qp.qrs = [70, 200];                 % Min/max range of QRS duration
-        qp.qt = [250, 700];                 % Min/max range of QT interval
-        qp.tpqt = [0.5, Inf];               % Min/max range of T peak/QT ratio (nominal is min only)
-        qp.t_mag = [0.05, Inf];             % Min/max range for T wave magnitude (nominal is min only)
-        qp.hr = [30, 150];                  % Min/max range for HR
-        qp.num_beats = [4, Inf];            % # of beats left after PVC and outlier beats are removed
-        qp.pct_beats_removed = [-Inf, 60];  % of total number of beats removed to trigger
-        qp.corr = [0.8,1];                  % Min/max range for average normalized cross correlation (nomimal min only)
-        qp.baseline = [-Inf, 0.1];          % Min/max range for baseline at the end of the T wave (nominal max only)
-        qp.hf_noise = [10, Inf];            % SNR for HF noise cutoff
-        qp.prob = [0.8, 1];                 % Logistic regression probability (range 0-1)
-        qp.lf_noise = [-Inf, 0.03];         % mV for cutoff in variance in LF noise
+    qp = Qualparams();                  % Blank Qualparams class
+    qp.qrs = [70, 200];                 % Min/max range of QRS duration
+    qp.qt = [250, 700];                 % Min/max range of QT interval
+    qp.tpqt = [0.5, Inf];               % Min/max range of T peak/QT ratio (nominal is min only)
+    qp.t_mag = [0.05, Inf];             % Min/max range for T wave magnitude (nominal is min only)
+    qp.hr = [30, 150];                  % Min/max range for HR
+    qp.num_beats = [4, Inf];            % # of beats left after PVC and outlier beats are removed
+    qp.pct_beats_removed = [-Inf, 60];  % of total number of beats removed to trigger
+    qp.corr = [0.8,1];                  % Min/max range for average normalized cross correlation (nomimal min only)
+    qp.baseline = [-Inf, 0.1];          % Min/max range for baseline at the end of the T wave (nominal max only)
+    qp.hf_noise = [10, Inf];            % SNR for HF noise cutoff
+    qp.prob = [0.8, 1];                 % Logistic regression probability (range 0-1)
+    qp.nnet_se = [0 10];                % Shannon entropy cutoff for MedianAnnoNetV2 only
+    qp.lf_noise = [-Inf, 0.03];         % mV for cutoff in variance in LF noise
 end
 
 
@@ -125,7 +126,13 @@ end
 % This also tests output file formatting which can be problematic if you
 % add new results that are not part of the output classes
 function test_braveheart_batch(testCase)
-    braveheart_batch('Example ECGs', 'muse_xml', '.csv', 'test', 0, 0, 1, 1, 1, 1, 1, 1)
+    braveheart_batch('Example ECGs', 'muse_xml', '.csv', 'test', 0, 0, 0, 1, 1, 1, 1, 1, 1)
+
+    % Use MedianAnnoNetV2 given this calculated sum_se
+    ap = aparam(); 
+    ap.median_reanno_method = 'NNetV2';
+    ap.wavelet_level_lowpass = 1;
+    braveheart_batch('Example ECGs', 'muse_xml', '.csv', 'test', 0, 0, 0, 1, 1, 1, 1, 1, 1, ap)
 end
 
 
@@ -2887,6 +2894,7 @@ qp = qparam();
     qp.hf_noise = [0, 0];             
     qp.prob = [0, 0];                 
     qp.lf_noise = [0, 0]; 
+    qp.nnet_se = [0 0];
 
 % Process ECG
 batchout = batch_calc(ecg, [], [], [], [], [], ap, qp, 0, '', []);
@@ -2905,6 +2913,66 @@ Q = struct;
     Q.hf_noise = 1;
     Q.lf_noise = 1;
     Q.prob = 1;
+    Q.nnet_se = 0;  % by convention set nnet_se 0 if sum_se == [] when using NNetV1
+fnQ = fieldnames(Q);
+
+for i = 1:length(fnQ)
+    testCase.verifyEqual(double(quality.(fnQ{i})),Q.(fnQ{i}),"AbsTol",1e-4)
+end
+
+end
+
+
+%% Check for Quality testing working correctly with NNetV2 and nnet_se
+function test_braveheart_quality_2_nnetv2(testCase)
+
+flags = struct;
+flags.vcg_calc_flag = 1;
+flags.lead_morph_flag = 1;
+flags.vcg_morph_flag = 1;
+
+ecg = ECG12(char('Example ECGs/example1.xml'), 'muse_xml');
+
+% Standard Annoparams
+ap = aparam();
+ap.median_reanno_method = 'NNetV2';
+
+% Standard Qualparams
+qp = qparam();
+
+% Flag all parameters
+    qp.qrs = [0, 0];                  
+    qp.qt = [0, 0];                  
+    qp.tpqt = [0, 0];                
+    qp.t_mag = [0, 0];              
+    qp.hr = [0, 0];                  
+    qp.num_beats = [0, 0];             
+    qp.pct_beats_removed = [-1, -1];   
+    qp.corr = [0, 0];                   
+    qp.baseline = [0, 0];            
+    qp.hf_noise = [0, 0];             
+    qp.prob = [0, 0];                 
+    qp.lf_noise = [0, 0]; 
+    qp.nnet_se = [0 0];
+
+% Process ECG
+batchout = batch_calc(ecg, [], [], [], [], [], ap, qp, 0, '', []);
+quality = batchout.quality;
+
+Q = struct;
+    Q.qt = 1;
+    Q.qrs = 1;
+    Q.tpqt = 1;
+    Q.t_mag = 1;
+    Q.hr = 1;
+    Q.num_beats = 1;
+    Q.pct_beats_removed = 1;
+    Q.corr = 1;
+    Q.baseline = 1;
+    Q.hf_noise = 1;
+    Q.lf_noise = 1;
+    Q.prob = 1;
+    Q.nnet_se = 1;
 fnQ = fieldnames(Q);
 
 for i = 1:length(fnQ)

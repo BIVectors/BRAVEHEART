@@ -29,15 +29,19 @@ aps.highpass = 0; % Temporarily turn off highpass to avoid triggering detection 
 
 freq = ecg_raw.hz;
 
-% Update in 1.7.0:
+% Update in 1.8.0:
 % Previously compared the filtered signal to the raw signal and computed SNR
 % But this measurement depended on the user chosen LPF level, and therefore
 % was not really a measure of inherent noise of the signal
 
-% Now will filter at level n where n corresponds to the level (Ln) at which the
-% frequency content of the signal is > ~Ln_freq hz, or more specifically
-% the first level that is BELOW Ln_freq so that 40 hz and above are always
-% included. However, freq below 40 Hz may also be included.
+% Choose wavelet level Ln so the lowpass cutoff = freq/2^(Ln+1) sits just below
+% Ln_freq (40 Hz). For typical sampling rates this lands the cutoff somewhat
+% below 40 Hz, but the upper bound is 40 Hz exactly.
+%
+% ecg_filtered then contains content BELOW the cutoff (never above 40 Hz).
+% The HF noise estimate (raw - ecg_filtered) contains everything ABOVE the cutoff,
+% which guarantees all >40 Hz content lands in the noise term, plus some
+% incidental ~30-40 Hz content that we accept as a small impurity.
 
 Ln_freq = 40;
 Ln = ceil(log2(freq/(2*Ln_freq)));

@@ -37,7 +37,7 @@ function view_vcgloops(vcg, fp, filename, save_folder, save_flag, colors)
 vcgloop_fig = figure('name','Median VCG Loops','numbertitle','off','Color',colors.bgcolor, 'SizeChangedFcn',{@move_button});
 set(gcf, 'Position', [0, 0, 1300 800])  % set figure size
 set(vcgloop_fig,'PaperSize',[8.5 11]); %set the paper size to what you want  
-sgtitle('Median VCG Loops','fontweight','bold', 'color', colors.txtcolor)
+sgtitle(sprintf('Median VCG Loops - %s',filename),'fontweight','bold', 'color', colors.txtcolor,'interpreter','none')
 
 % Save button
 save_filename = fullfile(save_folder,strcat(filename(1:end-4),'_vcg_loops.png'));

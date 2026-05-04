@@ -231,7 +231,7 @@ tx_div = ceil(tx/d);
 d_start = tx_div(1) * d;
 xticks(d_start:d:(sample_time*length(medianvm)));
 
-%title(strcat({'Speed of VCG Complex - '},{' '},{handles.filename_short(1:end-4)}),'fontsize',14,'Interpreter', 'none');
+title(strcat({'Speed of VCG Complex - '},{' '},{handles.filename_short}),'fontsize',14,'Interpreter', 'none');
 hold off
 
 % Save

@@ -26,7 +26,7 @@ classdef AnnoResult
 
 	properties
 		filename
-        version = {'1.7.1'}
+        version = {'1.8.0'}
 		note
 		date
 		time
@@ -46,6 +46,7 @@ classdef AnnoResult
         noise_hf
         noise_lf
         qual_prob
+        sum_se
         missing_lead
 		geh
 		ap
@@ -75,8 +76,8 @@ classdef AnnoResult
 					end
 					
 					
-				case 17
-					[filename, note, source_str, ap, ecg, hr, num_initial_beats, beats, beat_stats, cross_corr, noise, qual_prob, missing_lead, lead_ispaced, geh, lead_morph, vcg_morph] = varargin{:};
+				case 18
+					[filename, note, source_str, ap, ecg, hr, num_initial_beats, beats, beat_stats, cross_corr, noise, qual_prob, sum_se, missing_lead, lead_ispaced, geh, lead_morph, vcg_morph] = varargin{:};
 					obj.filename = {filename};
 					obj.note = {note};
 					
@@ -146,6 +147,13 @@ classdef AnnoResult
                     obj.noise_lf = num2cell(noise(2));
                     
                     obj.qual_prob = num2cell(qual_prob);
+                    
+                    if isempty(sum_se)
+                        obj.sum_se = {''};
+                    else
+                        obj.sum_se = num2cell(sum_se);
+                    end
+                    
                     obj.missing_lead = num2cell(missing_lead);    
 			end
         end
@@ -162,7 +170,7 @@ classdef AnnoResult
 				
 				
 				info_labels = [{'filename'} {'version'} {'note'} {'proc_date'} {'proc_time'} {'source'} {'freq'} {'num_samples'} {'num_beats'} {'initial_num_beats'} {'num_pvcs_removed'} ...
-                    {'num_outliers_removed'} {'num_manual_removed'} {'num_bad_removed'} {'pacing_detected'} {'num_paced_leads'} {'hr'} {'cross_corr'} {'noise_hf'} {'noise_lf'} {'quality_prob'} {'missing_lead'}];
+                    {'num_outliers_removed'} {'num_manual_removed'} {'num_bad_removed'} {'pacing_detected'} {'num_paced_leads'} {'hr'} {'cross_corr'} {'noise_hf'} {'noise_lf'} {'quality_prob'} {'sum_se'} {'missing_lead'}];
 				% you have to do it this way in order to deal properly with the nested cells and with empty cells								
 				excel_header = [info_labels vcg_blank.labels() aps_blank.labels() beat_stats_blank.labels() beats_blank.labels() lead_morph_blank.labels() vcg_morph_blank.labels()];				
 				p = properties(obj);

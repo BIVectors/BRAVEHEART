@@ -8,13 +8,13 @@
       <file>${PROJECT_ROOT}\braveheart_gui_windows_resources\icon_24.png</file>
       <file>${PROJECT_ROOT}\braveheart_gui_windows_resources\icon_16.png</file>
     </param.icons>
-    <param.version>1.7.1</param.version>
+    <param.version>1.8.0</param.version>
     <param.authnamewatermark>Hans F. Stabenau and Jonathan W. Waks</param.authnamewatermark>
     <param.email>bravheart.ecg@gmail.com</param.email>
     <param.company />
     <param.summary />
     <param.description>BRAVEHEART ECG/VCG Analysis Software -- GUI Version
-Version 1.7.1</param.description>
+Version 1.8.0</param.description>
     <param.screenshot>${PROJECT_ROOT}\braveheart_splash.png</param.screenshot>
     <param.guid />
     <param.installpath.string>\braveheart_gui\</param.installpath.string>
@@ -50,7 +50,7 @@ Version 1.7.1</param.description>
 	 varargin  input arguments 
  Description 
  	 BRAVEHEART ECG/VCG Analysis Software -- GUI Version
-Version 1.7.1</param.help.text>
+Version 1.8.0</param.help.text>
     <unset>
       <param.company />
       <param.summary />
@@ -92,10 +92,12 @@ Version 1.7.1</param.help.text>
       <file>${PROJECT_ROOT}\braveheart_gui.fig</file>
       <file>${PROJECT_ROOT}\braveheart_gui.m</file>
       <file>${PROJECT_ROOT}\braveheart_variables.pdf</file>
+      <file>${PROJECT_ROOT}\detect_num_cores.m</file>
       <file>${PROJECT_ROOT}\ECG12.m</file>
       <file>${PROJECT_ROOT}\ecg_axis.m</file>
       <file>${PROJECT_ROOT}\ecg_formats.csv</file>
       <file>${PROJECT_ROOT}\elecpos.mat</file>
+      <file>${PROJECT_ROOT}\extractFiducialPoints.m</file>
       <file>${PROJECT_ROOT}\find_and_interpolate_pacing_spikes_12L.m</file>
       <file>${PROJECT_ROOT}\findHighpassLvl.m</file>
       <file>${PROJECT_ROOT}\findpeakswavelet.m</file>
@@ -106,6 +108,7 @@ Version 1.7.1</param.help.text>
       <file>${PROJECT_ROOT}\lead_morph_uitable.m</file>
       <file>${PROJECT_ROOT}\leadidcodexyz.m</file>
       <file>${PROJECT_ROOT}\leadidtable_scpecg.mat</file>
+      <file>${PROJECT_ROOT}\load_biocare_zekg.m</file>
       <file>${PROJECT_ROOT}\load_braveheart_mat.m</file>
       <file>${PROJECT_ROOT}\load_cardiosoftxml.m</file>
       <file>${PROJECT_ROOT}\load_claris.m</file>
@@ -125,7 +128,9 @@ Version 1.7.1</param.help.text>
       <file>${PROJECT_ROOT}\load_wfdb_dat.m</file>
       <file>${PROJECT_ROOT}\load_zoncarexml.m</file>
       <file>${PROJECT_ROOT}\loop_rotation_dir.m</file>
+      <file>${PROJECT_ROOT}\MedianAnnoNetV2.mat</file>
       <file>${PROJECT_ROOT}\move_button.m</file>
+      <file>${PROJECT_ROOT}\nnet_median_annotateV2.m</file>
       <file>${PROJECT_ROOT}\open_ext_pdf.m</file>
       <file>${PROJECT_ROOT}\parse_claris_txt.m</file>
       <file>${PROJECT_ROOT}\physicalunits.m</file>
@@ -139,6 +144,7 @@ Version 1.7.1</param.help.text>
       <file>${PROJECT_ROOT}\scpopen.m</file>
       <file>${PROJECT_ROOT}\sopen.m</file>
       <file>${PROJECT_ROOT}\svd_twave.m</file>
+      <file>${PROJECT_ROOT}\viterbiDecode.m</file>
       <file>${PROJECT_ROOT}\wavelet_find_spikes.m</file>
       <file>${PROJECT_ROOT}\xyz2azel.m</file>
     </fileset.resources>
