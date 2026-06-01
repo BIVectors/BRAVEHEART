@@ -21,9 +21,15 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-function plot_vcg_gui(geh, median_vcg, medianbeat, aps, hObject, eventdata, handles)
+function plot_vcg_gui(geh, median_vcg, medianbeat, aps, hObject, eventdata, handles) %#ok<INUSL>
 
-cla(handles.vcg_axis) % clear axes
+% Clear vcg_axis 
+cla(handles.vcg_axis)
+clear_axis_fully(handles.vcg_axis)
+
+% Restore VCG axes location to avoid issues with colorbar shrinking figure
+orig_pos = getappdata(handles.BRAVEHEART_GUI, 'vcg_axis_orig_pos');
+handles.vcg_axis.Position = orig_pos;
 
 % Get colors based on if in light/dark mode
 [dm, dark_colors, light_colors] = check_darkmode(handles);
@@ -34,301 +40,247 @@ else
     colors = light_colors;
 end
 
-
+% If missing VCG leads just stop there
+if isempty(median_vcg.X) || isempty(median_vcg.Y) || isempty(median_vcg.Z) || isempty(median_vcg.VM)
+    return;
+end
 
 
 try   % If throw an error just dont plot!
 
-if isempty(median_vcg.X) || isempty(median_vcg.Y) || isempty(median_vcg.Z) || isempty(median_vcg.VM)
-    return;
-end
-    
-sample_time = median_vcg.sample_time();
+    % Read all flags into structure
+        flags = read_flags(handles);
+ 
+    % Median beat fiducial points
+        sample_time = median_vcg.sample_time();
+        Q = medianbeat.Q;
+        S = medianbeat.S;
+        Tend = medianbeat.Tend;
 
-% get flag for which type of graph to display
-    speed_flag = get(handles.speed_checkbox,'Value');
-    prop_flag = get(handles.propagation_checkbox,'Value');
-    legend_flag = get(handles.legend_checkbox,'Value');
-    vector_flag = get(handles.vector_checkbox,'Value');
-    axes_flag = get(handles.axes_origin_checkbox,'Value');
+    % Shift X,Y,Z to origin at (0,0,0)
+        origin_flag = aps.origin_flag;
+        [~, ~, ~, x, y, z, ~, ~, ~, ~, ~, ~] = shift_xyz(median_vcg.X', median_vcg.Y', median_vcg.Z', origin_flag);
 
-% Get axis ratio information
-    axesratio_flag = get(handles.sqaxes_box, 'Value');    
-    
-% Qon and Qoff for median beat
-    Q = medianbeat.Q;
-    S = medianbeat.S;
-    Tend = medianbeat.Tend;
+    % Draw on axis, accumulating legend handles as needed
+        ax = handles.vcg_axis;
+        hold(ax, 'on');
 
-% Set vcg axis for plotting
-axes(handles.vcg_axis)
-
-
-%%% data cursor
-dcm = datacursormode;
-step = sample_time;
-
-if get(handles.custom_dcm_checkbox, 'Value') == 1
-    set(dcm, 'update', {@display_datacursor, step});
-
-else
-    set(dcm, 'update', @standard_dcm);    
-end
-%%% end data cursor
-
-
-h = rotate3d;
-%h.ActionPostCallback = {@vcg_axis_ButtonDownFcn, handles};
-h.Enable = 'on';
-h.RotateStyle = 'orbit';
-
-% View angle
-v1=23;   %az
-v2=-45;  %el
-      
-origin_flag = aps.origin_flag;
-
-x = median_vcg.X';
-y = median_vcg.Y';
-z = median_vcg.Z';
-
-% Shift X,Y,Z to origin at (0,0,0)
-    [X_mid, Y_mid, Z_mid, x, y, z, x_orig, y_orig, z_orig, x_shift, y_shift, z_shift] = shift_xyz(x, y, z, origin_flag);
-
-% Plotting
-if speed_flag == 0    % plot loops and fit curves
-    XYZ_median_qrs= [x(Q:S);y(Q:S);z(Q:S)];             % define qrs curve for fitting
-    XYZ_median_t= [x(S:end);y(S:end);z(S:end)];         % define t curve for fitting
-
-    p1 = scatter3(x(Q:S),y(Q:S),z(Q:S),20,'MarkerEdgeColor','b','DisplayName','QRS Loop');
-    hold on
-    p2 = scatter3(x(S+1:end),y(S+1:end),z(S+1:end),20,'r','o','DisplayName','T Loop');
-    p3 = scatter3(x(S),y(S),z(S),60,'MarkerFaceColor','y','MarkerEdgeColor','k','DisplayName','QRS End');
-    p99 = scatter3(0,0,0,60,'k','filled','MarkerEdgeColor','y','DisplayName','Origin');
-
-    % if you want extra smoothed lines and have curve fitting toolbox
-    % removed because wasn't worth having to require curve fitting toolbox
-    % for minimal visual improvement
-    %fnplt(cscvn(XYZ_median_qrs),'b',2);   % fit QRS curve
-    %fnplt(cscvn(XYZ_median_t),'r',2);     % fit T curve
-    
-    plot3(x(Q:S),y(Q:S),z(Q:S),'color','b','linewidth',2)
-    plot3(x(S+1:end),y(S+1:end),z(S+1:end),'color','r','linewidth',2)
-    set(gca, 'Color', colors.bgfigcolor);
-    set(gca, 'XColor', colors.txtcolor);
-    set(gca, 'YColor', colors.txtcolor);
-    set(gca, 'ZColor', colors.txtcolor);
-
-    xlabel('X','FontWeight','bold','FontSize',14);
-    ylabel('Y','FontWeight','bold','FontSize',14);
-    zlabel('Z','FontWeight','bold','FontSize',14);
-    grid on 
-    box off
-
-% If want equal axis scaling
-    if axesratio_flag == 1
-        daspect([1 1 1])
-    end
-
-    if  axes_flag == 1
-         ax.XRuler.FirstCrossoverValue  = 0; % X crossover with Y axis
-         ax.YRuler.FirstCrossoverValue  = 0; % Y crossover with X axis
-         ax.ZRuler.FirstCrossoverValue  = 0; % Z crossover with X axis
-         ax.ZRuler.SecondCrossoverValue = 0; % Z crossover with Y axis
-         ax.XRuler.SecondCrossoverValue = 0; % X crossover with Z axis
-         ax.YRuler.SecondCrossoverValue = 0; % Y crossover with Z axis
-    end
-
-    view(v1,v2);
-    % camroll(-70);
-
-end  % End speed_flag == 0
-
-
-if speed_flag == 1  % plot color coded speed
-        SpeedColorMap = jet(256);    
-        speed_3d=zeros(1,length(x));
-
-        for i=Q:length(speed_3d)-1
-            speed_3d(i+1)= sqrt((x(i+1)-x(i))^2+(y(i+1)-y(i))^2+(z(i+1)-z(i))^2)/sample_time; 
-
-        end
-            speed_3d=speed_3d'; 
-
-% Divide 256/maxC to get conversion factor to map to colormap
-        ColorConv = 256/max(speed_3d);
-        speed_3d_rounded=round(speed_3d*ColorConv);
-        speed_3d_rounded(speed_3d_rounded == 0)=1;
-
-        LineColor=zeros(1,length(speed_3d));    
-
-
-        for i=Q:length(speed_3d_rounded)-1
-
-            line([x(i) x(i+1)], [y(i) y(i+1)], [z(i) z(i+1)],'Color', [SpeedColorMap(speed_3d_rounded(i+1),:)],'linewidth',3);
-            hold on
-        end    
-
-        colormap jet(256);
-        cbar_graph = colorbar;
-        set(gca, 'CLim', [min(speed_3d), max(speed_3d)]);
-        ylabel(cbar_graph, 'Speed (mV/ms)')
+        % Fix issue with losing ability to rotate when clearing figure
+        ax.HitTest = 'on';
+        ax.PickableParts = 'visible'; 
         
-        p3 = scatter3(x(S),y(S),z(S),60,'MarkerFaceColor','y','MarkerEdgeColor','k','DisplayName','QRS End');
-        p99 = scatter3(0,0,0,60,'k','filled','MarkerEdgeColor','y','DisplayName','Origin');
-       
-        xlabel('X','FontWeight','bold','FontSize',14);
-        ylabel('Y','FontWeight','bold','FontSize',14);
-        zlabel('Z','FontWeight','bold','FontSize',14);
-        %%set (gca,'Ydir','reverse');
-        %set (gca,'Zdir','reverse');
-        ax = gca;
-        grid on
-        legend off %fixing legend bug w/ speed display
+        h = struct();   % registry: fieldname -> graphics handle for legend
+ 
+        if flags.speed
+            plot_speed_colored(ax, x, y, z, Q, Tend, sample_time, flags);
+        else
+            h = plot_loops(ax, x, y, z, Q, S, h);
+        end
 
-% If want equal axis scaling
-    if axesratio_flag == 1
-        daspect([1 1 1])
-    end
+        % Markers shown regardless of plotting flags
+            h.QRSEnd = scatter3(ax, x(S), y(S), z(S), 60, 'MarkerFaceColor', 'y', 'MarkerEdgeColor', 'k', 'DisplayName', 'QRS End');
+            h.Origin = scatter3(ax, 0, 0, 0, 60, 'k', 'filled', 'MarkerEdgeColor', 'y', 'DisplayName', 'Origin');
+ 
+        if flags.prop
+            h = plot_propagation(ax, x, y, z, Q, S, h);
+        end
+ 
+        if flags.vector
+            h = plot_vectors(ax, geh, h);
+        end
 
-    if  axes_flag == 1   
-        ax.XRuler.FirstCrossoverValue  = 0; % X crossover with Y axis
-        ax.YRuler.FirstCrossoverValue  = 0; % Y crossover with X axis
-        ax.ZRuler.FirstCrossoverValue  = 0; % Z crossover with X axis
-        ax.ZRuler.SecondCrossoverValue = 0; % Z crossover with Y axis
-        ax.XRuler.SecondCrossoverValue = 0; % X crossover with Z axis
-        ax.YRuler.SecondCrossoverValue = 0; % Y crossover with Z axis
-    end
+    % Cosmetic changes to axes
+        apply_axes_cosmetics(ax, colors, flags);
 
-    view(v1,v2);
+    % Legend
+        if flags.legend
+            build_legend(ax, h, colors);
+        else
+            legend(ax, 'off');
+        end
+ 
+        hold(ax, 'off');
 
-end     % End speed flag == 1
+catch ME
+    % Don't crash the GUI on a plot failure
+    warning('plot_vcg_gui:render', 'VCG plot failed: %s', ME.message);
+    
+end  % end try
+
+end  % End function
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-if prop_flag == 1  % highlightes the first 20 samples of the QRS in green and the first 20 samples of the T wave in yellow
-        hold on
-        p4 = scatter3(x(Q:Q+20), y(Q:Q+20), z(Q:Q+20),'g','filled','MarkerEdgeColor','b','DisplayName','Start QRS Loop');   
-        p5 = scatter3(x(S+1:S+20),y(S+1:S+20),z(S+1:S+20),'y','filled','MarkerEdgeColor','r','DisplayName','Start T Loop');      
+% Helper functions
+
+% Read flags into a structure 'flags'
+function flags = read_flags(handles)
+    flags = struct( ...
+        'speed', get(handles.speed_checkbox, 'Value'), ...
+        'prop', get(handles.propagation_checkbox, 'Value'), ...
+        'legend', get(handles.legend_checkbox, 'Value'), ...
+        'vector', get(handles.vector_checkbox, 'Value'), ...
+        'axes_orig', get(handles.axes_origin_checkbox, 'Value'), ...
+        'sq_axes', get(handles.sqaxes_box, 'Value'), ...
+        'custom_dc', get(handles.custom_dcm_checkbox, 'Value'));
 end
 
 
-
-%%% VECTORS
-if vector_flag == 1
-       
-X_mid = 0;
-Y_mid = 0;
-Z_mid = 0;
-
-p3 = scatter3(x(S),y(S),z(S),60,'MarkerFaceColor','y','MarkerEdgeColor','k','DisplayName','QRS End');
-p99 = scatter3(0,0,0,60,'k','filled','MarkerEdgeColor','y','DisplayName','Origin');
-p6 = line([geh.XQ_peak X_mid], [geh.YQ_peak Y_mid], [geh.ZQ_peak Z_mid], 'Color','b','linewidth',3,'DisplayName','Peak QRS');
-p7 = line([geh.XT_peak X_mid], [geh.YT_peak Y_mid], [geh.ZT_peak Z_mid], 'Color','r','linewidth',3,'DisplayName','Peak T');
-p8 = line([geh.XT_peak+geh.XQ_peak X_mid],[geh.YT_peak+geh.YQ_peak Y_mid],[geh.ZT_peak+geh.ZQ_peak Z_mid],'Color','[0 0.7 0]','linewidth',3,'DisplayName','Peak SVG');
-
-
-% Generate scaling for area vectors
-QRS_area_length = sqrt((geh.XQ_area)^2 + (geh.YQ_area)^2 + (geh.ZQ_area)^2);
-QRS_peak_length = sqrt((geh.XQ_peak)^2 + (geh.YQ_peak)^2 + (geh.ZQ_peak)^2);
-
-T_area_length = sqrt((geh.XT_area)^2+(geh.YT_area)^2+(geh.ZT_area)^2);
-T_peak_length = sqrt((geh.XT_peak)^2 + (geh.YT_peak)^2 + (geh.ZT_peak)^2);
-
-SVG_area_length = geh.svg_area_mag;
-SVG_peak_length = sqrt((geh.XT_peak+geh.XQ_peak)^2+(geh.YT_peak+geh.YQ_peak)^2+(geh.ZT_peak+geh.ZQ_peak)^2);
-
-mean_max_ratio = min([QRS_peak_length/QRS_area_length, T_peak_length/T_area_length, SVG_peak_length/SVG_area_length]);
-
-% Area QRS scaling vectors
-QRSarea_end = [geh.XQ_area geh.YQ_area geh.ZQ_area];
-QRSarea_scale = QRSarea_end/norm(QRSarea_end);
-QRS_area_scaled = [(mean_max_ratio*QRS_area_length*QRSarea_scale(1)), (mean_max_ratio*QRS_area_length*QRSarea_scale(2)), (mean_max_ratio*QRS_area_length*QRSarea_scale(3))];
-
-% Area T scaling vectors
-Tarea_end = [geh.XT_area geh.YT_area geh.ZT_area];
-Tarea_scale = Tarea_end/norm(Tarea_end);
-T_area_scaled = [(mean_max_ratio*T_area_length*Tarea_scale(1)), (mean_max_ratio*T_area_length*Tarea_scale(2)), (mean_max_ratio*T_area_length*Tarea_scale(3))];
-
-% Area SVG scaling vectors
-SVGarea_end = [geh.svg_x, geh.svg_y, geh.svg_z];
-SVGarea_scale = SVGarea_end/norm(SVGarea_end);
-SVG_area_scaled = [(mean_max_ratio*SVG_area_length*SVGarea_scale(1)), (mean_max_ratio*SVG_area_length*SVGarea_scale(2)), (mean_max_ratio*SVG_area_length*SVGarea_scale(3))];
-
-p9 = line([QRS_area_scaled(1) X_mid], [QRS_area_scaled(2) Y_mid], [QRS_area_scaled(3) Z_mid], 'Color','b','linewidth',3,'linestyle',':','DisplayName','Area QRS');
-p10 = line([T_area_scaled(1) X_mid], [T_area_scaled(2) Y_mid], [T_area_scaled(3) Z_mid], 'Color','r','linewidth',3,'linestyle',':','DisplayName','Area T');
-
-% Add mean vectors and SVG
-p11 = line([SVG_area_scaled(1) X_mid], [SVG_area_scaled(2) Y_mid], [SVG_area_scaled(3) Z_mid], 'Color','[0 0.7 0]','linewidth',3,'linestyle',':','DisplayName','Area SVG');
-ax = gca;
-
-
-% If want equal axis scaling
-if axesratio_flag == 1
-    daspect([1 1 1])   
-end
-
-
-if  axes_flag == 1
-    ax.XRuler.FirstCrossoverValue  = 0; % X crossover with Y axis
-    ax.YRuler.FirstCrossoverValue  = 0; % Y crossover with X axis
-    ax.ZRuler.FirstCrossoverValue  = 0; % Z crossover with X axis
-    ax.ZRuler.SecondCrossoverValue = 0; % Z crossover with Y axis
-    ax.XRuler.SecondCrossoverValue = 0; % X crossover with Z axis
-    ax.YRuler.SecondCrossoverValue = 0; % Y crossover with Z axis
-end
-
-view(v1,v2);
-grid on
-box off
-
-end  % End vector flag
-
-
-%%% Legends
-if legend_flag == 1
-    
-  if prop_flag == 0 && speed_flag == 0 && vector_flag == 0
-        legend([p1 p2 p3 p99], 'color', colors.bgfigcolor, 'textcolor', colors.txtcolor);    
-  end
-    
-  if prop_flag == 1 && speed_flag == 0 && vector_flag == 0
-        legend([p1 p2 p4 p3 p5 p99], 'color', colors.bgfigcolor);       
-  end
-    
-  if prop_flag == 0 && speed_flag == 1 && vector_flag == 0 
-        legend([p3 p99], 'color', colors.bgfigcolor, 'textcolor', colors.txtcolor);       
-  end
+% Plot standard QRS and T wave loops (points and connected lines)
+function h = plot_loops(ax, x, y, z, Q, S, h)
+    h.QRSLoop = scatter3(ax, x(Q:S), y(Q:S), z(Q:S), 20, 'MarkerEdgeColor', 'b', 'DisplayName', 'QRS Loop');
+    h.TLoop = scatter3(ax, x(S+1:end), y(S+1:end), z(S+1:end), 20, 'r', 'o', 'DisplayName', 'T Loop');
    
-  if prop_flag == 0 && speed_flag == 0 && vector_flag == 1 
-        legend([p1 p2 p3 p99 p6 p7 p8 p9 p10 p11], 'color', colors.bgfigcolor, 'textcolor', colors.txtcolor);      
-  end
-  
-  if prop_flag == 0 && speed_flag == 1 && vector_flag == 1   
-        legend([p3 p99 p6 p7 p8 p9 p10 p11], 'color', colors.bgfigcolor, 'textcolor', colors.txtcolor);   
-  end
-  
-  if prop_flag == 1 && speed_flag == 1 && vector_flag == 1
-        legend([p3 p4 p3 p99 p5 p6 p7 p8 p9 p10 p11], 'color', 'color', colors.bgfigcolor, 'textcolor', colors.txtcolor);   
-  end  
-  
-  if prop_flag == 1 && speed_flag == 0 && vector_flag == 1
-        legend([p1 p2 p4 p3 p99 p5 p6 p7 p8 p9 p10 p11], 'color', colors.bgfigcolor, 'textcolor', colors.txtcolor);   
-  end
-  
-  if prop_flag == 1 && speed_flag == 1 && vector_flag == 0
-        legend([p4 p3 p5 p99], 'color', colors.bgfigcolor, 'textcolor', colors.txtcolor);   
-  end
-  
-  
-  grid on
-  box off
-  
+    % Connecting lines, hidden from the legend so dont assign to 'h'
+    plot3(ax, x(Q:S), y(Q:S), z(Q:S), 'b', 'LineWidth', 2);
+    plot3(ax, x(S+1:end), y(S+1:end), z(S+1:end), 'r', 'LineWidth', 2);
 end
 
-view(v1,v2);
-hold off
 
-catch ME % If graphing throws an error
+% Plot color coded speed
+function plot_speed_colored(ax, x, y, z, Q, Tend, sample_time, flags)
+    n = numel(x);
+    speed_3d = zeros(n-1, 1);
+    
+    % Calcualte the speed between sequential points
+    for i = Q:n-1
+        speed_3d(i+1) = sqrt((x(i+1)-x(i))^2 + (y(i+1)-y(i))^2 + (z(i+1)-z(i))^2) / sample_time;
+    end
 
+    smax = max(speed_3d);
+
+    SpeedColorMap = jet(256);
+    idx  = round(speed_3d * (256 / smax));
+    
+    for i = Q:Tend
+        line(ax, [x(i) x(i+1)], [y(i) y(i+1)], [z(i) z(i+1)], 'Color', SpeedColorMap(idx(i+1), :), ...
+            'LineWidth', 3);   % don't add to the legend
+    end
+    colormap(ax, SpeedColorMap);
+    cb = colorbar(ax, 'Location', 'eastoutside');
+
+    % Shift the colorbar only if no legend is shown
+    if flags.legend == 0
+        drawnow;
+        ax_pos_pin = ax.Position;
+        cb.Position(1) = cb.Position(1) - 0.05;
+        ax.Position = ax_pos_pin;
+    end
+
+    % Set color limits from 0 to the maximum speed
+    set(ax, 'CLim', [0, smax]);
+    
+    % Generate 8 ticks: 0, smax, and 6 evenly spaced values in between
+    cb.Ticks = linspace(0, smax, 8);
+    
+    % Clean up the labels to 2 decimal place so they don't overlap
+    cb.TickLabels = string(round(cb.Ticks, 2));
+    ylabel(cb, 'Speed (mV/ms)');
+
+    % Fixing legend bug w/ speed display
+    legend off
+end
+
+
+function apply_axes_cosmetics(ax, colors, flags)
+    set(ax, 'Color',  colors.bgfigcolor, ...
+            'XColor', colors.txtcolor, ...
+            'YColor', colors.txtcolor, ...
+            'ZColor', colors.txtcolor);
+    xlabel(ax, 'X', 'FontWeight', 'bold', 'FontSize', 14);
+    ylabel(ax, 'Y', 'FontWeight', 'bold', 'FontSize', 14);
+    zlabel(ax, 'Z', 'FontWeight', 'bold', 'FontSize', 14);
+    grid(ax, 'on');
+    box(ax, 'off');
+ 
+    if flags.sq_axes
+        daspect(ax, [1 1 1]);
+    else
+        daspect(ax, 'auto');
+    end
+ 
+    if flags.axes_orig
+        ax.XRuler.FirstCrossoverValue  = 0;  % X crossover with Y
+        ax.YRuler.FirstCrossoverValue  = 0;  % Y crossover with X
+        ax.ZRuler.FirstCrossoverValue  = 0;  % Z crossover with X
+        ax.ZRuler.SecondCrossoverValue = 0;  % Z crossover with Y
+        ax.XRuler.SecondCrossoverValue = 0;  % X crossover with Z
+        ax.YRuler.SecondCrossoverValue = 0;  % Y crossover with Z
+    else
+        % Reset to defaults if user unchecked the box
+        ax.XRuler.FirstCrossoverValue  = -inf;
+        ax.YRuler.FirstCrossoverValue  = -inf;
+        ax.ZRuler.FirstCrossoverValue  = -inf;
+        ax.ZRuler.SecondCrossoverValue = -inf;
+        ax.XRuler.SecondCrossoverValue = -inf;
+        ax.YRuler.SecondCrossoverValue = -inf;
+    end
+ 
+    view(ax, 23, -45);
+end
+ 
+
+% Create legend with appropriate number of items
+function build_legend(ax, h, colors)
+    names = fieldnames(h);
+    if isempty(names)
+        legend(ax, 'off');
+        return;
+    end
+    c = struct2cell(h);
+    handles_list = [c{:}];
+    leg = legend(ax, handles_list, 'Location', 'northeastoutside', 'Color', colors.bgfigcolor, 'TextColor', colors.txtcolor);
+end
+
+% Plot initial propagation of QRS and T wave
+function h = plot_propagation(ax, x, y, z, Q, S, h)
+    h.StartQRS = scatter3(ax, x(Q:Q+20), y(Q:Q+20), z(Q:Q+20), 'g', 'filled', 'MarkerEdgeColor', 'b', 'DisplayName', 'Start QRS Loop');
+    h.StartT = scatter3(ax, x(S+1:S+20), y(S+1:S+20), z(S+1:S+20), 'y', 'filled', 'MarkerEdgeColor', 'r', 'DisplayName', 'Start T Loop');
+end
+
+
+% Plot peak and area vectors
+function h = plot_vectors(ax, geh, h)
+    O = [0 0 0];
+ 
+    % Peak Vectors
+    qrs_peak = [geh.XQ_peak geh.YQ_peak geh.ZQ_peak];
+    t_peak   = [geh.XT_peak geh.YT_peak geh.ZT_peak];
+    svg_peak = qrs_peak + t_peak;
+ 
+    h.PeakQRS = vec_line(ax, qrs_peak, O, 'b', '-', 'Peak QRS');
+    h.PeakT   = vec_line(ax, t_peak,   O, 'r', '-', 'Peak T');
+    h.PeakSVG = vec_line(ax, svg_peak, O, [0 0.7 0], '-', 'Peak SVG');
+ 
+    % Area Vectors (scaled so can view them on same figure)
+    qrs_area = [geh.XQ_area geh.YQ_area geh.ZQ_area];
+    t_area   = [geh.XT_area geh.YT_area geh.ZT_area];
+    svg_area = [geh.svg_x geh.svg_y geh.svg_z];
+ 
+    ratio = min([norm(qrs_peak) / max(norm(qrs_area), eps), ...
+                 norm(t_peak) / max(norm(t_area), eps), ...
+                 norm(svg_peak) / max(geh.svg_area_mag, eps)]);
+ 
+    h.AreaQRS = vec_line(ax, scale_to(qrs_area, norm(qrs_area) * ratio), O, 'b', ':', 'Area QRS');
+    h.AreaT   = vec_line(ax, scale_to(t_area,   norm(t_area)   * ratio), O, 'r', ':', 'Area T');
+    h.AreaSVG = vec_line(ax, scale_to(svg_area, geh.svg_area_mag * ratio), O, [0 0.7 0], ':', 'Area SVG');
+end
+
+
+% Rescale area vectors so they fit
+function v = scale_to(vec, target_len)
+    n = norm(vec);
+    if n == 0
+        v = vec;
+    else
+        v = vec / n * target_len;
+    end
+end
+ 
+% Draw vectors as lines
+function lh = vec_line(ax, p1, p2, color, style, name)
+    lh = line(ax, [p1(1) p2(1)], [p1(2) p2(2)], [p1(3) p2(3)], ...
+        'Color', color, 'LineWidth', 3, 'LineStyle', style, ...
+        'DisplayName', name);
 end

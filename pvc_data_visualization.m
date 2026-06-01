@@ -28,7 +28,7 @@ function pvc_data_visualization(beats, aps, vcg, hObject, eventdata, handles)
 v = properties(VCG());
 v_fn = fieldnames(VCG());
 
-figure('name','QRS Normalized Cross Correlations and Normalized RMSE','numbertitle','off')
+pvcfig = figure('name','QRS Normalized Cross Correlations and Normalized RMSE','numbertitle','off','visible','off')
 sgtitle(sprintf('Normalized X-Correlation (Threshold = %3.1f%%) & Normalized RMSE (Threshold = %0.2f)',round(100*aps.pvcthresh),round(aps.rmse_pvcthresh,2)),'fontweight', 'bold')
 
 for k = 3:5     % X, Y, and Z in VCG properties
@@ -188,7 +188,11 @@ yticks([0 1])
 xlim([0 N+1])
 xticks(1:1:N)
 
-set(gcf, 'Position', [200, 100, 900, 1000])  % set figure size
+set(gcf, 'Position', center_gui_figure(900,1000))  % set figure size
+
+set(pvcfig, 'Visible', 'on');
+
+
 % Increase font size on mac due to pc/mac font differences if version prior to R2025a
 currentVersion = char(matlabRelease.Release);
 currentVersion = str2double(currentVersion(2:5));

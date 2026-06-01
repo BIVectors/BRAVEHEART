@@ -101,7 +101,7 @@ end
 
 
 % Now generate figure
-LMFig = figure('name','Median Beat Morphology','numbertitle','off','Color',colors.bgcolor, 'SizeChangedFcn',{@move_button});
+LMFig = figure('name','Median Beat Morphology','numbertitle','off','Color',colors.bgcolor, 'SizeChangedFcn',{@move_button},'Visible','off');
 
 % Buttons on figure
 save_filename = fullfile(save_folder,strcat(filename(1:end-4),'_lead_morph_ecg.png'));
@@ -226,7 +226,8 @@ end
 
 
 sgtitle(strcat("Median Beat Morphology - ", filename(1:end-4)),'interpreter','none','fontweight', 'bold','Color',colors.txtcolor)
-set(gcf, 'Position', [0,0, 1600, 1000])  % set figure size
+set(gcf, 'Position', center_gui_figure(1600, 1000));  % set figure size
+set(LMFig, 'Visible', 'on');
 
 
 % Increase font size on mac due to pc/mac font differences if version prior to R2025a
@@ -270,7 +271,7 @@ xlim([0 length(vm.(fn_vm{6}))]);
 title(strcat("Superimposed Leads - ", filename(1:end-4)),'interpreter','none', 'color', colors.txtcolor)
 set(gca, 'Xcolor', colors.txtcolor);
 set(gca, 'Ycolor', colors.txtcolor);
-set(gcf, 'Position', [100,100, 700, 500])  % set figure size
+set(gcf, 'Position', [830, 500, 700, 500])  % set figure size
 xlabel('Samples', 'color', colors.txtcolor)
 ylabel('mV', 'color', colors.txtcolor)
 
@@ -338,7 +339,7 @@ elseif m.qrs_frontal_axis > 90
 end
 
 set(gca,'Color', colors.bgfigcolor);
-set(gcf, 'Position', [200,200, 700, 500])  % set figure size
+set(gcf, 'Position', [930, 400, 700, 500])  % set figure size
 title(sprintf("QRS Axis = %3.0f° -- %s",m.qrs_frontal_axis, ax_str), 'color', colors.txtcolor)
 
 

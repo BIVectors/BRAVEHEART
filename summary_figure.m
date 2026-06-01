@@ -27,7 +27,7 @@ function summary_figure(vcg, beats, median_vcg, medianbeat, correlation_test, pr
 % Starting in v1.3.0 the Beats class stores the R peaks for deleted beats
 % and why they were deleted.
 
-    summaryecg_fig = figure('name',filename,'numbertitle','off', 'color', colors.bgcolor);
+    summaryecg_fig = figure('name',filename,'numbertitle','off','SizeChangedFcn',{@move_button}, 'color', colors.bgcolor,'Visible','off');
     set(gcf, 'InvertHardCopy', 'off');
 
    % Save button
@@ -231,5 +231,7 @@ function summary_figure(vcg, beats, median_vcg, medianbeat, correlation_test, pr
         savebutton.FontSize = 10;
     end
 
-    set(gcf, 'Position', [200, 100, 1200, 900])  % set figure size
-    %set(gcf, 'InvertHardCopy', 'off');
+    set(gcf, 'Position', center_gui_figure(1200, 900))  % set figure size
+
+    set(summaryecg_fig, 'Visible', 'on');
+

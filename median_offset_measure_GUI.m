@@ -43,7 +43,7 @@ label = {'L1', 'L2', 'L3', 'avR', 'avF', 'avL', 'V1', 'V2', 'V3', 'V4', 'V5', 'V
 
 figure('name','Lead Baseline Offset Correction','numbertitle','off');
 sgtitle('Results of Filtering and Baseline Correction');
-set(gcf, 'Position', [0, 0, 1800, 1000])  % set figure size
+set(gcf, 'Position', center_gui_figure(1800, 1000))  % set figure size
 
 for i = 1:12
     
@@ -103,7 +103,7 @@ currentVersion = str2double(currentVersion(2:5));
 
 figure('name','Results of Baseline Offset Correction on VM Lead','numbertitle','off');
 title('Results of Filtering and Baseline Correction on VM Lead');
-set(gcf, 'Position', [0, 0, 1800, 400])  % set figure size
+set(gcf, 'Position', center_gui_figure(1800, 400))  % set figure size
 plot(vcg_noshift.VM,'k', 'displayname','Uncorrected VM')
 hold on
 plot(vcg.VM,'r')

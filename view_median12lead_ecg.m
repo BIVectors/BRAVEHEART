@@ -52,7 +52,7 @@ for i = 1:4
 end
 
    
-median12L_fig = figure('name','Median Beats','numbertitle','off','SizeChangedFcn',{@move_button},'color',colors.bgcolor);
+median12L_fig = figure('name','Median Beats','numbertitle','off','SizeChangedFcn',{@move_button},'color',colors.bgcolor,'Visible','off');
 
 % Save button
 save_filename = fullfile(save_folder,strcat(filename(1:end-4),'_median_beats.png'));
@@ -60,8 +60,11 @@ savebutton = uicontrol('Parent',median12L_fig,'Style','pushbutton','String','Sav
     'BackgroundColor',colors.buttoncolor, 'FontWeight','bold', 'fontsize',8, 'ForegroundColor',colors.txtcolor, ...
     'Position',[1100 400 80 30],'Visible','on','Callback',{@save_fig_from_button, save_filename});
 
-set(gcf, 'Position', [30, 50, 1000, 500])  % set figure size
+set(gcf, 'Position', center_gui_figure(1000, 500));  % set figure size
 set(median12L_fig,'PaperSize',[8.5 11]); %set the paper size to what you want  
+
+set(median12L_fig, 'Visible', 'on');
+
 hold on
 
 xlim([0 ceil(length(new_ecg(1,:)))]);

@@ -23,7 +23,8 @@
 function open_ext_pdf(file, type)
 
 % Special way to deal with user guide which is in the same directory as the
-% application executable
+% application executable - mostly an issue for how Mac MATLAB executables
+% deal with these external files within the compiled application
 
 if strcmp(type, 'userguide')
 
@@ -45,7 +46,7 @@ if strcmp(type, 'userguide')
        
         open_ext_file(fullfile(P,file));
     
-    % Either PC or Mac not deployed - just get current directory    
+    % Mac/NOT deployed or any OS and NOT deployed - just get current directory and load file    
     else        
         fpath = fullfile(getcurrentdir(),file);
         open_ext_file(fullfile(getcurrentdir(),file));

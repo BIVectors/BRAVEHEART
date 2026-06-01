@@ -44,7 +44,7 @@ num_beats = beats.length();  % number of beats in bar graph
 
 y_text_loc = zeros(1,num_beats)+0.3;
 
-figure('name','Outlier Beat Analysis','numbertitle','off')
+fig = figure('name','Outlier Beat Analysis','numbertitle','off','visible','off');
 sgtitle(sprintf('Beat & Intervals (in Samples) for VM Lead with Mod Z-Score Cutpoint = %2.1f', cutpt), 'fontweight','bold','fontsize',12)
 
 
@@ -170,7 +170,10 @@ end
 
 xlabel('Beat #')
 
-set(gcf, 'Position', [200, 100, 900, 600])  % set figure size
+set(gcf, 'Position', center_gui_figure(900, 600))  % set figure size
+
+set(fig, 'Visible', 'on');
+
 
 % Increase font size on mac due to pc/mac font differences if version prior to R2025a
 currentVersion = char(matlabRelease.Release);

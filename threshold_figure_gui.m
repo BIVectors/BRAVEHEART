@@ -61,7 +61,7 @@ q = quantile(abs(vm), 100);
 up(up<q(th)) = NaN;
 
 figure('name','Initial R Peak Detection','numbertitle','off');
-set(gcf, 'Position', [100, 800, 1600, 300])  % set figure size
+set(gcf, 'Position', [480, 570, 1600, 300])  % set figure size
 plot(vm,'linewidth',1','color','black');
 hold on
 p_green = plot(up,'linewidth',1.5','color','green');
@@ -124,7 +124,7 @@ up_filt = vm_filt;
 up_filt(up_filt<q_filt(th)) = NaN;
 
 figure('name','Initial Filtered R Peak Detection','numbertitle','off');
-set(gcf, 'Position', [100, 400, 1600, 300])  % set figure size
+set(gcf, 'Position', [480, 170, 1600, 300])  % set figure size
 p_vm_filt = plot(vm_filt,'linewidth',1','color','black');
 hold on
 p_green_filt = plot(up_filt,'linewidth',1.5','color','green');

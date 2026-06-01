@@ -39,67 +39,43 @@ end
 % clear axes
 	clear_axes(hObject,eventdata,handles);
 
-% Loads ECG leads from handles
-%     X = handles.vcg.X;
-%     Y = handles.vcg.Y;
-%     Z = handles.vcg.Z;
-%     VM = handles.vcg.VM;
-%     QRS = handles.beats.QRS;
+% Axes objects to pass in to make plotting much faster    
+axX = handles.x_axis;
+axY = handles.y_axis;
+axZ = handles.z_axis;
+axVM = handles.vm_axis;
 
 % X
-axes(handles.x_axis);
-line([0 length(X)],[0 0], 'color', colors.vertlines,'linewidth',0.5)
-hold on
-plot(X,'color', colors.xyzecg)
-ylim([min(X)-0.1*(abs(max(X)-min(X))) max(X)+0.1*(abs(max(X)-min(X)))])
-
-for i = 1:length(QRS)
-    scatter(QRS(i), X(QRS(i)),'m','*')
-end
-
-hold off
+line(axX, [0 length(X)],[0 0], 'color', colors.vertlines,'linewidth',0.5)
+hold(axX,'on')
+plot(axX, X,'color', colors.xyzecg)
+ylim(axX, [min(X)-0.1*(abs(max(X)-min(X))) max(X)+0.1*(abs(max(X)-min(X)))])
+scatter(axX,QRS, X(QRS),'m','*')
+hold(axX,'off')
 
 
 % Y
-axes(handles.y_axis);
-line([0 length(Y)],[0 0], 'color', colors.vertlines,'linewidth',0.5)
-hold on
-plot(Y,'color', colors.xyzecg)
-ylim([min(Y)-0.1*(abs(max(Y)-min(Y))) max(Y)+0.1*(abs(max(Y)-min(Y)))])
-
-for i = 1:length(QRS)
-    scatter(QRS(i), Y(QRS(i)),'m','*')
-end
-
-hold off
+line(axY, [0 length(Y)],[0 0], 'color', colors.vertlines,'linewidth',0.5)
+hold(axY, 'on')
+plot(axY, Y,'color', colors.xyzecg)
+ylim(axY, [min(Y)-0.1*(abs(max(Y)-min(Y))) max(Y)+0.1*(abs(max(Y)-min(Y)))])
+scatter(axY, QRS, Y(QRS),'m','*')
+hold(axY, 'off')
 
 
 % Z
-axes(handles.z_axis);
-line([0 length(Z)],[0 0], 'color', colors.vertlines,'linewidth',0.5)
-hold on
-plot(Z,'color', colors.xyzecg)
-ylim([min(Z)-0.1*(abs(max(Z)-min(Z))) max(Z)+0.1*(abs(max(Z)-min(Z)))])
-
-for i = 1:length(QRS)
-    scatter(QRS(i), Z(QRS(i)),'m','*')
-end
-
-hold off
+line(axZ, [0 length(Z)],[0 0], 'color', colors.vertlines,'linewidth',0.5)
+hold(axZ, 'on')
+plot(axZ, Z,'color', colors.xyzecg)
+ylim(axZ, [min(Z)-0.1*(abs(max(Z)-min(Z))) max(Z)+0.1*(abs(max(Z)-min(Z)))])
+scatter(axZ, QRS, Z(QRS),'m','*')
+hold(axZ, 'off')
 
 
 % VM
-axes(handles.vm_axis);
-line([0 length(VM)],[0 0], 'color', colors.vertlines,'linewidth',0.5)
-hold on
-plot(VM,'color', colors.vmecg)
-ylim([min(VM)-0.1*(abs(max(VM)-min(VM))) max(VM)+0.1*(abs(max(VM)-min(VM)))])
-
-for i = 1:length(QRS)
-    scatter(QRS(i), VM(QRS(i)),'m','*')
-end
-
-hold off
-
-
-
+line(axVM, [0 length(VM)],[0 0], 'color', colors.vertlines,'linewidth',0.5)
+hold(axVM, 'on')
+plot(axVM, VM,'color', colors.vmecg)
+ylim(axVM, [min(VM)-0.1*(abs(max(VM)-min(VM))) max(VM)+0.1*(abs(max(VM)-min(VM)))])
+scatter(axVM, QRS, VM(QRS),'m','*')
+hold(axVM, 'off')

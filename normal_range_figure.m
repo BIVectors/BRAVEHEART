@@ -57,7 +57,7 @@ else
     gender_short = 'N/A';
 end
 
-nmlval_fig = figure('name','Normal Values','numbertitle','off','SizeChangedFcn',{@move_button}, 'Color', colors.bgcolor);   
+nmlval_fig = figure('name','Normal Values','numbertitle','off','SizeChangedFcn',{@move_button}, 'Color', colors.bgcolor, 'Visible','off');   
 
 set(gcf, 'InvertHardCopy', 'off');
 
@@ -220,10 +220,11 @@ ax.Layer = 'top';
 set(gca,'GridColor',[0.1 0.1 0.1]);
 end
 
-set(gcf, 'Position', [100, 100, 1500, 500]);  % set figure size
-
+set(gcf, 'Position', center_gui_figure(1500, 500));  % set figure size
 
 end
+
+set(nmlval_fig, 'Visible', 'on');
 
 % Increase font size on mac due to pc/mac font differences if version prior to R2025a
 currentVersion = char(matlabRelease.Release);

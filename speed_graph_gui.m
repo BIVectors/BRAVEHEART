@@ -20,7 +20,7 @@
 % This software is for research purposes only and is not intended to diagnose or treat any disease.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function speed_graph_gui(hObject, eventdata, handles, filename, save_flag, auto_flag, blank_samples, blank_samples_t, accel_flag, legend_flag, colors, popout)
+function speed_graph_gui(hObject, eventdata, handles, filename, auto_flag, blank_samples, blank_samples_t, accel_flag, legend_flag, colors, popout)
 
 % speed defined as the speed going to point n (eg distance of pt n minues pt n-1
 % Therefore point 1 will have no speed (because no point 0).  This
@@ -98,55 +98,66 @@ Tend = (Tend - Qorig) * sample_time;
 
 % Graph inside GUI or as a popout
 if popout == 0
-    axes(handles.speed_axis)
+    ax = handles.speed_axis;
+    fig = ancestor(ax, 'figure');
+
 elseif popout == 1
-    fig_vcgspeed = figure('name','VCG Speed','numbertitle','off');
-    set(fig_vcgspeed,'defaultAxesColorOrder',[colors.xyzecg; [1 0 0]]);
-    set(gcf, 'Position', [0, 0, 1200, 600])  % set figure size
+    fig = figure('name','VCG Speed','numbertitle','off','SizeChangedFcn',{@move_button},'Visible','off');
+    set(fig, 'defaultAxesColorOrder', [colors.xyzecg; [1 0 0]]);
+    
+    ax = axes(fig);                   % Create an axes inside the figure
+
+    % Save button
+    savebutton = uicontrol('Parent',fig,'Style','pushbutton','String','Save .png','Units','pixels', ...
+    'BackgroundColor',colors.buttoncolor, 'FontWeight','bold', 'fontsize',8, 'ForegroundColor',colors.txtcolor, ...
+    'Position',[1100 500 80 30],'Visible','on','Callback',{@save_fig_from_button, filename});
+
+    set(fig, 'Position', center_gui_figure(1200, 600));
+    set(fig, 'Visible', 'on');
 end
 
-yyaxis left
-s1 = plot(tx,medianvm,'LineWidth',2,'displayname','VCG VM');
-hold on
-xlabel('Time (ms)','FontWeight','bold','FontSize',12, 'color', colors.txtcolor);
-xlim([min(tx) max(tx)]);
-ylabel('VM Voltage (mV)','FontWeight','bold','FontSize',12);
-set(gca,'XColor',colors.txtcolor);
+yyaxis(ax,'left');
+s1 = plot(ax,tx,medianvm,'LineWidth',2,'displayname','VCG VM');
+hold(ax,'on');
+xlabel(ax,'Time (ms)','FontWeight','bold','FontSize',12, 'color', colors.txtcolor);
+xlim(ax, [min(tx) max(tx)]);
+ylabel(ax,'VM Voltage (mV)','FontWeight','bold','FontSize',12);
+set(ax,'XColor',colors.txtcolor);
 
 % Draw dashed lines at Qon, Qoff, Toff
-sqoff = line([S S],[0 max([max_vm max_speed])],'color', 'b','linewidth',1,'linestyle','--','displayname','QRS End');
-sqon = line([Q Q],[0 max([max_vm max_speed])],'color', 'k','linewidth',1,'linestyle','--','displayname','QRS Start');
-stoff = line([Tend Tend],[0 max([max_vm max_speed])],'color', 'r','linewidth',1,'linestyle','--','displayname','T End');
+sqoff = line(ax,[S S],[0 max([max_vm max_speed])],'color', 'b','linewidth',1,'linestyle','--','displayname','QRS End');
+sqon = line(ax,[Q Q],[0 max([max_vm max_speed])],'color', 'k','linewidth',1,'linestyle','--','displayname','QRS Start');
+stoff = line(ax,[Tend Tend],[0 max([max_vm max_speed])],'color', 'r','linewidth',1,'linestyle','--','displayname','T End');
 
 % assign ylim for left axis
-left_ylim_min = min(ylim);
-left_ylim_max = max(ylim);
+left_ylim_min = min(ylim(ax));
+left_ylim_max = max(ylim(ax));
 
 % Add max speed in QRS complex to figure
-s4 = scatter(tx(speed_qrs_max.loc_samp), medianvm(speed_qrs_max.loc_samp),70,'d','linewidth',1.3,'MarkerEdgeColor',[0 0 0],'displayname','Fastest QRS Segment');
-s4_2 = scatter(tx(speed_qrs_max.loc_samp_st), medianvm(speed_qrs_max.loc_samp_st),70,'d','linewidth',1.3,'MarkerEdgeColor',[0 0 0],'displayname','Fastest QRS Segment2');
-s4_m = scatter(0.5*(tx(speed_qrs_max.loc_samp)+tx(speed_qrs_max.loc_samp_st)), 0.5*(medianvm(speed_qrs_max.loc_samp)+medianvm(speed_qrs_max.loc_samp_st)),90,'MarkerEdgeColor',[0 0 0],'MarkerFaceColor','k','displayname','Fastest QRS Point (Mean)');
-line([tx(speed_qrs_max.loc_samp) tx(speed_qrs_max.loc_samp_st)],[medianvm(speed_qrs_max.loc_samp) medianvm(speed_qrs_max.loc_samp_st)],'Color','k','linewidth',2);
+s4 = scatter(ax,tx(speed_qrs_max.loc_samp), medianvm(speed_qrs_max.loc_samp),70,'d','linewidth',1.3,'MarkerEdgeColor',[0 0 0],'displayname','Fastest QRS Segment');
+s4_2 = scatter(ax,tx(speed_qrs_max.loc_samp_st), medianvm(speed_qrs_max.loc_samp_st),70,'d','linewidth',1.3,'MarkerEdgeColor',[0 0 0],'displayname','Fastest QRS Segment2');
+s4_m = scatter(ax,0.5*(tx(speed_qrs_max.loc_samp)+tx(speed_qrs_max.loc_samp_st)), 0.5*(medianvm(speed_qrs_max.loc_samp)+medianvm(speed_qrs_max.loc_samp_st)),90,'MarkerEdgeColor',[0 0 0],'MarkerFaceColor','k','displayname','Fastest QRS Point (Mean)');
+line(ax,[tx(speed_qrs_max.loc_samp) tx(speed_qrs_max.loc_samp_st)],[medianvm(speed_qrs_max.loc_samp) medianvm(speed_qrs_max.loc_samp_st)],'Color','k','linewidth',2);
 
 % Add max speed in T wave to figure
-s5 = scatter(tx(speed_t_max.loc_samp), medianvm(speed_t_max.loc_samp),70,'d','linewidth',1.3,'MarkerEdgeColor',[0 0.7 0],'displayname','Fastest QRS Segment');
-s5_2 = scatter(tx(speed_t_max.loc_samp_st), medianvm(speed_t_max.loc_samp_st),70,'d','linewidth',1.3,'MarkerEdgeColor',[0 0.7 0],'displayname','Fastest QRS Segment2');
-s5_m = scatter(0.5*(tx(speed_t_max.loc_samp)+tx(speed_t_max.loc_samp_st)), 0.5*(medianvm(speed_t_max.loc_samp)+medianvm(speed_t_max.loc_samp_st)),90,'MarkerEdgeColor',[0 0 0],'MarkerFaceColor',[0 0.7 0],'displayname','Fastest QRS Point (Mean)');
-line([tx(speed_t_max.loc_samp) tx(speed_t_max.loc_samp_st)],[medianvm(speed_t_max.loc_samp) medianvm(speed_t_max.loc_samp_st)],'Color',[0 0.7 0],'linewidth',2);
+s5 = scatter(ax,tx(speed_t_max.loc_samp), medianvm(speed_t_max.loc_samp),70,'d','linewidth',1.3,'MarkerEdgeColor',[0 0.7 0],'displayname','Fastest QRS Segment');
+s5_2 = scatter(ax,tx(speed_t_max.loc_samp_st), medianvm(speed_t_max.loc_samp_st),70,'d','linewidth',1.3,'MarkerEdgeColor',[0 0.7 0],'displayname','Fastest QRS Segment2');
+s5_m = scatter(ax,0.5*(tx(speed_t_max.loc_samp)+tx(speed_t_max.loc_samp_st)), 0.5*(medianvm(speed_t_max.loc_samp)+medianvm(speed_t_max.loc_samp_st)),90,'MarkerEdgeColor',[0 0 0],'MarkerFaceColor',[0 0.7 0],'displayname','Fastest QRS Point (Mean)');
+line(ax,[tx(speed_t_max.loc_samp) tx(speed_t_max.loc_samp_st)],[medianvm(speed_t_max.loc_samp) medianvm(speed_t_max.loc_samp_st)],'Color',[0 0.7 0],'linewidth',2);
 
-yyaxis right
-s2 = plot(tx,speed_3d,'LineWidth',2,'color','r','displayname','VCG Speed');
-ylabel('Speed (mV/ms)','FontWeight','bold','FontSize',12,'color','r')
-xlim([min(tx) max(tx)]);
+yyaxis(ax,'right');
+s2 = plot(ax,tx,speed_3d,'LineWidth',2,'color','r','displayname','VCG Speed');
+ylabel(ax,'Speed (mV/ms)','FontWeight','bold','FontSize',12,'color','r')
+xlim(ax,[min(tx) max(tx)]);
 if max_speed > max_vm
-sqoff = line([S S],[0 max(ylim)],'color', 'k','linewidth',1,'linestyle','--','displayname','QRS End');
-sqon = line([Q Q],[0 max(ylim)],'color', 'k','linewidth',1,'linestyle','--','displayname','QRS Start');
-stoff = line([Tend Tend],[0 max(ylim)],'color', 'k','linewidth',1,'linestyle','--','displayname','T End');
+sqoff = line(ax,[S S],[0 max(ylim(ax))],'color', 'k','linewidth',1,'linestyle','--','displayname','QRS End');
+sqon = line(ax,[Q Q],[0 max(ylim(ax))],'color', 'k','linewidth',1,'linestyle','--','displayname','QRS Start');
+stoff = line(ax,[Tend Tend],[0 max(ylim(ax))],'color', 'k','linewidth',1,'linestyle','--','displayname','T End');
 end
 
 % assign ylim for right axis
-right_ylim_min = min(ylim);
-right_ylim_max = max(ylim);
+right_ylim_min = min(ylim(ax));
+right_ylim_max = max(ylim(ax));
 
 
 if accel_flag == 1
@@ -154,73 +165,76 @@ if accel_flag == 1
         % Accel graph
         % Add acceleration tracing and min/max
 
-        s_accel = plot(tx,accel_3d,'LineWidth',2,'color','[0 0.3 0]','linestyle','-','displayname','Acceleration');
+        s_accel = plot(ax,tx,accel_3d,'LineWidth',2,'color','[0 0.3 0]','linestyle','-','displayname','Acceleration');
         
-        ylabel('Speed (mV/ms) {\color{black}&} {\color[rgb]{0,0.5,0}Acceleration (mV/ms^{2})}','FontWeight','bold','FontSize',12)
+        ylabel(ax,'Speed (mV/ms) {\color{black}&} {\color[rgb]{0,0.5,0}Acceleration (mV/ms^{2})}','FontWeight','bold','FontSize',12)
         
         % assign ylim for right axis
-        right_ylim_min = min(ylim);
-        right_ylim_max = max(ylim);
+        right_ylim_min = min(ylim(ax));
+        right_ylim_max = max(ylim(ax));
 
         % switch back to left axis to plot poitns of max acceleration on median beat
-        yyaxis left
+        yyaxis(ax,'left');
 
-        s6 = scatter(tx(accel_pos_max.loc_samp), medianvm(accel_pos_max.loc_samp),70,'d','linewidth',1.3,'MarkerEdgeColor','[0.9290, 0.6940, 0.1250]','displayname','Max Pos Acceleration Segment');
-        scatter(tx(accel_pos_max.loc_samp_st), medianvm(accel_pos_max.loc_samp_st),70,'d','linewidth',1.3,'MarkerEdgeColor','[0.9290, 0.6940, 0.1250]','displayname','Max Pos Acceleration2');
-        s6_m = scatter(0.5*(tx(accel_pos_max.loc_samp)+tx(accel_pos_max.loc_samp_st)), 0.5*(medianvm(accel_pos_max.loc_samp)+medianvm(accel_pos_max.loc_samp_st)),90,'MarkerEdgeColor','k','MarkerFaceColor','[0.9290, 0.6940, 0.1250]','displayname','Max Pos Acceleration Point (Mean)');
-        line([tx(accel_pos_max.loc_samp) tx(accel_pos_max.loc_samp_st)],[medianvm(accel_pos_max.loc_samp) medianvm(accel_pos_max.loc_samp_st)],'Color','[0.9290, 0.6940, 0.1250]','linewidth',2);
+        s6 = scatter(ax,tx(accel_pos_max.loc_samp), medianvm(accel_pos_max.loc_samp),70,'d','linewidth',1.3,'MarkerEdgeColor','[0.9290, 0.6940, 0.1250]','displayname','Max Pos Acceleration Segment');
+        scatter(ax,tx(accel_pos_max.loc_samp_st), medianvm(accel_pos_max.loc_samp_st),70,'d','linewidth',1.3,'MarkerEdgeColor','[0.9290, 0.6940, 0.1250]','displayname','Max Pos Acceleration2');
+        s6_m = scatter(ax,0.5*(tx(accel_pos_max.loc_samp)+tx(accel_pos_max.loc_samp_st)), 0.5*(medianvm(accel_pos_max.loc_samp)+medianvm(accel_pos_max.loc_samp_st)),90,'MarkerEdgeColor','k','MarkerFaceColor','[0.9290, 0.6940, 0.1250]','displayname','Max Pos Acceleration Point (Mean)');
+        line(ax,[tx(accel_pos_max.loc_samp) tx(accel_pos_max.loc_samp_st)],[medianvm(accel_pos_max.loc_samp) medianvm(accel_pos_max.loc_samp_st)],'Color','[0.9290, 0.6940, 0.1250]','linewidth',2);
 
-        s7 = scatter(tx(accel_neg_max.loc_samp), medianvm(accel_neg_max.loc_samp),70,'d','linewidth',1.3,'MarkerEdgeColor','[0.4940, 0.1840, 0.5560]','displayname','Max Neg Acceleration Segment');
-        scatter(tx(accel_neg_max.loc_samp_st), medianvm(accel_neg_max.loc_samp_st),70,'d','linewidth',1.3,'MarkerEdgeColor','[0.4940, 0.1840, 0.5560]','displayname','Max Neg Acceleration2');
-        s7_m = scatter(0.5*(tx(accel_neg_max.loc_samp)+tx(accel_neg_max.loc_samp_st)), 0.5*(medianvm(accel_neg_max.loc_samp)+medianvm(accel_neg_max.loc_samp_st)),90,'MarkerEdgeColor','k','MarkerFaceColor','[0.4940, 0.1840, 0.5560]','displayname','Max Neg Acceleration Point (Mean)');
-        line([tx(accel_neg_max.loc_samp) tx(accel_neg_max.loc_samp_st)],[medianvm(accel_neg_max.loc_samp) medianvm(accel_neg_max.loc_samp_st)],'Color','[0.4940, 0.1840, 0.5560]','linewidth',2);
+        s7 = scatter(ax,tx(accel_neg_max.loc_samp), medianvm(accel_neg_max.loc_samp),70,'d','linewidth',1.3,'MarkerEdgeColor','[0.4940, 0.1840, 0.5560]','displayname','Max Neg Acceleration Segment');
+        scatter(ax,tx(accel_neg_max.loc_samp_st), medianvm(accel_neg_max.loc_samp_st),70,'d','linewidth',1.3,'MarkerEdgeColor','[0.4940, 0.1840, 0.5560]','displayname','Max Neg Acceleration2');
+        s7_m = scatter(ax,0.5*(tx(accel_neg_max.loc_samp)+tx(accel_neg_max.loc_samp_st)), 0.5*(medianvm(accel_neg_max.loc_samp)+medianvm(accel_neg_max.loc_samp_st)),90,'MarkerEdgeColor','k','MarkerFaceColor','[0.4940, 0.1840, 0.5560]','displayname','Max Neg Acceleration Point (Mean)');
+        line(ax,[tx(accel_neg_max.loc_samp) tx(accel_neg_max.loc_samp_st)],[medianvm(accel_neg_max.loc_samp) medianvm(accel_neg_max.loc_samp_st)],'Color','[0.4940, 0.1840, 0.5560]','linewidth',2);
 end
 
 % QRS onset blanking period line and fills
-yyaxis right
+yyaxis(ax,'right');
 if blank_samples >= 0       % Always will be some blanking prior to QRS onset
-    s_fill = fill([min(tx) (Q+blank_q_ms) (Q+blank_q_ms) min(tx)], [right_ylim_min right_ylim_min right_ylim_max right_ylim_max ],[0.6 0.6 0.6],'EdgeColor','none','facealpha',0.3,'displayname','Blanking Period');
+    s_fill = fill(ax,[min(tx) (Q+blank_q_ms) (Q+blank_q_ms) min(tx)], [right_ylim_min right_ylim_min right_ylim_max right_ylim_max ],[0.6 0.6 0.6],'EdgeColor','none','facealpha',0.3,'displayname','Blanking Period');
 end
 
 
 % T wave onset blanking period line and fills
-yyaxis right
+yyaxis(ax,'right');
 if blank_samples_t > 0      % Only show blaking if blank_samples_t > 0
-    s_fill_t = fill([S (S+blank_t_ms) (S+blank_t_ms) S], [right_ylim_min right_ylim_min right_ylim_max right_ylim_max ],[0.6 0.6 0.6],'EdgeColor','none','facealpha',0.3,'displayname','Blanking Period');
+    s_fill_t = fill(ax,[S (S+blank_t_ms) (S+blank_t_ms) S], [right_ylim_min right_ylim_min right_ylim_max right_ylim_max ],[0.6 0.6 0.6],'EdgeColor','none','facealpha',0.3,'displayname','Blanking Period');
 end
+
+% Color right axis red (also colors label)
+ax.YAxis(2).Color = [1 0 0]; 
 
 if legend_flag == 1
 
     if blank_samples == 0 && accel_flag == 0
-    legend([s1 s2 sqon sqoff stoff s4 s4_m s5 s5_m])
+    legend(ax,[s1 s2 sqon sqoff stoff s4 s4_m s5 s5_m])
     %legend([s1 s2 s3 s4 s4_m])
-    legend('show','location','bestoutside')
+    legend(ax,'show','location','bestoutside')
     end
     
     if blank_samples >0 && accel_flag == 0
-    legend([s1 s2 sqon sqoff stoff s_fill s4 s4_m s5 s5_m])
+    legend(ax,[s1 s2 sqon sqoff stoff s_fill s4 s4_m s5 s5_m])
     %legend([s1 s2 s3 s4 s4_m])
-    legend('show','location','bestoutside')
+    legend(ax,'show','location','bestoutside')
     end
     
     if blank_samples == 0 && accel_flag == 1
-    legend([s1 s2 s_accel sqon sqoff stoff s4 s4_m s5 s5_m s6 s6_m s7 s7_m])
+    legend(ax,[s1 s2 s_accel sqon sqoff stoff s4 s4_m s5 s5_m s6 s6_m s7 s7_m])
     %legend([s1 s2 s3 s4 s4_m])
-    legend('show','location','bestoutside')
+    legend(ax,'show','location','bestoutside')
     end
     
     if blank_samples >0 && accel_flag == 1
-    legend([s1 s2 s_accel sqon sqoff stoff s_fill s4 s4_m s5 s5_m s6 s6_m s7 s7_m])
+    legend(ax,[s1 s2 s_accel sqon sqoff stoff s_fill s4 s4_m s5 s5_m s6 s6_m s7 s7_m])
     %legend([s1 s2 s3 s4 s4_m])
-    legend('show','location','bestoutside')
+    legend(ax,'show','location','bestoutside')
     end
 else
-    legend('off');
+    legend(ax,'off');
 end
 
 
 %set(gcf, 'Position', [200, 100, 1200, 800])  % set figure size
-xlim([min(tx) max(tx)]);
+xlim(ax,[min(tx) max(tx)]);
 
 % Need to find lower limit of Xtick label with 50 ms delta and starting at
 % zero going backwards to negative numbers in tx
@@ -229,15 +243,13 @@ d = 50;
 % Take ceiling because negative
 tx_div = ceil(tx/d);
 d_start = tx_div(1) * d;
-xticks(d_start:d:(sample_time*length(medianvm)));
+xticks(ax,d_start:d:(sample_time*length(medianvm)));
 
-title(strcat({'Speed of VCG Complex - '},{' '},{handles.filename_short}),'fontsize',14,'Interpreter', 'none');
-hold off
-
-% Save
-if save_flag == 1 && popout == 1
-    print(gcf,'-dpng',filename,'-r600');
+if popout == 1
+    title(ax,strcat({'Speed of VCG Complex - '},{' '},{handles.filename_short}),'fontsize',14,'Interpreter', 'none');
 end
+
+hold(ax,'off');
 
 %%# Auto close figure for auto saving
 if auto_flag == 1

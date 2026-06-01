@@ -54,7 +54,7 @@ end
 
     diff_vals = (ceil(max_vals - min_vals));
    
-xyz_fig = figure('name','X Y Z ECG','numbertitle','off','SizeChangedFcn',{@move_button}, 'color',colors.bgcolor);
+xyz_fig = figure('name','X Y Z ECG','numbertitle','off','SizeChangedFcn',{@move_button}, 'color',colors.bgcolor,'Visible', 'off');
 
 % Save button
 save_filename = fullfile(save_folder,strcat(filename(1:end-4),'_xyz_ecg.png'));
@@ -62,8 +62,11 @@ savebutton = uicontrol('Parent',xyz_fig,'Style','pushbutton','String','Save .png
     'BackgroundColor',colors.buttoncolor, 'FontWeight','bold', 'fontsize',8, 'ForegroundColor',colors.txtcolor, ...
     'Position',[1100 400 80 30],'Visible','on','Callback',{@save_fig_from_button, save_filename});
 
-set(gcf, 'Position', [30, 60, 1200, 500])  % set figure size
+set(gcf, 'Position', center_gui_figure(1200, 500));  % set figure size
 set(xyz_fig,'PaperSize',[8.5 11]); %set the paper size to what you want  
+
+set(xyz_fig, 'Visible', 'on');
+
 hold on
 
 xlim([0 ceil(length(ecg_sqwave(1,:)))]);

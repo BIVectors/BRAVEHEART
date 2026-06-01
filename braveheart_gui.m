@@ -89,6 +89,10 @@ handles.output = hObject;
 % Update handles structure
 guidata(hObject, handles);
 
+% Center GUI figure
+movegui(hObject, 'center');
+movegui(hObject, 'onscreen');
+
 % Clear all axes
 clear_axes(hObject,eventdata,handles);
 
@@ -110,18 +114,11 @@ set(handles.tab3,'visible','off')
 set(handles.tab4,'visible','off')
 set(handles.tab5,'visible','off')
     
-% % Load neural network for median beat annotation
-% load('MedianAnnoNet')
-% handles.MedianAnnoNet = MedianAnnoNet;
-% handles.meanTrain = meanTrain;
-% handles.stdTrain = stdTrain;
-% handles.standardizeFun = standardizeFun;
-% guidata(hObject, handles);  % Save to handles.
-    
 % Link face and vcg axes
-hlink = linkprop([handles.vcg_axis, handles.face_axis],{'CameraPosition','CameraUpVector'});
-handles.hlink = hlink;
-guidata(hObject, handles);  % Save to handles.
+hlink = linkprop([handles.vcg_axis, handles.face_axis], {'CameraPosition','CameraTarget','CameraUpVector'});
+setappdata(handles.BRAVEHEART_GUI, 'StoreTheLink', hlink);  % Keep linkprop alive independently
+setappdata(handles.BRAVEHEART_GUI, 'vcg_axis_orig_pos', handles.vcg_axis.Position); % Avoid issues with colorbar position
+guidata(hObject, handles);
 
 % Load fiducial point presets from excel spreadsheed 'search_presets.csv'
 % folder with the preset file will be in different location if running from .m file or from standalone .exe
@@ -174,6 +171,8 @@ else
     % Adjust GUI appearance if on Mac and before R2025
     if ismac
         changeGUIfont(handles);
+    elseif isunix
+        changeGUIfont_linux(handles);
     end
 end
 
@@ -201,6 +200,9 @@ end
 
 handles.num_cores_avail = num_cores_avail;
 guidata(hObject, handles);  % Save to handles
+
+% Monitor resolution check
+check_display();
 
 % Show About Information regarding License etc 
 % (automatically updates version number)
@@ -896,7 +898,7 @@ calc_plot(handles.vcg, handles.beats, handles.aps, hObject, eventdata, handles);
 guidata(hObject, handles);  % update handles
 
 % disable rotation so can move lines to reannotate in selected beat viewer
-    rotate3d off
+rotate3d off
        
 % Excecute PVC removal automatically if checkbox clicked
 if get(handles.auto_pvc_removal_checkbox, 'Value') == 1
@@ -1029,30 +1031,15 @@ if handles.highlight_flag == 1
     
    % Acitvates each of the 4 median beat axes and then deletes 
    % the handle/object for the highlighted beat 
-   axes(handles.Xmedianbeat_axis)
    delete(handles.highlightx)
-
-   axes(handles.Ymedianbeat_axis)
    delete(handles.highlighty)
-
-   axes(handles.Zmedianbeat_axis)
    delete(handles.highlightz)
-
-%    axes(handles.VMmedianbeat_axis)
-%    delete(handles.highlightvm)
 
    % Acitvates each of the 4 median beat axes and then deletes 
    % the handle/object for the highlighted star marker 
-   axes(handles.x_axis)
    delete(handles.beat_starx)
-
-   axes(handles.y_axis)
    delete(handles.beat_stary)
-
-   axes(handles.z_axis)
    delete(handles.beat_starz)
-
-   axes(handles.vm_axis)
    delete(handles.beat_starvm)
 
    % Set highlight flag to 0
@@ -1123,47 +1110,34 @@ ylim([y1 y2])
 % Z, VM graphs
 
 % Add green lead highlighting to median beat graphs 
-axes(handles.Xmedianbeat_axis)
-hold on
-handles.highlightx = plot(beatsigx(str_index,:),'g', 'linewidth', 1.1');
-hold off
+hold(handles.Xmedianbeat_axis, 'on')
+handles.highlightx = plot(handles.Xmedianbeat_axis, beatsigx(str_index,:),'g', 'linewidth', 1.1');
+hold(handles.Xmedianbeat_axis, 'off')
 
-axes(handles.Ymedianbeat_axis)
-hold on
-handles.highlighty = plot(beatsigy(str_index,:),'g', 'linewidth', 1.1');
-hold off
+hold(handles.Ymedianbeat_axis, 'on')
+handles.highlighty = plot(handles.Ymedianbeat_axis, beatsigy(str_index,:),'g', 'linewidth', 1.1');
+hold(handles.Ymedianbeat_axis, 'off')
 
-axes(handles.Zmedianbeat_axis)
-hold on
-handles.highlightz = plot(beatsigz(str_index,:),'g', 'linewidth', 1.1');
-hold off
-
-% axes(handles.VMmedianbeat_axis)
-% hold on
-% handles.highlightvm = plot(beatsigvm(str_index,:),'g', 'linewidth', 1.1');
-% hold off
-
+hold(handles.Zmedianbeat_axis, 'on')
+handles.highlightz = plot(handles.Zmedianbeat_axis, beatsigz(str_index,:),'g', 'linewidth', 1.1');
+hold(handles.Zmedianbeat_axis, 'off')
 
 % Add green star to X,Y,Z,VM axes (not median beats)
-axes(handles.x_axis)
-hold on
-handles.beat_starx = plot(beatmatrix(str_index,2),X(beatmatrix(str_index,2)),'*','color','g','MarkerSize', 8);
-hold off
+hold(handles.x_axis, 'on')
+handles.beat_starx = plot(handles.x_axis, beatmatrix(str_index,2),X(beatmatrix(str_index,2)),'*','color','g','MarkerSize', 8);
+hold(handles.x_axis, 'off')
 
-axes(handles.y_axis)
-hold on
-handles.beat_stary = plot(beatmatrix(str_index,2),Y(beatmatrix(str_index,2)),'*','color','g','MarkerSize', 8);
-hold off
+hold(handles.y_axis, 'on')
+handles.beat_stary = plot(handles.y_axis, beatmatrix(str_index,2),Y(beatmatrix(str_index,2)),'*','color','g','MarkerSize', 8);
+hold(handles.y_axis, 'off')
 
-axes(handles.z_axis)
-hold on
-handles.beat_starz = plot(beatmatrix(str_index,2),Z(beatmatrix(str_index,2)),'*','color','g','MarkerSize', 8);
-hold off
+hold(handles.z_axis, 'on')
+handles.beat_starz = plot(handles.z_axis, beatmatrix(str_index,2),Z(beatmatrix(str_index,2)),'*','color','g','MarkerSize', 8);
+hold(handles.z_axis, 'off')
 
-axes(handles.vm_axis)
-hold on
-handles.beat_starvm = plot(beatmatrix(str_index,2),VM(beatmatrix(str_index,2)),'*','color','g','MarkerSize', 8);
-hold off
+hold(handles.vm_axis, 'on')
+handles.beat_starvm = plot(handles.vm_axis, beatmatrix(str_index,2),VM(beatmatrix(str_index,2)),'*','color','g','MarkerSize', 8);
+hold(handles.vm_axis, 'off')
 
 % Activate flag noting highlighting is present
 handles.highlight_flag = 1;
@@ -1901,7 +1875,7 @@ L = handles.vcg_axis;
 h = figure('name','VCG','numbertitle','off');
 copyobj([L legend(L)],h);
 set(gca, 'Units', 'normalized', 'Position', [.1 .1 .7 .7] );
-set(gcf, 'Position', [0, 0, 1000, 1000])  % set figure size
+set(gcf, 'Position', center_gui_figure(1000, 1000))  % set figure size
 
 title(handles.filename_short(1:end-4),'fontsize',14,'Interpreter', 'none');
 xlabel('X','FontWeight','bold','FontSize',14);
@@ -2154,8 +2128,9 @@ medianbeat = handles.medianbeat;
 aps = pull_guiparams(hObject, eventdata, handles);
 
 plot_vcg_gui(geh, median_vcg, medianbeat, aps, hObject, eventdata, handles);
-linkprop([handles.vcg_axis, handles.face_axis],'view');
-linkprop([handles.vcg_axis, handles.face_axis],'CameraUpVector');
+
+% disable rotation so can move lines to reannotate in selected beat viewer
+rotate3d off
 
 
 % --- Executes on button press in orientation_button.
@@ -2194,9 +2169,8 @@ function sag_view_button_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-axes(handles.vcg_axis)
-view(-270,0) % ZY
-camroll(270)
+view(handles.vcg_axis, -270, 0)
+set(handles.vcg_axis, 'CameraUpVector', [0 -1 0])  
 
 % axes(handles.face_axis)
 % view(-270,0) % ZY
@@ -2229,7 +2203,7 @@ handles = guidata(hObject);  % load handles variables
 % face_flag is 1 if face is showing, and 0 if not showing
 face_flag = handles.face_flag;
 
-face_figure(face_flag, hObject, eventdata, handles)
+toggle_face_figure(face_flag, hObject, eventdata, handles)
 handles = guidata(hObject);     % Take handles from the function and transfer to main program to avoid bugs
 
 
@@ -2264,7 +2238,7 @@ zlabel('Z','FontWeight','bold','FontSize',14);
 
 title('Raw VCG Data');
 set( gca, 'Units', 'normalized', 'Position', [.1 .1 .8 .8] );
-set(gcf, 'Position', [200, 100, 900, 900])  % set figure size
+set(gcf, 'Position', center_gui_figure(900, 900))  % set figure size
 %set (gca,'Zdir','reverse');
 set (gca,'Ydir','reverse');
 
@@ -2276,8 +2250,8 @@ function vcg_axis_ButtonDownFcn(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-linkprop([handles.vcg_axis, handles.face_axis],'view');
-linkprop([handles.vcg_axis, handles.face_axis],'CameraUpVector');
+%linkprop([handles.vcg_axis, handles.face_axis],'view');
+%linkprop([handles.vcg_axis, handles.face_axis],'CameraUpVector');
 
 function vcg_axis_DeleteFcn(hObject, eventdata, handles)
 % try to fix that close program error
@@ -2806,7 +2780,7 @@ speed_filename = fullfile(save_folder,filename_short);
 
 popout = 0;
 
-speed_graph_gui(hObject, eventdata, handles, speed_filename, save_flag, 0, str2num(get(handles.speed_blank_txt, 'String')), ...
+speed_graph_gui(hObject, eventdata, handles, speed_filename, 0, str2num(get(handles.speed_blank_txt, 'String')), ...
     str2num(get(handles.speed_t_blank_txt, 'String')), accel_flag, legend_flag, colors, popout);
 
 
@@ -3424,6 +3398,11 @@ handles.highlight_flag = 0;
 % Initialize face flag for VCG face 
 face_flag = 0;
 handles.face_flag = face_flag;
+
+% Draw face while it is still hidden
+face_figure(hObject, eventdata, handles);
+handles.face_flag = 0;
+set(allchild(handles.face_axis), 'Visible', 'off');
 guidata(hObject, handles);  % update handles
 
 % Generate Annoparams Class with default values and then pull values from
@@ -4825,8 +4804,7 @@ function rot_l_button_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-axes(handles.face_axis);
-camorbit(10,0,'coordsys') 
+camorbit(handles.face_axis,10,0,'camera') 
 
 % --- Executes on button press in rot_r_button.
 function rot_r_button_Callback(hObject, eventdata, handles)
@@ -4834,8 +4812,7 @@ function rot_r_button_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-axes(handles.face_axis);
-camorbit(-10,0,'coordsys') 
+camorbit(handles.face_axis,-10,0,'camera') 
 
 % --- Executes on button press in rot_d_button.
 function rot_d_button_Callback(hObject, eventdata, handles)
@@ -4843,8 +4820,7 @@ function rot_d_button_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-axes(handles.face_axis);
-camorbit(0,10,'coordsys') 
+camorbit(handles.face_axis,-0,10,'camera') 
 
 % --- Executes on button press in rot_u_button.
 function rot_u_button_Callback(hObject, eventdata, handles)
@@ -4852,8 +4828,7 @@ function rot_u_button_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-axes(handles.face_axis);
-camorbit(0,-10,'coordsys') 
+camorbit(handles.face_axis,-0,-10,'camera') 
 
 % --- Executes on button press in rot_l2_button.
 function rot_l2_button_Callback(hObject, eventdata, handles)
@@ -4978,7 +4953,7 @@ else
     colors = light_colors;
 end
 
-speed_graph_gui(hObject, eventdata, handles, speed_filename, save_flag, 0, str2num(get(handles.speed_blank_txt, 'String')), str2num(get(handles.speed_t_blank_txt, 'String')), accel_flag, legend_flag, colors, popout);
+speed_graph_gui(hObject, eventdata, handles, speed_filename, 0, str2num(get(handles.speed_blank_txt, 'String')), str2num(get(handles.speed_t_blank_txt, 'String')), accel_flag, legend_flag, colors, popout);
 
 
 
@@ -5462,15 +5437,19 @@ function vcg_morph_popout_button_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 L = handles.vcg_morph_axis;
-h = figure('name','VCG Morphology','numbertitle','off');
+h = figure('name','VCG Morphology','numbertitle','off','Visible','off');
 copyobj([L legend(L)],h);
-set(gca, 'Units', 'normalized', 'Position', [.1 .1 .7 .7] );
-set(gcf, 'Position', [200, 100, 1200, 1200])  % set figure size
+set(gca, 'Units', 'normalized', 'OuterPosition', [0 0 1 1])     % set figure size
+set(gca, 'Units', 'normalized');                                % freeze current proportions
+set(gcf, 'Position', get(gcf,'Position') .* [1 1 1.5 1.5])      % size 1.5x
 
-title(handles.filename_short(1:end-4),'fontsize',14,'Interpreter', 'none');
+title(strcat(handles.filename_short,' VCG Morphology'),'fontsize',14,'Interpreter', 'none');
 xlabel('X','FontWeight','bold','FontSize',14);
 ylabel('Y','FontWeight','bold','FontSize',14);
 zlabel('Z','FontWeight','bold','FontSize',14);
+
+movegui(h, 'center');
+set(h, 'Visible', 'on');
 
 rotate3d on
 
@@ -6042,7 +6021,7 @@ ecgfn(1:2) = [];
 if aps.interpolate == 1
 
 figure
-set(gcf, 'Position', [100, 100, 1500, 1000])  % set figure size
+set(gcf, 'Position', center_gui_figure(1500, 1000))  % set figure size
 tiledlayout(6,2,'TileSpacing','tight','Padding','tight')
 sgtitle('Pacing Spike Interpolation','fontsize',12,'fontweight','bold')
 

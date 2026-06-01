@@ -25,24 +25,12 @@ function about_popup()
 % Get version
 version = AnnoResult().version{1};
 
-% Get screen size and calculate center position
-screenSize = get(0, 'ScreenSize');  % [left, bottom, width, height]
-figWidth = 500;
-figHeight = 600;
-
-% Calculate centered position
-figLeft = round((screenSize(3) - figWidth) / 2);
-figBottom = round((screenSize(4) - figHeight) / 2);
-
-% Create figure - centered on screen
+% Get center screen coordinates
+% Create figure - centered on screen with dimensions 500x600
 fig = uifigure('Name', 'About/License', ...
-               'Position', [figLeft, figBottom, figWidth, figHeight], ...
+               'Position', center_gui_figure(500, 600), ...
                'WindowStyle', 'modal', 'Resize', 'off');
     
-% % Create figure
-% fig = uifigure('Name', 'About/License', 'Position', [700, 500, 500, 600], ...
-%            'WindowStyle', 'modal', 'Resize', 'off');
-
 % Create panel
 panel = uipanel(fig, 'Position', [10, 10, 480, 600], 'BorderType', 'none');
 

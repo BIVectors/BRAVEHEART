@@ -36,7 +36,7 @@ quality_matrix = [quality.qt quality.qrs quality.tpqt quality.t_mag quality.hr q
     quality.pct_beats_removed quality.corr quality.baseline quality.missing_lead quality.hf_noise quality.lf_noise ...
     quality.prob nnet_flag quality.sum_se];
 
-figure('name','Annotation Quality Assessment','numbertitle','off')
+qfig = figure('name','Annotation Quality Assessment','numbertitle','off','Visible','off');
 title('Annotation Quality Assessment','fontsize',12)
 hold on
 
@@ -101,12 +101,15 @@ ylim([0 1]);
 set(gca,'YTickLabel',[]);
 set(gca,'XTickLabel',[]);
 
-set(gcf, 'Position', [200, 100, 1700, 150])  % set figure size
+set(gcf, 'Position', center_gui_figure(1700,150))  % set figure size
 
 InSet = get(gca, 'TightInset');
 InSet(4) = InSet(4)+0.015;
 InSet(3) = InSet(3)+0.015;
 set(gca, 'Position', [InSet(1:2), 1-InSet(1)-InSet(3), 1-InSet(2)-InSet(4)]);
+
+set(qfig, 'Visible', 'on');
+
 
 % Increase font size on mac due to pc/mac font differences if version prior to R2025a
 currentVersion = char(matlabRelease.Release);

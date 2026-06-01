@@ -298,7 +298,7 @@ end
 
 if debug == 1
 figure
-set(gcf, 'Position', [200, 200, 1500, 1000])  % set figure size
+set(gcf, 'Position', [430, 100, 1500, 1000])  % set figure size
 tiledlayout(6,2,'TileSpacing','tight','Padding','compact')
 
 if isnumeric(pacer_zpk)
@@ -325,13 +325,19 @@ hold on
 p2 = plot(ecg.(ecg_fn{jj}),'linewidth',0.8,'Color','black');
 
 if ~isempty(S)
-    s1 = scatter(s.(ecg_fn{jj}),ecg.(ecg_fn{jj})(s.(ecg_fn{jj})),20,'filled','b');
-    s2 = scatter(e.(ecg_fn{jj}),ecg.(ecg_fn{jj})(e.(ecg_fn{jj})),20,'filled','b');
+    sc1 = scatter(s.(ecg_fn{jj}),ecg.(ecg_fn{jj})(s.(ecg_fn{jj})),20,'filled','b');
+    sc2 = scatter(e.(ecg_fn{jj}),ecg.(ecg_fn{jj})(e.(ecg_fn{jj})),20,'filled','b');
 end
 ylabel('mV')
 
     if jj == 2
-        legend([p2 p1 p3 s1],{'ECG Signal','|Mod Z Score|','|Mod Z Score| Cutoff', 'On/Off Interpolation'},'Location','eastoutside','FontSize',10)
+         if exist('sc1', 'var')
+            legend([p2 p1 p3 sc1], {'ECG Signal','|Mod Z Score|','|Mod Z Score| Cutoff','On/Off Interpolation'}, ...
+               'Location','eastoutside','FontSize',10)
+        else
+            legend([p2 p1 p3], {'ECG Signal','|Mod Z Score|','|Mod Z Score| Cutoff'}, ...
+               'Location','eastoutside','FontSize',10)
+        end
     end
 
 ax = gca;

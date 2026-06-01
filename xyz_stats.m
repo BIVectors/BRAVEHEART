@@ -95,7 +95,7 @@ end
 % GRAPH
 
     
-figure('name',sprintf('Lead %s Data',lead_str),'numbertitle','off');
+fig = figure('name',sprintf('Lead %s Data',lead_str),'numbertitle','off', 'Visible', 'off');
 sgtitle(sprintf('Lead %s Data',lead_str),'fontsize',14,'fontweight','bold');
 
 subplot(r,c,1) 
@@ -186,7 +186,8 @@ xlabel('Samples','FontWeight','bold','FontSize',12);
 ylabel('mV','FontWeight','bold','FontSize',12)
 title(sprintf('Median Beat Lead %s',string(lead{n})));
 
-set(gcf, 'Position', [0, 0, 1600, 700])  % set figure size
+set(gcf, 'Position', center_gui_figure(1600, 700));  % set figure size
+set(fig, 'Visible', 'on');
 
 
 % Increase font size on mac due to pc/mac font differences if version prior to R2025a

@@ -25,7 +25,7 @@ function noise_reduction_figure(ecg, ecg_raw, aps, filename, hObject, eventdata,
 
 % Initialize figure
 figure(figure('name','Noise Reduction','numbertitle','off'))
-set(gcf, 'Position', [0, 0, 1500, 1000])  % set figure size
+set(gcf, 'Position', center_gui_figure(1500, 1000));  % set figure size
 hold on
 
 % Y-scale adjustment if needed
@@ -313,7 +313,7 @@ xlim([0 length(hf_noise_matrix)+1]);
 set(gca,'YTickLabel',[]);
 set(gca,'XTickLabel',[]);
 
-set(gcf, 'Position', [200, 100, 800, 300])  % set figure size
+set(gcf, 'Position', center_gui_figure(800, 300))  % set figure size
 
 % Increase font size on mac due to pc/mac font differences if version prior to R2025a
 currentVersion = char(matlabRelease.Release);

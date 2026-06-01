@@ -34,9 +34,12 @@ function view_vcgloops(vcg, fp, filename, save_folder, save_flag, colors)
 
 % fp = fiducial points of median beat
 
-vcgloop_fig = figure('name','Median VCG Loops','numbertitle','off','Color',colors.bgcolor, 'SizeChangedFcn',{@move_button});
-set(gcf, 'Position', [0, 0, 1300 800])  % set figure size
+vcgloop_fig = figure('name','Median VCG Loops','numbertitle','off','Color',colors.bgcolor, 'SizeChangedFcn',{@move_button},'Visible', 'off');
+set(gcf, 'Position', center_gui_figure(1300, 800));  % set figure size
 set(vcgloop_fig,'PaperSize',[8.5 11]); %set the paper size to what you want  
+
+set(vcgloop_fig, 'Visible', 'on');
+
 sgtitle(sprintf('Median VCG Loops - %s',filename),'fontweight','bold', 'color', colors.txtcolor,'interpreter','none')
 
 % Save button

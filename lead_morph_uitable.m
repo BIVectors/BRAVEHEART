@@ -29,9 +29,9 @@ currentVersion = str2double(currentVersion(2:5));
 
 %Create figure and uitable
 if currentVersion >= 2025
-    fig = figure('Name', 'Lead Morphology Data Table', 'NumberTitle', 'off', 'Position', [100 100 1500 440]);
+    fig = figure('Name', 'Lead Morphology Data Table', 'NumberTitle', 'off', 'Position', [100 100 1500 440],'Visible','off');
 else
-    fig = figure('Name', 'Lead Morphology Data Table', 'NumberTitle', 'off', 'Position', [100 100 1250 360]);
+    fig = figure('Name', 'Lead Morphology Data Table', 'NumberTitle', 'off', 'Position', [100 100 1250 360],'Visible','off');
 end
 
 % Add the title text uicontrol
@@ -135,3 +135,7 @@ data{16,13} = sprintf('%.3f',(geh.VMQ_area + geh.VMT_area));
 
 % Update table data
 t.Data = data;   
+
+% Center
+movegui(fig, 'center');
+set(fig, 'Visible', 'on');

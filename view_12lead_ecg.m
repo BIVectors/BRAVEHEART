@@ -59,7 +59,7 @@ end
 
     diff_vals = (ceil(max_vals - min_vals));
    
-lead12_fig = figure('name','12-Lead ECG','numbertitle','off','SizeChangedFcn',{@move_button},'color',colors.bgcolor);
+lead12_fig = figure('name','12-Lead ECG','numbertitle','off','SizeChangedFcn',{@move_button},'color',colors.bgcolor,'Visible','off');
 
 % Save button
 save_filename = fullfile(save_folder,strcat(filename(1:end-4),'_12lead_ecg.png'));
@@ -68,8 +68,10 @@ savebutton = uicontrol('Parent',lead12_fig,'Style','pushbutton','String','Save .
     'Position',[1100 900 80 30],'Visible','on','Callback',{@save_fig_from_button, save_filename});
 
 
-set(gcf, 'Position', [0, 0, 1150, 1050])  % set figure size
+set(gcf, 'Position', center_gui_figure(1150, 1050));  % set figure size
 set(lead12_fig,'PaperSize',[8.5 11]); %set the paper size to what you want  
+set(lead12_fig, 'Visible', 'on');
+
 hold on
 
 xlim([0 ceil(length(ecg_sqwave(1,:)))]);

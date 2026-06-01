@@ -79,6 +79,7 @@ BRAVEHEART can read a wide variety of 12-lead ECG formats including:
 21. Mortara ELI XML
 22. EP Tracer recording system
 23. Labsystem Pro recording system
+24. Biocare iE12A .zekg
 
 If you need BRAVEHEART to read another ECG format let us know and we will help add it.
 

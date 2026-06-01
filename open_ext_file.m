@@ -30,6 +30,8 @@ elseif ismac
     p = strrep(p, ' ', '\ ');
     system([sprintf("open %s",p)]);
 
+elseif isunix
+    system(sprintf('LD_LIBRARY_PATH="" xdg-open "%s" &', p));
 else
     % Do nothing
 
