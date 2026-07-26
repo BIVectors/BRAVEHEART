@@ -473,7 +473,7 @@ parfor (i = 1:num_files, workers)
             send(D, i);          % Send iteration counter to DataQueue
         else
             k = num_files - i+1;  % Turns out if there are 0 workers parfor seems to go in reverse order!
-            waitbar(k/num_files, H, sprintf('Processed %i out of %i Total ECGs (%i%%)',k,num_files,round(100*(k/num_files))),'Name','Processing...');
+            waitbar(k/num_files, H, sprintf('Processed %i out of %i ECGs (%i%%)',k,num_files,round(100*(k/num_files))),'Name','Processing...');
         end
     end
     
@@ -552,7 +552,7 @@ fprintf('\n\nECG PROCESSING COMPLETE! \n\n%i ECGs Processed \n%i ECGs Need Quali
 
 % Function to update the parallel waitbar
 function UpdateWaitbar(~)
-    waitbar(P/num_files, H, sprintf('Processed %i out of %i Total ECGs (%i%%) on %i Workers',P,num_files,round(100*(P/num_files)),workers));
+    waitbar(P/num_files, H, sprintf('Processed %i out of %i ECGs (%i%%) on %i Workers',P,num_files,round(100*(P/num_files)),workers));
     P = P + 1;
 end
 

@@ -28,7 +28,7 @@ function pvc_data_visualization(beats, aps, vcg, hObject, eventdata, handles)
 v = properties(VCG());
 v_fn = fieldnames(VCG());
 
-pvcfig = figure('name','QRS Normalized Cross Correlations and Normalized RMSE','numbertitle','off','visible','off')
+pvcfig = figure('name','QRS Normalized Cross Correlations and Normalized RMSE','numbertitle','off','visible','off');
 sgtitle(sprintf('Normalized X-Correlation (Threshold = %3.1f%%) & Normalized RMSE (Threshold = %0.2f)',round(100*aps.pvcthresh),round(aps.rmse_pvcthresh,2)),'fontweight', 'bold')
 
 for k = 3:5     % X, Y, and Z in VCG properties

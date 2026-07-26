@@ -359,7 +359,7 @@ classdef Beats
             % dynamic cutpt based on number of beats?
             length(obj.Q);
             
-            [outlier_matrix, ~] = find_outliers([obj.Q obj.QRS obj.S obj.Tend], vcg.VM, vcg.hz, cutpt); % careful! definition of beatmatrix different
+            [outlier_matrix, ~, ~] = find_outliers([obj.Q obj.QRS obj.S obj.Tend], vcg.VM, vcg.hz, cutpt); % careful! definition of beatmatrix different
             o = outlier_matrix(4,:) + outlier_matrix(1,:);
             obj.outlier = (o>=1)';
         end

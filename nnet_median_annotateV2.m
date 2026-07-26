@@ -148,7 +148,7 @@ sum_se = sum(se);
 if debug == 1 
 	%close(gcf);
 	try % dont choke here
-		plot_scores(signal, signal_orig, freq, scores, Q, S, T, Tend, Q_down, S_down, T_down, Tend_down);
+		plot_scores(signal, signal_orig, freq, scores, YClean, Q, S, T, Tend, Q_down, S_down, T_down, Tend_down);
     catch ME
     end 
 end
@@ -157,10 +157,10 @@ end
 % Re-enable warning
     warning('on', 'MATLAB:dispatcher:UnresolvedFunctionHandle');
 	
-end
+end % end main function
 
 
-function plot_scores(signal, signal_orig, freq, scores, Q, S, T, Tend, Q_down, S_down, T_down, Tend_down)
+function plot_scores(signal, signal_orig, freq, scores, YClean, Q, S, T, Tend, Q_down, S_down, T_down, Tend_down)
 
 pOther = scores{1}(1,:);
 pQRS = scores{1}(2,:);
@@ -176,8 +176,9 @@ sum_se = sum(se);
 
 if freq ~= 500
 	
-	figure('name','Median Reannotation Fiducial Point Debug','numbertitle','off')
-	subplot(7,2,[1 3 5 7 9])
+	F = figure('name','Median Reannotation Fiducial Point Debug','numbertitle','off','SizeChangedFcn',{@move_button});
+    set(gcf, 'Position', center_gui_figure(1200, 700));  % set figure size
+	ax1 = subplot(7,2,[1 3 5 7 9]);
 	title('Resampled Signal - 500 Hz')
 	yyaxis left
 	
@@ -190,24 +191,44 @@ if freq ~= 500
 	s0 = plot(scores{1}(1,1:end),'k','LineStyle', '--', 'Displayname',' Other');
 	s1 = plot(scores{1}(2,1:end),'r','LineStyle', '--', 'Displayname',' QRS');
 	s2 = plot(scores{1}(3,1:end),'b','LineStyle', '--', 'Displayname',' T');
-	
-	line([Q_down Q_down],[0 1],'color','m', 'LineStyle', '-')
-	line([S_down S_down],[0 1],'color','m', 'LineStyle', '-')
-	line([Tend_down Tend_down],[0 1],'color','m', 'LineStyle', '-')
-	
-	yyaxis left
-	text(Q_down, signal(Q_down), '[', 'FontSize', 16, 'Color', 'magenta', 'interpreter', 'none');
-	text(S_down, signal(S_down), ']', 'FontSize', 16, 'Color', 'magenta', 'interpreter', 'none');
-	text(T_down, signal(T_down), 'T', 'FontSize', 16, 'Color', 'magenta', 'interpreter', 'none');
-	text(Tend_down, signal(Tend_down), '}', 'FontSize', 16, 'Color', 'magenta', 'interpreter', 'none');
-	
+
+    % Final classes before and after Viterbi decoder
+    [~, collapsed_scores] = max(scores{1}, [], 1);
+    score_orig = plot(collapsed_scores-1,'k','Linestyle','-','linewidth',4,'Marker','none','Visible','off','Displayname', sprintf('Raw\nClasses'));
+    score_fixed = plot(double(YClean)-1,'r','Linestyle','-','linewidth',2.5,'Marker','none','Visible','off','Displayname',sprintf('Viterbi\nCorrected'));
+
+    yyaxis left
+    if ~isnan(Q_down)
+	    line([Q_down Q_down],[0 1],'color','m', 'LineStyle', '-')
+        t1 = text(Q_down, signal(Q_down), '[', 'FontSize', 16, 'Color', 'magenta', 'interpreter', 'none');
+    end
+
+    if ~isnan(S_down)
+	    line([S_down S_down],[0 1],'color','m', 'LineStyle', '-')
+        t2 = text(S_down, signal(S_down), ']', 'FontSize', 16, 'Color', 'magenta', 'interpreter', 'none');
+    end
+
+    if ~isnan(T_down)
+        t3 = text(T_down, signal(T_down), 'T', 'FontSize', 16, 'Color', 'magenta', 'interpreter', 'none');
+    end
+
+    if ~isnan(Tend_down)
+	    line([Tend_down Tend_down],[0 1],'color','m', 'LineStyle', '-')
+        t4 = text(Tend_down, signal(Tend_down), '}', 'FontSize', 16, 'Color', 'magenta', 'interpreter', 'none');
+    end
+
 	plot(signal,'Color', '[ 0 0.8 0]')
 	
 	hold off
 	
+    % Viterbi vs Scores toggle button
+    vbutton = uicontrol('Parent',F,'Style','pushbutton','String','Classification','Units','pixels', ...
+     'FontWeight','bold','Position',[1100 660 90 30],'Visible','on','Callback', @(src,evt) ...
+      toggleViterbi(score_orig, score_fixed, s0, s1, s2, ax1));
+
 	legend([s0 s1 s2])
 	
-	subplot(7,2,[2 4 6 8 10])
+	ax2 = subplot(7,2,[2 4 6 8 10]);
 	
 	plot(signal_orig,'Color', '[ 0 0.8 0]')
 	title(sprintf('Original Signal - %i Hz', freq))
@@ -215,13 +236,13 @@ if freq ~= 500
 	xlabel('Samples')
 	hold on
 	
-	text(Q, signal_orig(Q), '[', 'FontSize', 16, 'Color', 'magenta', 'interpreter', 'none');
-	text(S, signal_orig(S), ']', 'FontSize', 16, 'Color', 'magenta', 'interpreter', 'none');
-	text(T, signal_orig(T), 'T', 'FontSize', 16, 'Color', 'magenta', 'interpreter', 'none');
-	text(Tend, signal_orig(Tend), '}', 'FontSize', 16, 'Color', 'magenta', 'interpreter', 'none');
+	t1 = text(Q, signal_orig(Q), '[', 'FontSize', 16, 'Color', 'magenta', 'interpreter', 'none');
+	t2 = text(S, signal_orig(S), ']', 'FontSize', 16, 'Color', 'magenta', 'interpreter', 'none');
+	t3 = text(T, signal_orig(T), 'T', 'FontSize', 16, 'Color', 'magenta', 'interpreter', 'none');
+	t4 = text(Tend, signal_orig(Tend), '}', 'FontSize', 16, 'Color', 'magenta', 'interpreter', 'none');
 	hold off
 
-    subplot(7,2,13)
+    ax3 = subplot(7,2,13);
     title(sprintf('Shannon Entropy (SE) - Sum = %.1f nats', sum_se),'FontSize',11)
     yyaxis left
     plot(cumsum(se))
@@ -237,13 +258,13 @@ if freq ~= 500
     yticklabels({'0','0.69'})
 	
     sgtitle('Median Reannotation Fiducial Point Debug','fontweight','bold')
-	set(gcf, 'Position', [10, 10, 1200, 700])  % set figure size
+    
 	
 else
 	
-    figure('name','Median Reannotation Fiducial Point Debug','numbertitle','off')
-    set(gcf, 'Position', [10, 10, 650, 700])  % set figure size
-    subplot(7,1,1:5)
+    F = figure('name','Median Reannotation Fiducial Point Debug','numbertitle','off','SizeChangedFcn',{@move_button});
+    set(gcf, 'Position', center_gui_figure(650, 700));  % set figure size
+    ax1 = subplot(7,1,1:5);
     hold on
     plot(signal, 'Color', '[ 0 0.8 0]');
     title('Median Reannotation Fiducial Point Debug')
@@ -258,32 +279,44 @@ else
 	s0 = plot(scores{1}(1,1:end),'k','LineStyle', '--', 'Displayname',' Other');
 	s1 = plot(scores{1}(2,1:end),'r','LineStyle', '--', 'Displayname',' QRS');
 	s2 = plot(scores{1}(3,1:end),'b','LineStyle', '--', 'Displayname',' T');
+
+    % Final classes before and after Viterbi decoder
+    [~, collapsed_scores] = max(scores{1}, [], 1);
+    score_orig = plot(collapsed_scores-1,'k','Linestyle','-','linewidth',4,'Marker','none','Visible','off','Displayname', sprintf('Raw\nClasses'));
+    score_fixed = plot(double(YClean)-1,'r','Linestyle','-','linewidth',2.5,'Marker','none','Visible','off','Displayname',sprintf('Viterbi\nCorrected'));
 	
-    yyaxis right
+    yyaxis left
     if ~isnan(Q)
 	    line([Q Q],[0 1],'color','m', 'LineStyle', '-')
-        text(Q, signal(Q), '[', 'FontSize', 16, 'Color', 'magenta', 'interpreter', 'none');
+        t1 = text(Q, signal(Q), '[', 'FontSize', 16, 'Color', 'magenta', 'interpreter', 'none');
     end
 
     if ~isnan(S)
 	    line([S S],[0 1],'color','m', 'LineStyle', '-')
-        text(S, signal(S), ']', 'FontSize', 16, 'Color', 'magenta', 'interpreter', 'none');
+        t2 = text(S, signal(S), ']', 'FontSize', 16, 'Color', 'magenta', 'interpreter', 'none');
     end
 
     if ~isnan(T)
-        text(T, signal(T), 'T', 'FontSize', 16, 'Color', 'magenta', 'interpreter', 'none');
+        t3 = text(T, signal(T), 'T', 'FontSize', 16, 'Color', 'magenta', 'interpreter', 'none');
     end
 
     if ~isnan(Tend)
 	    line([Tend Tend],[0 1],'color','m', 'LineStyle', '-')
-        text(Tend, signal(Tend), '}', 'FontSize', 16, 'Color', 'magenta', 'interpreter', 'none');
+        t4 = text(Tend, signal(Tend), '}', 'FontSize', 16, 'Color', 'magenta', 'interpreter', 'none');
     end
 
+
+    % Viterbi vs Scores toggle button
+    vbutton = uicontrol('Parent',F,'Style','pushbutton','String','Classification','Units','pixels', ...
+     'FontWeight','bold','Position',[550 660 90 30],'Visible','on','Callback', @(src,evt) ...
+      toggleViterbi(score_orig, score_fixed, s0, s1, s2, ax1));
+    
+
 	hold off
-	legend([s0 s1 s2])
+	legend(ax1, [s0 s1 s2])
 
     
-    subplot(7,1,7)
+    ax2 = subplot(7,1,7);
     title(sprintf('Shannon Entropy (SE) - Sum = %.1f nats', sum_se),'FontSize',11)
     yyaxis left
     plot(cumsum(se))
@@ -301,4 +334,25 @@ else
 end
 
 
+end  % end plotscores
+
+
+% Toggle Viterbi vs score display function
+function toggleViterbi(score_orig, score_fixed, s0, s1, s2, ax)
+ 
+    vis = ~strcmp(score_orig.Visible,'on');
+
+    % Toggle categories and move text labels
+    set([score_orig score_fixed], 'Visible', vis);
+    if vis
+        yyaxis(ax, 'right');
+        ax.YLim = [0 2.2];   
+        legend(ax,[s0 s1 s2 score_orig score_fixed])
+    else
+        yyaxis(ax, 'right');
+        ax.YLim = [0 1.1];   % original
+        legend(ax,[s0 s1 s2])
+    end
 end
+
+

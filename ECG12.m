@@ -194,7 +194,7 @@ classdef ECG12
 
 					
                     otherwise
-                        error('unknown format %s', format);
+                        error('ECG12: unknown format %s', format);
                 end
             else
                 error('ECG12: invalid number of arguments %d', nargin);

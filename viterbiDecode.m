@@ -21,49 +21,63 @@
 % This software is for research purposes only and is not intended to diagnose or treat any disease.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+% Updated to 4 states 
+
 function [YPred_clean, wasModified] = viterbiDecode(probs)
-    % probs is numStates x T matrix of softmax outputs (3 x T)
-    % States: row 1 = other (0), row 2 = QRS (1), row 3 = Twave (2)
-    
-    [numStates, T] = size(probs);
-    
-    % Log-probability transition matrix (-Inf = forbidden)
-    % Rows = from state, cols = to state
-    logTrans = [0    0    -Inf;   % from 0: allow 0->0, 0->1
-                -Inf 0    0;      % from 1: allow 1->1, 1->2
-                0    -Inf 0];     % from 2: allow 2->0, 2->2
-    
-    % Log emissions (add small epsilon to avoid log(0))
-    logEmit = log(probs + 1e-10);  % still 3 x T
-    
-    % Initialize: force start in state 0
+    % probs is 3 x T softmax outputs.
+    % Original classes: row 1 = other (0), row 2 = QRS (1), row 3 = Twave (2)
+    %
+    % Expanded (non-cyclic) state space (4 states):
+    %   1 = pre   (baseline before QRS), emits class 0
+    %   2 = QRS,                         emits class 1
+    %   3 = T,                           emits class 2
+    %   4 = post  (baseline after T),    emits class 0
+
+    [~, T] = size(probs);
+    numStates = 4;
+
+    % Log-prob transition matrix (rows = from, cols = to; -Inf = forbidden)
+    logTrans = [0    0    -Inf -Inf;   % pre  -> pre, QRS
+                -Inf 0    0    -Inf;   % QRS  -> QRS, T
+                -Inf -Inf 0    0;      % T    -> T, post
+                -Inf -Inf -Inf 0];     % post -> post
+
+    % Log emissions: pre and post both emit class 0
+    eps0 = 1e-10;
+    logEmit = zeros(numStates, T);
+    logEmit(1,:) = log(probs(1,:) + eps0);  % pre  -> class 0
+    logEmit(2,:) = log(probs(2,:) + eps0);  % QRS  -> class 1
+    logEmit(3,:) = log(probs(3,:) + eps0);  % T    -> class 2
+    logEmit(4,:) = log(probs(1,:) + eps0);  % post -> class 0
+
+    % Force start in pre
     score = -Inf(numStates, T);
-    score(1, 1) = logEmit(1, 1);  % must start in state 0
+    score(1, 1) = logEmit(1, 1);
     backptr = zeros(numStates, T);
-    
+
     % Forward pass
     for t = 2:T
         for s = 1:numStates
-            % score(:, t-1) is 3x1, logTrans(:, s) is 3x1 - both column vectors
             [bestScore, bestPrev] = max(score(:, t-1) + logTrans(:, s));
             score(s, t) = bestScore + logEmit(s, t);
             backptr(s, t) = bestPrev;
         end
     end
-    
-    % Backward pass: recover optimal path
+
+    % Backward pass
     path = zeros(T, 1);
     [~, path(T)] = max(score(:, T));
     for t = T-1:-1:1
         path(t) = backptr(path(t+1), t+1);
     end
-    
-    % Convert to 0-indexed and to categorical
-    YPred_clean_num = path - 1;
+
+    % Map 4-state path back to original 3-class labels
+    stateToClass = [0; 1; 2; 0];           % pre=0, QRS=1, T=2, post=0
+    YPred_clean_num = stateToClass(path);
     YPred_clean = categorical(YPred_clean_num, [0 1 2], {'0','1','2'});
-    
-    % Compare to argmax to determine if modified
-    [~, argmaxPath] = max(probs, [], 1);  % argmax across rows (states)
-    argmaxPath = argmaxPath(:) - 1;  % make column, 0-indexed
+
+    % Modification flag
+    [~, argmaxPath] = max(probs, [], 1);
+    argmaxPath = argmaxPath(:) - 1;
     wasModified = any(argmaxPath ~= YPred_clean_num);
 end

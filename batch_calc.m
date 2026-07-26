@@ -67,9 +67,6 @@ if isempty(ovrmedianbeat) && isempty(ovrmedianvcg) && isempty(ovrmedian12L)
 % Unfiltered (raw) VCG from unfiltered (raw) ECG
 batchout.vcg_raw = VCG(ecg_raw, ap);
 
-% Find Rpeaks in VCG VM lead (legacy code, but leaving in for now)
-QRS_for_shift = batchout.vcg_raw.peaks(ap);
-
 % Will interpolate/spike remove on the RAW signals prior to filtering.
 % Interpolation was fone prior to filtering to allow more robust and
 % consistent performance.  If interpolation is done AFTER filtering, have
@@ -181,7 +178,7 @@ if ap.baseline_correct_flag
     [sL1, sL2, sL3, savR, savF, savL, sV1, sV2, sV3, sV4, sV5, sV6, ~, ~, ~, ~, ~,...
     ~, ~, ~, ~, ~, ~, ~] = ...
     baseline_shift_hfs(batchout.filtered_ecg.I, batchout.filtered_ecg.II, batchout.filtered_ecg.III, batchout.filtered_ecg.avR, batchout.filtered_ecg.avF, batchout.filtered_ecg.avL, ...
-    batchout.filtered_ecg.V1, batchout.filtered_ecg.V2, batchout.filtered_ecg.V3, batchout.filtered_ecg.V4, batchout.filtered_ecg.V5, batchout.filtered_ecg.V6, batchout.filtered_ecg.hz, QRS_for_shift);
+    batchout.filtered_ecg.V1, batchout.filtered_ecg.V2, batchout.filtered_ecg.V3, batchout.filtered_ecg.V4, batchout.filtered_ecg.V5, batchout.filtered_ecg.V6, batchout.filtered_ecg.hz, QRS2);
 
     batchout.filtered_ecg = ECG12(batchout.filtered_ecg.hz,'',sL1, sL2, sL3, savR, savF, savL, sV1, sV2, sV3, sV4, sV5, sV6);
         

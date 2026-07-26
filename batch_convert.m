@@ -71,7 +71,7 @@ for i = 1:num_files
         e.write(strcat(fname(1:end-4),'.txt'), 'unformatted');
 
         if progbar
-            waitbar(i/num_files, W, sprintf('Processed %i out of %i Total ECGs (%i%%)',i,num_files,round(100*(i/num_files))),'Name','Processing...');
+            waitbar(i/num_files, W, sprintf('Processed %i out of %i ECGs (%i%%)',i,num_files,round(100*(i/num_files))),'Name','Processing...');
         end
     
     catch ME

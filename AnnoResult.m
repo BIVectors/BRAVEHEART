@@ -26,7 +26,7 @@ classdef AnnoResult
 
 	properties
 		filename
-        version = {'1.8.1'}
+        version = {'1.8.2'}
 		note
 		date
 		time

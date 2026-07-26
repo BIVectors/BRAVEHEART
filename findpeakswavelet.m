@@ -93,7 +93,7 @@ for i = 1:length(QRS_wavelet)
     % Prevent indices from being out of bounds for QRS complexes near
     % start/end of signal
 
-    ll(ll<0) = 1;
+    ll(ll<=0) = 1;
     ul(ul>length(VM)) = length(VM);
 
     % Just take maximum as should only be 1 peak
