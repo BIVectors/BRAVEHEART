@@ -41,6 +41,7 @@ classdef ECG12
         V4
         V5
         V6
+        info
         
     end
 
@@ -51,6 +52,10 @@ classdef ECG12
                 [obj.hz, obj.units, ...
                     obj.I, obj.II, obj.III, obj.avR, obj.avF, obj.avL, ...
                     obj.V1, obj.V2, obj.V3, obj.V4, obj.V5, obj.V6] = varargin{:};
+            elseif nargin == 15
+                [obj.hz, obj.units, obj.info, ...
+                    obj.I, obj.II, obj.III, obj.avR, obj.avF, obj.avL, ...
+                    obj.V1, obj.V2, obj.V3, obj.V4, obj.V5, obj.V6] = varargin{:};    
             elseif nargin == 10
                 [obj.hz, obj.units, ...
                     obj.I, obj.II, ...
@@ -79,6 +84,7 @@ classdef ECG12
                         obj.avF = obj.II - 0.5*obj.I;
                         obj.avR = -0.5*obj.I - 0.5*obj.II;
                         obj.avL = obj.I - 0.5*obj.II;
+
                     
                     case 'prucka_txt'
                         [obj.hz, obj.I, obj.II, obj.III, obj.avR, obj.avF, obj.avL, ...
@@ -192,7 +198,11 @@ classdef ECG12
                         [obj.hz, obj.I, obj.II, obj.III, obj.avR, obj.avF, obj.avL, ...
                             obj.V1, obj.V2, obj.V3, obj.V4, obj.V5, obj.V6] = load_biocare_zekg(filename);
 
-					
+                    % MUSE PDFs (see https://github.com/BIVectors/pdf2ecg)
+                    case 'muse_pdf'
+                        [obj.hz, obj.I, obj.II, obj.III, obj.avR, obj.avF, obj.avL, ...
+                            obj.V1, obj.V2, obj.V3, obj.V4, obj.V5, obj.V6, obj.info] = load_musepdf_wrapper(filename);
+  					
                     otherwise
                         error('ECG12: unknown format %s', format);
                 end
@@ -202,7 +212,7 @@ classdef ECG12
             
             % Error handeling if file doesn't parse correctly
             fn = fieldnames(ECG12());
-            for i = 3:length(fn)
+            for i = 3:length(fn)-1
                 if isempty(obj.(fn{i}))
                     error(sprintf('%s seems to be incorrect - could not find ECG data in file',format));
                 end
@@ -253,6 +263,7 @@ classdef ECG12
             if isrow(obj.V4); obj.V4 = obj.V4'; end
             if isrow(obj.V5); obj.V5 = obj.V5'; end
             if isrow(obj.V6); obj.V6 = obj.V6'; end
+           
 
         end
         
@@ -329,6 +340,7 @@ classdef ECG12
 			ecg1.V6  = obj.V6(1:idx);  ecg2.V6  = obj.V6(idx+1:end);
 			ecg1.hz = obj.hz; ecg2.hz = obj.hz;
 			ecg1.units = obj.units; ecg2.units = obj.units;
+            ecg1.info = obj.info; ecg2.info = obj.info;
 		end
 
         function l = lead(obj, i)

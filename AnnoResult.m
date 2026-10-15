@@ -26,11 +26,12 @@ classdef AnnoResult
 
 	properties
 		filename
-        version = {'1.8.2'}
+        version = {'1.9.0'}
 		note
 		date
 		time
 		source
+        ecg_format_info
 		freq
 		num_samples
 		num_beats
@@ -88,6 +89,7 @@ classdef AnnoResult
 					obj.beats = beats.cells();
 					obj.ap = ap.cells();
 					obj.source = {source_str};
+                    obj.ecg_format_info = {ecg.info};
 					obj.freq = {ecg.hz};
 					obj.num_samples = {ecg.length()};
 					obj.num_beats = {beats.length()};
@@ -169,7 +171,7 @@ classdef AnnoResult
 				aps_blank = Annoparams();
 				
 				
-				info_labels = [{'filename'} {'version'} {'note'} {'proc_date'} {'proc_time'} {'source'} {'freq'} {'num_samples'} {'num_beats'} {'initial_num_beats'} {'num_pvcs_removed'} ...
+				info_labels = [{'filename'} {'version'} {'note'} {'proc_date'} {'proc_time'} {'source'} {'ecg_format_info'} {'freq'} {'num_samples'} {'num_beats'} {'initial_num_beats'} {'num_pvcs_removed'} ...
                     {'num_outliers_removed'} {'num_manual_removed'} {'num_bad_removed'} {'pacing_detected'} {'num_paced_leads'} {'hr'} {'cross_corr'} {'noise_hf'} {'noise_lf'} {'quality_prob'} {'sum_se'} {'missing_lead'}];
 				% you have to do it this way in order to deal properly with the nested cells and with empty cells								
 				excel_header = [info_labels vcg_blank.labels() aps_blank.labels() beat_stats_blank.labels() beats_blank.labels() lead_morph_blank.labels() vcg_morph_blank.labels()];				

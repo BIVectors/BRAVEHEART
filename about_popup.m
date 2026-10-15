@@ -88,7 +88,7 @@ version_txt = uilabel(panel, ...
 
 % Main text content
 main_text = {
-'Copyright 2016-2025  Hans F. Stabeneau and Jonathan W. Waks'
+'Copyright 2016-2025  Hans F. Stabenau and Jonathan W. Waks'
 ''
 'Software updates available at http://github.com/BIVectors/BRAVEHEART'
 ''

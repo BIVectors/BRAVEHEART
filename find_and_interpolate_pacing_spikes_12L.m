@@ -42,9 +42,10 @@ pacer_zpk = aps.pacer_zpk;                  % Percent of mod Z peak to define pe
 pacer_maxscale = aps.pacer_maxscale;        % Scale cutoff for frequencies to include in pacer spike
 win = round(50*hz/1000);                    % 50 ms window around spike peak
 
-% Get lead fieldnames from ECG12 class and remove Hz and units
+% Get lead fieldnames from ECG12 class and remove Hz, units, and info
 ecg_fn = fieldnames(ecg);
 ecg_fn(1:2) = [];
+ecg_fn(end) = [];
 
 % Loop through each lead
 for jj = 1:length(ecg_fn)

@@ -80,6 +80,7 @@ BRAVEHEART can read a wide variety of 12-lead ECG formats including:
 22. EP Tracer recording system
 23. Labsystem Pro recording system
 24. Biocare iE12A .zekg
+25. GE MUSE PDF (12x1 format)
 
 If you need BRAVEHEART to read another ECG format let us know and we will help add it.
 
@@ -153,7 +154,11 @@ The software has been used for ECG/VCG analysis in the following publications:
 
 22. [M Gurnani, K Patlatzoglo, J Barker, L Pastika, B Zeidaabadi, I Antoun, GA Ng, P Inglese, L Curran, D O’Regan, NS Peters, DB Kramer, JW Waks, A Sau, and FS Ng. Deriving Novel Atrial Fibrillation Phenotypes Using a Tree-Based Artificial Intelligence-Enhanced Electrocardiography Approach. _NPJ Digit. Med._ 2025 Dec 4.](https://doi.org/10.1038/s41746-025-02159-z)
 
-23. [JW Waks, M Poulin, P Tung, HF Stabenau, A Haouzi, JD Clarke, P Zimetbaum, A d’Avila, B Ultimo, KA Guibone, K Kiernan, A Medline, NS Peters, A Sau, FS Ng, DB Kramer, A Shvilkin, RJ Laham, and AE Buxton. _Heart Rhythm O2._ 2026 In Press.](https://www.heartrhythmopen.com/article/S2666-5018(26)00035-8/fulltext)
+23. [JW Waks, M Poulin, P Tung, HF Stabenau, A Haouzi, JD Clarke, P Zimetbaum, A d’Avila, B Ultimo, KA Guibone, K Kiernan, A Medline, NS Peters, A Sau, FS Ng, DB Kramer, A Shvilkin, RJ Laham, and AE Buxton. _Heart Rhythm O2._ 2026, July 2.](https://www.heartrhythmopen.com/article/S2666-5018(26)00035-8/fulltext)
+
+24. [L Pastika, K Patlatzoglou, E Sieliwonczyk, J Barker, B Zeidaabadi, KA McGurk, SM Barreto, L Camelo, S Khan, WR Scott, DP O’Regan, BB Duncan, MI Schmidt, JS Ware, S Misra, DB Kramer, JW Waks, NS Peters, ALP Ribeiro, A Sau, and FS Ng.  Artificial intelligence-enhanced electrocardiography for the prediction of future type 2 diabetes mellitus: a model-development and multicentre validation study._European Heart Journal - Digital Health_, 2026 Jul 22;7(7):ztag118](https://academic.oup.com/ehjdh/article/7/7/ztag118/8739742)
+
+25. [H Jiang, Z Loring, N Varma, R Schaller, C Gilles, K Emerek, P Søgaard, C Polcwiartek, C Graff, M Fudim, J Kisslo, and DJ Friedman.  Refining cardiac resynchronization therapy selection in borderline QRS duration patients. _Heart Rhythm O2_. 2026 July 2](https://www.sciencedirect.com/science/article/pii/S2666501826002904)
 
 If you have used BRAVEHEART for your research project, let us know, as we would be happy to include a reference to your manuscript!
 

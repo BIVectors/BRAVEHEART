@@ -8,13 +8,13 @@
       <file>${PROJECT_ROOT}\braveheart_batch_windows_resources\icon_24.png</file>
       <file>${PROJECT_ROOT}\braveheart_batch_windows_resources\icon_16.png</file>
     </param.icons>
-    <param.version>1.8.2</param.version>
+    <param.version>1.9.0</param.version>
     <param.authnamewatermark>Hans F. Stabenau and Jonathan W. Waks</param.authnamewatermark>
     <param.email>braveheart.ecg@gmail.com</param.email>
     <param.company />
     <param.summary />
     <param.description>BRAVHEART ECG/VCG Analysis Software -- Command Line Version
-Version 1.8.2</param.description>
+Version 1.9.0</param.description>
     <param.screenshot>${PROJECT_ROOT}\braveheart_splash.png</param.screenshot>
     <param.guid />
     <param.installpath.string>\braveheart_batch\</param.installpath.string>
@@ -50,7 +50,7 @@ Version 1.8.2</param.description>
 	 varargin  input arguments 
  Description 
  	 BRAVHEART ECG/VCG Analysis Software -- Command Line Version
-Version 1.8.2</param.help.text>
+Version 1.9.0</param.help.text>
     <unset>
       <param.company />
       <param.summary />
@@ -95,6 +95,7 @@ Version 1.8.2</param.help.text>
       <file>${PROJECT_ROOT}\getfiletype.m</file>
       <file>${PROJECT_ROOT}\getLeadDatafromTable.m</file>
       <file>${PROJECT_ROOT}\HRV_Calc.m</file>
+      <file>${PROJECT_ROOT}\identify_clipped_leads.m</file>
       <file>${PROJECT_ROOT}\interpolate_pacer_spikes.m</file>
       <file>${PROJECT_ROOT}\leadidcodexyz.m</file>
       <file>${PROJECT_ROOT}\leadidtable_scpecg.mat</file>
@@ -109,6 +110,8 @@ Version 1.8.2</param.help.text>
       <file>${PROJECT_ROOT}\load_labsystempro.m</file>
       <file>${PROJECT_ROOT}\load_megacarexml.m</file>
       <file>${PROJECT_ROOT}\load_mfer.m</file>
+      <file>${PROJECT_ROOT}\load_musepdf.m</file>
+      <file>${PROJECT_ROOT}\load_musepdf_wrapper.m</file>
       <file>${PROJECT_ROOT}\load_norav.m</file>
       <file>${PROJECT_ROOT}\load_physionet_csv.m</file>
       <file>${PROJECT_ROOT}\load_prucka.m</file>

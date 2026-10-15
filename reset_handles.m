@@ -49,4 +49,9 @@ for i = 1:length(fn)
     
 end
 
+% Also reset ECG format warning
+set(handles.filename_txt,'Position',[49 171 450 22])
+set(handles.filewarn_txt,'Visible', 'Off')
+set(handles.filewarn_txt,'ToolTip','')
+
 guidata(hObject, handles);  % update handles

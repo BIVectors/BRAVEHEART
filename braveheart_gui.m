@@ -3436,6 +3436,14 @@ source_str = handles.source_str;
 
 ecg_raw = ECG12(filename, source_str);      % Loads raw data
 handles.ecg_raw = ecg_raw;
+
+% Update ECG format warning if PDF has clipping or fails certification
+% (only MUSE PDF format)
+if contains(ecg_raw.info,'PDF clipped') || contains(ecg_raw.info,'PDF not certified')
+    set(handles.filename_txt,'Position',[49 171 428 22])
+    set(handles.filewarn_txt,'Visible', 'On')
+    set(handles.filewarn_txt,'ToolTip',ecg_raw.info)
+end
           
 % Extract frequency and sample_time from ecg class
 freq = ecg_raw.hz;
