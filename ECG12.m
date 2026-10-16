@@ -41,7 +41,7 @@ classdef ECG12
         V4
         V5
         V6
-        info
+        info = '';
         
     end
 
